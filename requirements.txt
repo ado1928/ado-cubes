@@ -1,1 +1,3 @@
-flask-socketio
+Flask-SocketIO==5.1.1
+gunicorn==20.1.0<
+Flask==2.0.2
