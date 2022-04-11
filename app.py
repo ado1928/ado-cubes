@@ -1,5 +1,6 @@
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit
+import os
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -36,4 +37,4 @@ def test_connect(auth):
     emit("connected", cubes)
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, port=int(os.environ.get('PORT', 17995)))
