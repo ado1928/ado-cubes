@@ -35,5 +35,5 @@ def handle_message(data):
 def test_connect(auth):
     emit("connected", cubes)
 
-
-socketio.run(app)
+if __name__ == '__main__':
+    socketio.run(app)
