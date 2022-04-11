@@ -117,7 +117,7 @@ scene.add( light );
 
 let geometry, material, cube
 
-var socket = io();
+var socket = io({transports: ['websocket']});
 
 function placeCube(pos) {
     socket.emit("place", pos)
