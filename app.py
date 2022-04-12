@@ -1,10 +1,14 @@
+from pickletools import bytes8
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit
 import os
+import numpy as np
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+size = (64, 64, 64)
+world = np.zeros(size, dtype=np.int8)
 cubes = []
 
 class Cube():
@@ -23,18 +27,18 @@ def send_file(path):
 
 @socketio.on('place')
 def handle_message(data):
-    #print(data)
-    data["x"] = (data["x"] + 0.5) // 5 * 5
-    data["y"] = (data["y"] + 0.5) // 5 * 5
-    data["z"] = (data["z"] + 0.5) // 5 * 5
-    cubes.append(data)
-    #print(data)
-    emit('place', data, broadcast = True)
-
+    print(data)
+    pos = data["pos"]
+    if type(pos[0]) is int and type(pos[1]) is int and type(pos[2]) is int:
+        if(pos[0] >= 0 and pos[1] >= 0 and pos[2] >= 0 and pos[0] < 64 and pos[1] < 64 and pos[2] < 64):
+            world[pos[0], pos[1], pos[2]] = 1
+            emit('place', data, broadcast = True)
+        else:
+            print("nah")
 
 @socketio.on('connect')
-def test_connect(auth):
-    emit("connected", cubes)
+def test_connect():
+    emit("connected", world.tolist())
 
 if __name__ == '__main__':
     socketio.run(app, host="0.0.0.0", port=int(os.environ.get('PORT', 17995)))
