@@ -31,8 +31,9 @@ def handle_message(data):
     pos = data["pos"]
     if type(pos[0]) is int and type(pos[1]) is int and type(pos[2]) is int:
         if(pos[0] >= 0 and pos[1] >= 0 and pos[2] >= 0 and pos[0] < 64 and pos[1] < 64 and pos[2] < 64):
-            world[pos[0], pos[1], pos[2]] = 1
-            emit('place', data, broadcast = True)
+            if(world[pos[0], pos[1], pos[2]] != 1):
+                world[pos[0], pos[1], pos[2]] = 1
+                emit('place', data, broadcast = True)
         else:
             print("nah")
 

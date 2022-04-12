@@ -14,6 +14,79 @@ const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const controls = new PointerLockControls(camera, renderer.domElement)
 
+
+let vert = `
+varying vec2 vUv;
+
+void main()
+{
+    vUv = uv;
+    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+    gl_Position = projectionMatrix * mvPosition;
+}`
+
+
+let frag = `
+uniform sampler2D colorTexture;
+
+varying vec2 vUv;
+
+void main( void ) {
+    vec4 color = vec4(0.0, 0.0, 0.0, 0.1);
+
+    if(mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
+        color = vec4(1.0, 1.0, 0.0, 0.5);
+    }
+
+    else if(mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
+        color = vec4(1.0, 1.0, 0.0, 0.5);
+    }
+
+    else if(mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
+        color = vec4(1.0, 1.0, 0.0, 0.5);
+    }
+
+    else if(mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
+        color = vec4(1.0, 1.0, 0.0, 0.5);
+    }
+
+    else if(mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
+        color = vec4(1.0, 1.0, 0.0, 0.5);
+    }
+
+    else if(mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
+        color = vec4(1.0, 1.0, 0.0, 0.5);
+    }
+
+
+
+    gl_FragColor = vec4( color);
+
+}`
+
+let geometry, material, grid, pos
+
+material = new THREE.ShaderMaterial( {
+
+	uniforms: {
+
+		time: { value: 1.0 },
+		resolution: { value: new THREE.Vector2() }
+
+	},
+    vertexShader: vert,
+	fragmentShader: frag,
+    
+    side: THREE.BackSide 
+} );
+
+material.transparent = true;
+geometry = new THREE.BoxGeometry( 64, 64, 64 );
+grid = new THREE.Mesh( geometry, material );
+grid.position.set(31.5, 31.5, 31.5);
+scene.add(grid);
+grid.visible = true;
+
 let moveForward = false;
 let moveBackward = false;
 let moveLeft = false;
@@ -47,6 +120,10 @@ const onKeyDown = function ( event ) {
             break;
         case "KeyX":
             placeCube(controls.getObject().position);
+            break;
+        case "KeyG":
+            console.log(grid.visible);
+            grid.visible = !grid.visible;
             break;
     }
 };
@@ -115,76 +192,6 @@ scene.add( directionalLight );
 const light = new THREE.AmbientLight( 0x505060 );
 scene.add( light );
 
-let vert = `
-varying vec2 vUv;
-
-void main()
-{
-    vUv = uv;
-    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-    gl_Position = projectionMatrix * mvPosition;
-}`
-
-
-let frag = `
-uniform sampler2D colorTexture;
-
-varying vec2 vUv;
-
-void main( void ) {
-    vec4 color = vec4(0.0, 0.0, 0.0, 0.1);
-
-    if(mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
-
-    else if(mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
-
-    else if(mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
-
-    else if(mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
-
-    else if(mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
-
-    else if(mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
-
-
-
-    gl_FragColor = vec4( color);
-
-}`
-
-let geometry, material, cube, pos
-
-material = new THREE.ShaderMaterial( {
-
-	uniforms: {
-
-		time: { value: 1.0 },
-		resolution: { value: new THREE.Vector2() }
-
-	},
-    vertexShader: vert,
-	fragmentShader: frag,
-    
-    side: THREE.BackSide 
-} );
-material.transparent = true;
-geometry = new THREE.BoxGeometry( 64, 64, 64 );
-cube = new THREE.Mesh( geometry, material );
-cube.position.set(31.5, 31.5, 31.5);
-scene.add(cube);
-
 var socket = io();
 
 function placeCube(pos) {
@@ -192,9 +199,9 @@ function placeCube(pos) {
 }
 
 function addCube(pos) {
-    geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    material = new THREE.MeshLambertMaterial( {color: 0xffffff} );
-    cube = new THREE.Mesh( geometry, material );
+    let geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    let material = new THREE.MeshLambertMaterial( {color: 0xffffff} );
+    let cube = new THREE.Mesh( geometry, material );
     cube.position.set(pos.x, pos.y, pos.z);
     scene.add(cube);
 }
