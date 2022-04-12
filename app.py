@@ -25,7 +25,7 @@ def send_file(path):
     return send_from_directory("/static", path)
 
 @socketio.on('place')
-def handle_message(data):
+def placecube(data):
     print(data)
     pos = data["pos"]
     if type(pos[0]) is int and type(pos[1]) is int and type(pos[2]) is int:
@@ -33,6 +33,18 @@ def handle_message(data):
             if(world[pos[0], pos[1], pos[2]] != 1):
                 world[pos[0], pos[1], pos[2]] = 1
                 emit('place', data, broadcast = True)
+        else:
+            print("nah")
+
+@socketio.on('break')
+def breakcube(data):
+    print(data)
+    pos = data["pos"]
+    if type(pos[0]) is int and type(pos[1]) is int and type(pos[2]) is int:
+        if(pos[0] >= 0 and pos[1] >= 0 and pos[2] >= 0 and pos[0] < 64 and pos[1] < 64 and pos[2] < 64):
+            if(world[pos[0], pos[1], pos[2]] != 0):
+                world[pos[0], pos[1], pos[2]] = 0
+                emit('break', data, broadcast = True)
         else:
             print("nah")
 

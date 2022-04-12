@@ -121,6 +121,9 @@ const onKeyDown = function ( event ) {
         case "KeyX":
             placeCube(controls.getObject().position);
             break;
+        case "KeyC":
+            breakCube(controls.getObject().position);
+            break;
         case "KeyG":
             console.log(grid.visible);
             grid.visible = !grid.visible;
@@ -198,18 +201,39 @@ function placeCube(pos) {
     socket.emit("place", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
 }
 
+function breakCube(pos) {
+    socket.emit("break", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
+}
+
+let cubes = [];
+
 function addCube(pos) {
     let geometry = new THREE.BoxGeometry( 1, 1, 1 );
     let material = new THREE.MeshLambertMaterial( {color: 0xffffff} );
     let cube = new THREE.Mesh( geometry, material );
     cube.position.set(pos.x, pos.y, pos.z);
+    cubes.push(cube)
     scene.add(cube);
+}
+
+function removeCube(pos) {
+    cubes.forEach( e => {
+        if(~~e.position.x == ~~pos.x && ~~e.position.y == ~~pos.y && ~~e.position.z == ~~pos.z) {
+            scene.remove(e)
+        }
+    });
 }
 
 socket.on('place', function(data) {
     console.log(data);
     let pos = data.pos;
     addCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
+});
+
+socket.on('break', function(data) {
+    console.log(data);
+    let pos = data.pos;
+    removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
 });
 
 
