@@ -5,6 +5,9 @@ import { PointerLockControls } from "/static/jsm/controls/PointerLockControls.js
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
 document.body.appendChild( renderer.domElement );
 
 const camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 500 );
@@ -187,10 +190,25 @@ const texture = loader.load([
 ]);
 scene.background = texture
 
-const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+const directionalLight = new THREE.DirectionalLight( 0xffffe0, 0.5);
+directionalLight.position.set(20, 90, 50);
 directionalLight.castShadow = true;
-directionalLight.position.set(0.5, 1, 0.3).normalize();
 scene.add( directionalLight );
+
+directionalLight.shadow.mapSize.width = 2048; // default
+directionalLight.shadow.mapSize.height = 2048; // default
+directionalLight.shadow.camera.near = 0.5; // default
+directionalLight.shadow.camera.far = 115; 
+directionalLight.shadow.camera.right = 60;
+directionalLight.shadow.camera.left = - 30;
+directionalLight.shadow.camera.top	= 35;
+directionalLight.shadow.camera.bottom	= - 71;
+
+
+const dlight = new THREE.DirectionalLight( 0xffffe0, 0.1);
+dlight.position.set(0.3, 1, 0.5);
+dlight.castShadow = true;
+scene.add( dlight );
 
 const light = new THREE.AmbientLight( 0x505060 );
 scene.add( light );
@@ -207,11 +225,15 @@ function breakCube(pos) {
 
 let cubes = [];
 
+geometry = new THREE.BoxGeometry( 1, 1, 1 );
+material = new THREE.MeshStandardMaterial( {color: 0xffffff} );
+material.roughness = 0;
+
 function addCube(pos) {
-    let geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    let material = new THREE.MeshLambertMaterial( {color: 0xffffff} );
-    let cube = new THREE.Mesh( geometry, material );
+    let cube = new THREE.Mesh( geometry, material, 100);
     cube.position.set(pos.x, pos.y, pos.z);
+    cube.receiveShadow = true;
+    cube.castShadow = true;
     cubes.push(cube)
     scene.add(cube);
 }
@@ -273,7 +295,6 @@ function render() {
 
     pos = controls.getObject().position;
     document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
-
     renderer.render( scene, camera );
 
 }

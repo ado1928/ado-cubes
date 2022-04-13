@@ -8,13 +8,9 @@ socketio = SocketIO(app)
 
 size = (64, 64, 64)
 world = np.zeros(size, dtype=np.int8)
-cubes = []
-
-class Cube():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-    
+#world.fill(1)
+import w
+world = w.world
 
 @app.route('/', methods=['GET'])
 def index():
@@ -23,6 +19,10 @@ def index():
 @app.route('/static/<path:path>')
 def send_file(path):
     return send_from_directory("/static", path)
+
+@socketio.on('player')
+def placecube(data):
+    emit('player', data, broadcast = True)
 
 @socketio.on('place')
 def placecube(data):
@@ -53,4 +53,4 @@ def test_connect():
     emit("connected", world.tolist())
 
 if __name__ == '__main__':
-    socketio.run(app, host="0.0.0.0", port=int(os.environ.get('PORT', 17995)))
+    socketio.run(app, host="0.0.0.0", port=int(os.environ.get('PORT', 80)))
