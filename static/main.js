@@ -11,8 +11,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild( renderer.domElement );
 
 const camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 500 );
-camera.position.set( 0, 0, 10 );
-camera.lookAt( 0, 0, 0 );
+camera.position.set( 2, 2, 2 );
+camera.lookAt( 64, 10, 64 );
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const controls = new PointerLockControls(camera, renderer.domElement)
