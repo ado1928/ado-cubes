@@ -190,7 +190,7 @@ const texture = loader.load([
 ]);
 scene.background = texture
 
-const directionalLight = new THREE.DirectionalLight( 0xffffe0, 0.4);
+const directionalLight = new THREE.DirectionalLight( 0xffffe0, 0.3);
 directionalLight.position.set(20, 90, 50);
 directionalLight.castShadow = true;
 scene.add( directionalLight );
