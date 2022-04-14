@@ -190,27 +190,34 @@ const texture = loader.load([
 ]);
 scene.background = texture
 
-const directionalLight = new THREE.DirectionalLight( 0xffffe0, 0.5);
+const directionalLight = new THREE.DirectionalLight( 0xffffe0, 0.4);
 directionalLight.position.set(20, 90, 50);
 directionalLight.castShadow = true;
 scene.add( directionalLight );
 
-directionalLight.shadow.mapSize.width = 2048; // default
-directionalLight.shadow.mapSize.height = 2048; // default
+directionalLight.shadow.bias = 0;
+directionalLight.shadow.normalBias = 0.1;
+directionalLight.shadow.mapSize.width = 4096; // default
+directionalLight.shadow.mapSize.height = 4096; // default
 directionalLight.shadow.camera.near = 0.5; // default
 directionalLight.shadow.camera.far = 115; 
 directionalLight.shadow.camera.right = 60;
 directionalLight.shadow.camera.left = - 30;
 directionalLight.shadow.camera.top	= 35;
 directionalLight.shadow.camera.bottom	= - 71;
+directionalLight.shadow.autoUpdate = false;
 
-
-const dlight = new THREE.DirectionalLight( 0xffffe0, 0.1);
-dlight.position.set(0.3, 1, 0.5);
-dlight.castShadow = true;
+const dlight = new THREE.DirectionalLight( 0xffffe0, 0.2);
+dlight.position.set(0.3, 0.6, 0.5);
+dlight.castShadow = false;
 scene.add( dlight );
 
-const light = new THREE.AmbientLight( 0x505060 );
+const dlight2 = new THREE.DirectionalLight( 0xffffe0, 0.15);
+dlight2.position.set(-0.3, 0.6, -0.2);
+dlight2.castShadow = false;
+scene.add( dlight2 );
+
+const light = new THREE.AmbientLight( 0x606070 );
 scene.add( light );
 
 var socket = io();
@@ -227,7 +234,6 @@ let cubes = [];
 
 geometry = new THREE.BoxGeometry( 1, 1, 1 );
 material = new THREE.MeshStandardMaterial( {color: 0xffffff} );
-material.roughness = 0;
 
 function addCube(pos) {
     let cube = new THREE.Mesh( geometry, material, 100);
@@ -236,6 +242,7 @@ function addCube(pos) {
     cube.castShadow = true;
     cubes.push(cube)
     scene.add(cube);
+    directionalLight.shadow.needsUpdate = true;
 }
 
 function removeCube(pos) {
@@ -244,6 +251,7 @@ function removeCube(pos) {
             scene.remove(e)
         }
     });
+    directionalLight.shadow.needsUpdate = true;
 }
 
 socket.on('place', function(data) {
