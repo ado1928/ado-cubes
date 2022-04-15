@@ -288,7 +288,7 @@ function escapeHTML(unsafe)
 
 socket.on('message', function(data) {
     document.getElementById("messages").insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b>: " + escapeHTML(data["message"]) + "<br>")
-    scrollToBottom(msgs);
+    scrollToBottom(document.getElementById("messages"));
 });
 
 socket.on('connected', function(arr) {
