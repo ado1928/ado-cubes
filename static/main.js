@@ -1,18 +1,18 @@
 import * as THREE from 'three';
 
 
-import { PointerLockControls } from "/static/jsm/controls/PointerLockControls.js";
+import {PointerLockControls} from "/static/jsm/controls/PointerLockControls.js";
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-document.body.appendChild( renderer.domElement );
+document.body.appendChild(renderer.domElement);
 
-const camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 500 );
-camera.position.set( 2, 2, 2 );
-camera.lookAt( 64, 10, 64 );
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500);
+camera.position.set(2, 2, 2);
+camera.lookAt(64, 10, 64);
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const controls = new PointerLockControls(camera, renderer.domElement)
@@ -69,22 +69,20 @@ void main( void ) {
 
 let geometry, material, grid, pos
 
-material = new THREE.ShaderMaterial( {
+material = new THREE.ShaderMaterial({
 
 	uniforms: {
-
-		time: { value: 1.0 },
-		resolution: { value: new THREE.Vector2() }
-
+		time: {value: 1.0},
+		resolution: {value: new THREE.Vector2()}
 	},
     vertexShader: vert,
 	fragmentShader: frag,
     
     side: THREE.BackSide 
-} );
+});
 
 material.transparent = true;
-geometry = new THREE.BoxGeometry( 64, 64, 64 );
+geometry = new THREE.BoxGeometry(64, 64, 64 );
 grid = new THREE.Mesh( geometry, material );
 grid.position.set(31.5, 31.5, 31.5);
 scene.add(grid);
@@ -97,45 +95,53 @@ let moveRight = false;
 let moveUp = false;
 let moveDown = false;
 
-const onKeyDown = function ( event ) {
-    switch ( event.code ) {
-        case 'ArrowUp':
-        case 'KeyW':
-            moveForward = true;
-            break;
-        case 'ArrowLeft':
-        case 'KeyA':
-            moveLeft = true;
-            break;
-        case 'ArrowDown':
-        case 'KeyS':
-            moveBackward = true;
-            break;
-        case 'ArrowRight':
-        case 'KeyD':
-            moveRight = true;
-            break;
-        case 'Space':
-            moveUp = true;
-            break;
-        case 'ShiftLeft':
-            moveDown = true;
-            break;
-        case "KeyX":
-            placeCube(controls.getObject().position);
-            break;
-        case "KeyC":
-            breakCube(controls.getObject().position);
-            break;
-        case "KeyG":
-            console.log(grid.visible);
-            grid.visible = !grid.visible;
-            break;
+const onKeyDown = function (event) {
+	if (chatinput !== document.activeElement) {
+		switch (event.code) {
+            case 'ArrowUp':
+            case 'KeyW':
+                moveForward = true;
+                break;
+            case 'ArrowLeft':
+            case 'KeyA':
+                moveLeft = true;
+                break;
+            case 'ArrowDown':
+            case 'KeyS':
+                moveBackward = true;
+                break;
+            case 'ArrowRight':
+            case 'KeyD':
+                moveRight = true;
+                break;
+            case 'Space':
+                moveUp = true;
+                break;
+            case 'ShiftLeft':
+                moveDown = true;
+                break;
+            case "KeyX":
+                placeCube(controls.getObject().position);
+                break;
+            case "KeyC":
+                breakCube(controls.getObject().position);
+                break;
+            case "KeyG":
+                console.log(grid.visible);
+                grid.visible = !grid.visible;
+                break;
+            case "Enter":
+                chatinput.focus();
+			    break;
+			case "KeyL":
+				settings.style.display = "block";
+				break;
+        }
     }
 };
 
-const onKeyUp = function ( event ) {
-    switch ( event.code ) {
+const onKeyUp = function (event) {
+    switch (event.code) {
         case 'ArrowUp':
         case 'KeyW':
             moveForward = false;
@@ -161,22 +167,22 @@ const onKeyUp = function ( event ) {
     }
 };
 
-document.addEventListener('keydown', onKeyDown );
-document.addEventListener('keyup', onKeyUp );
+document.addEventListener('keydown', onKeyDown);
+document.addEventListener('keyup', onKeyUp);
 
-renderer.domElement.addEventListener( 'click', function () {controls.lock();});
-//controls.addEventListener( 'lock', function () {menu.style.display = 'none';});
-//controls.addEventListener( 'unlock', function () {menu.style.display = 'block';});
-scene.add( controls.getObject() );
+renderer.domElement.addEventListener('click', function() {controls.lock();});
+//controls.addEventListener('lock', function () {menu.style.display = 'none';});
+//controls.addEventListener('unlock', function () {menu.style.display = 'block';});
+scene.add(controls.getObject());
 
 const direction = new THREE.Vector3();
 const velocity = new THREE.Vector3();
 
-window.addEventListener( 'resize', onWindowResize );
+window.addEventListener('resize', onWindowResize);
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 const loader = new THREE.CubeTextureLoader();
@@ -190,10 +196,10 @@ const texture = loader.load([
 ]);
 scene.background = texture
 
-const directionalLight = new THREE.DirectionalLight( 0xffffe0, 0.3);
+const directionalLight = new THREE.DirectionalLight(0xffffe0, 0.3);
 directionalLight.position.set(20, 90, 50);
 directionalLight.castShadow = true;
-scene.add( directionalLight );
+scene.add(directionalLight);
 
 directionalLight.shadow.bias = 0;
 directionalLight.shadow.normalBias = 0.1;
@@ -204,21 +210,21 @@ directionalLight.shadow.camera.far = 115;
 directionalLight.shadow.camera.right = 60;
 directionalLight.shadow.camera.left = - 30;
 directionalLight.shadow.camera.top	= 35;
-directionalLight.shadow.camera.bottom	= - 71;
+directionalLight.shadow.camera.bottom = -71;
 directionalLight.shadow.autoUpdate = false;
 
-const dlight = new THREE.DirectionalLight( 0xffffe0, 0.2);
+const dlight = new THREE.DirectionalLight(0xffffe0, 0.2);
 dlight.position.set(0.3, 0.6, 0.5);
 dlight.castShadow = false;
-scene.add( dlight );
+scene.add(dlight);
 
-const dlight2 = new THREE.DirectionalLight( 0xffffe0, 0.15);
+const dlight2 = new THREE.DirectionalLight(0xffffe0, 0.15);
 dlight2.position.set(-0.3, 0.6, -0.2);
 dlight2.castShadow = false;
-scene.add( dlight2 );
+scene.add(dlight2);
 
-const light = new THREE.AmbientLight( 0x606070 );
-scene.add( light );
+const light = new THREE.AmbientLight(0x606070);
+scene.add(light);
 
 var socket = io();
 
@@ -232,7 +238,7 @@ function breakCube(pos) {
 
 let cubes = [];
 
-geometry = new THREE.BoxGeometry( 1, 1, 1 );
+geometry = new THREE.BoxGeometry(1, 1, 1);
 material = new THREE.MeshStandardMaterial( {color: 0xffffff} );
 
 function addCube(pos) {
@@ -246,7 +252,7 @@ function addCube(pos) {
 }
 
 function removeCube(pos) {
-    cubes.forEach( e => {
+    cubes.forEach(e => {
         if(~~e.position.x == ~~pos.x && ~~e.position.y == ~~pos.y && ~~e.position.z == ~~pos.z) {
             scene.remove(e)
         }
@@ -266,6 +272,24 @@ socket.on('break', function(data) {
     removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
 });
 
+function scrollToBottom(element) {
+    element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+  }
+
+function escapeHTML(unsafe)
+{
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+socket.on('message', function(data) {
+    document.getElementById("messages").insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b>: " + escapeHTML(data["message"]) + "<br>")
+    scrollToBottom(msgs);
+});
 
 socket.on('connected', function(arr) {
     console.log(arr);
@@ -280,30 +304,57 @@ socket.on('connected', function(arr) {
         }
     }
 })
-  //placeCube(new THREE.Vector3(0, 0, 0))
+
+let nick = "Player";
+nickinput.onkeydown = function(input) {
+    if(input.keyCode == 13 && nickinput.value !== "") {
+        nick = nickinput.value;
+        document.getElementById("nick").style = "display: none";
+    }
+};
+
+let chat = chatinput
+chatinput.onkeydown = function(chanter) {
+    if(chanter.keyCode == 13 && chat.value !== "") {
+        socket.emit("message", {"message": chat.value, "sender": nick});
+        chat.value = "";
+    }
+};
+
+const box = document.getElementsByClassName("box");
+var bgopacity = document.getElementById("bgopacity");
+bgopacity.oninput = function() {
+	for(var i = 0; i < box.length; i++){
+		box[i].style.background = "rgb(0 0 0 / " + bgopacity.value + "%)";
+	}
+}
+
+settingsexit.onclick = function settingsExit() {
+	settings.style.display = "none";
+};
 
 function render() {
-    requestAnimationFrame( render )
+    requestAnimationFrame(render)
 	const delta = clock.getDelta();
 
     velocity.x *= 0.9;
     velocity.z *= 0.9;
     velocity.y *= 0.9;
-
+	
     if (moveForward) velocity.z += 50.0 * delta;
-    if (moveBackward) velocity.z -= 50.0 * delta;
+	if (moveBackward) velocity.z -= 50.0 * delta;
     if (moveRight) velocity.x += 50.0 * delta;
     if (moveLeft) velocity.x -= 50.0 * delta;
     if (moveUp) velocity.y += 50.0 * delta;
     if (moveDown) velocity.y -= 50.0 * delta;
-
+	
     controls.moveRight(velocity.x * delta );
     controls.moveForward(velocity.z * delta );
     controls.getObject().position.y += velocity.y * delta;
 
     pos = controls.getObject().position;
     document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
-    renderer.render( scene, camera );
+    renderer.render(scene, camera);
 
 }
 render();

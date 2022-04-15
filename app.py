@@ -20,9 +20,9 @@ def index():
 def send_file(path):
     return send_from_directory("/static", path)
 
-@socketio.on('player')
+@socketio.on('message')
 def placecube(data):
-    emit('player', data, broadcast = True)
+    emit('message', data, broadcast = True)
 
 @socketio.on('place')
 def placecube(data):
