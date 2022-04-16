@@ -88,6 +88,8 @@ grid.position.set(31.5, 31.5, 31.5);
 scene.add(grid);
 grid.visible = true;
 
+let raycaster = new THREE.Raycaster();
+
 let moveForward = false;
 let moveBackward = false;
 let moveLeft = false;
@@ -127,7 +129,6 @@ const onKeyDown = function (event) {
                 breakCube(controls.getObject().position);
                 break;
             case "KeyG":
-                console.log(grid.visible);
                 grid.visible = !grid.visible;
                 break;
             case "Enter":
@@ -228,12 +229,42 @@ scene.add(light);
 
 var socket = io();
 
-function placeCube(pos) {
-    socket.emit("place", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
+function placeCube(pos) {    
+    raycaster.setFromCamera( {"x" : 0.0, "y" : 0.0}, camera );
+        
+    const intersects = raycaster.intersectObjects( scene.children );
+
+    if ( intersects.length > 0 ) {
+        const intersect = intersects[ 0 ];
+        let pos = new THREE.Vector3();
+        if(intersect.object == grid) {   
+            pos.sub(intersect.face.normal);
+            pos.multiplyScalar(0.5);
+            pos.add(intersect.point);
+            socket.emit("place", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
+        } else {        
+            pos.add(intersect.object.position)
+            pos.add(intersect.face.normal)
+            console.log(pos)
+            socket.emit("place", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
+        }
+    }
+    
 }
 
 function breakCube(pos) {
-    socket.emit("break", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
+    raycaster.setFromCamera( {"x" : 0.0, "y" : 0.0}, camera );
+        
+    const intersects = raycaster.intersectObjects( scene.children );
+
+    if ( intersects.length > 0 ) {
+        const intersect = intersects[ 0 ];
+        let pos = new THREE.Vector3();
+        pos.add(intersect.object.position)
+        console.log(pos)
+        socket.emit("break", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
+    }
+    
 }
 
 let cubes = [];
@@ -261,13 +292,11 @@ function removeCube(pos) {
 }
 
 socket.on('place', function(data) {
-    console.log(data);
     let pos = data.pos;
     addCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
 });
 
 socket.on('break', function(data) {
-    console.log(data);
     let pos = data.pos;
     removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
 });
@@ -332,6 +361,7 @@ bgopacity.oninput = function() {
 settingsexit.onclick = function settingsExit() {
 	settings.style.display = "none";
 };
+
 
 function render() {
     requestAnimationFrame(render)
