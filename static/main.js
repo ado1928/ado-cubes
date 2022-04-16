@@ -334,7 +334,7 @@ socket.on('connected', function(arr) {
     }
 })
 
-let nick = "Player";
+let nick = "";
 nickinput.onkeydown = function(input) {
     if(input.keyCode == 13 && nickinput.value !== "") {
         nick = nickinput.value;
@@ -342,19 +342,22 @@ nickinput.onkeydown = function(input) {
     }
 };
 
-let chat = chatinput
 chatinput.onkeydown = function(chanter) {
-    if(chanter.keyCode == 13 && chat.value !== "") {
-        socket.emit("message", {"message": chat.value, "sender": nick});
-        chat.value = "";
+    if(chanter.keyCode == 13 && nick !== "" && chatinput.value !== "") {
+        socket.emit("message", {"message": chatinput.value, "sender": nick});
+        chatinput.value = "";
     }
 };
 
 const box = document.getElementsByClassName("box");
 var bgopacity = document.getElementById("bgopacity");
+for(var i = 0; i < box.length; i++){
+	box[i].style.background = "rgb(0 0 0 / " + window.localStorage.getItem("bgopacity") + "%)";
+}
 bgopacity.oninput = function() {
 	for(var i = 0; i < box.length; i++){
 		box[i].style.background = "rgb(0 0 0 / " + bgopacity.value + "%)";
+		window.localStorage.setItem("bgopacity", bgopacity.value);
 	}
 }
 

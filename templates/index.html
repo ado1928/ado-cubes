@@ -22,12 +22,29 @@
 			color: #fff;
 		}
 
+		input {
+			background: #fffa;
+			color: #000;
+		}
+
+		input:focused {
+			background: #fff;
+		}
+
 		.box {
 			pointer-events: all;
 			background: rgb(0 0 0 / 64%);
 			padding: 6px;
 			border: 1px solid #000;
+			border-radius: 6px;
 			backdrop-filter: blur(8px);
+		}
+
+		.center {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
 		}
 
 		#coordinates {
@@ -40,19 +57,6 @@
 			position: absolute;
 			bottom: 5px;
 			left: 5px;
-		}
-
-		#controls {
-			position: absolute;
-			top: 5px;
-			left: 5px;
-		}
-
-		.center {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
 		}
 
 		#messages {
@@ -75,12 +79,18 @@
 		<div id="crosshair" class="center">+</div>
 
 		<div id="nick" class="box center">
-			Hi, welcome to ado cubes! <br><br>
+			Welcome to <!--osu!-->adocubes!<br><br>
+			<strong>Controls</strong><br>
+			WASD - Move<br>
+			Space - Fly up<br>
+			Shift - Fly down<br>
+			X - Place cubes<br>
+			C - Break cubes<br>
+			G - Toggle grid<br>
+			Enter - Open chat<br>
+			L - Open settings<br><br>
 			Please enter a nickname: <br>
 			<input type="text" id="nickinput" style="width:300px">
-		</div>
-		<div id="controls" class="box">
-			Press L for controls and settings
 		</div>
 		<div id="chat" class="box">
 			<div id="messages">
@@ -93,18 +103,9 @@
 
 		<div id="settings" class="box center" style="display: none">
 			<div style="display:flex;justify-content:space-between">
-				<strong style="font-size:18px">Controls</strong>
+				<strong style="font-size:18px">Settings</strong>
 				<button id="settingsexit" onclick="settingsExit()">X</button>
 			</div>
-			WASD - Move<br>
-			Space - Fly up<br>
-			Shift - Fly down<br>
-			X - Place cubes<br>
-			C - Break cubes<br>
-			G - Toggle grid<br>
-			Enter - Open chat<br>
-			L - Open settings<br><br>
-			<strong style="font-size:18px">Settings</strong>
 			<div style="margin-top: 12px">
 				<strong>UI</strong>
 				<div>Background opacity<input type="range" min="0" max="100" step="1" value="64" id="bgopacity">
