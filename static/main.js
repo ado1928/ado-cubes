@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 
-import {PointerLockControls} from "/static/jsm/controls/PointerLockControls.js";
+import { PointerLockControls } from "/static/jsm/controls/PointerLockControls.js";
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -71,19 +71,19 @@ let geometry, material, grid, pos
 
 material = new THREE.ShaderMaterial({
 
-	uniforms: {
-		time: {value: 1.0},
-		resolution: {value: new THREE.Vector2()}
-	},
+    uniforms: {
+        time: { value: 1.0 },
+        resolution: { value: new THREE.Vector2() }
+    },
     vertexShader: vert,
-	fragmentShader: frag,
-    
-    side: THREE.BackSide 
+    fragmentShader: frag,
+
+    side: THREE.BackSide
 });
 
 material.transparent = true;
-geometry = new THREE.BoxGeometry(64, 64, 64 );
-grid = new THREE.Mesh( geometry, material );
+geometry = new THREE.BoxGeometry(64, 64, 64);
+grid = new THREE.Mesh(geometry, material);
 grid.position.set(31.5, 31.5, 31.5);
 scene.add(grid);
 grid.visible = true;
@@ -98,8 +98,8 @@ let moveUp = false;
 let moveDown = false;
 
 const onKeyDown = function (event) {
-	if (chatinput !== document.activeElement) {
-		switch (event.code) {
+    if (chatinput !== document.activeElement) {
+        switch (event.code) {
             case 'ArrowUp':
             case 'KeyW':
                 moveForward = true;
@@ -133,10 +133,10 @@ const onKeyDown = function (event) {
                 break;
             case "Enter":
                 chatinput.focus();
-			    break;
-			case "KeyL":
-				settings.style.display = "block";
-				break;
+                break;
+            case "KeyL":
+                settings.style.display = "block";
+                break;
         }
     }
 };
@@ -171,7 +171,7 @@ const onKeyUp = function (event) {
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
-renderer.domElement.addEventListener('click', function() {controls.lock();});
+renderer.domElement.addEventListener('click', function () { controls.lock(); });
 //controls.addEventListener('lock', function () {menu.style.display = 'none';});
 //controls.addEventListener('unlock', function () {menu.style.display = 'block';});
 scene.add(controls.getObject());
@@ -188,12 +188,12 @@ function onWindowResize() {
 
 const loader = new THREE.CubeTextureLoader();
 const texture = loader.load([
-  '/static/sky/Daylight Box_Right.bmp',
-  '/static/sky/Daylight Box_Left.bmp',
-  '/static/sky/Daylight Box_Top.bmp',
-  '/static/sky/Daylight Box_Bottom.bmp',
-  '/static/sky/Daylight Box_Front.bmp',
-  '/static/sky/Daylight Box_Back.bmp',
+    '/static/sky/Daylight Box_Right.bmp',
+    '/static/sky/Daylight Box_Left.bmp',
+    '/static/sky/Daylight Box_Top.bmp',
+    '/static/sky/Daylight Box_Bottom.bmp',
+    '/static/sky/Daylight Box_Front.bmp',
+    '/static/sky/Daylight Box_Back.bmp',
 ]);
 scene.background = texture
 
@@ -207,10 +207,10 @@ directionalLight.shadow.normalBias = 0.1;
 directionalLight.shadow.mapSize.width = 4096; // default
 directionalLight.shadow.mapSize.height = 4096; // default
 directionalLight.shadow.camera.near = 0.5; // default
-directionalLight.shadow.camera.far = 115; 
+directionalLight.shadow.camera.far = 115;
 directionalLight.shadow.camera.right = 60;
 directionalLight.shadow.camera.left = - 30;
-directionalLight.shadow.camera.top	= 35;
+directionalLight.shadow.camera.top = 35;
 directionalLight.shadow.camera.bottom = -71;
 directionalLight.shadow.autoUpdate = false;
 
@@ -227,53 +227,53 @@ scene.add(dlight2);
 const light = new THREE.AmbientLight(0x606070);
 scene.add(light);
 
-var socket = io();
+var socket;
 
-function placeCube(pos) {    
-    raycaster.setFromCamera( {"x" : 0.0, "y" : 0.0}, camera );
-        
-    const intersects = raycaster.intersectObjects( scene.children );
+function placeCube(pos) {
+    raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 
-    if ( intersects.length > 0 ) {
-        const intersect = intersects[ 0 ];
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+        const intersect = intersects[0];
         let pos = new THREE.Vector3();
-        if(intersect.object == grid) {   
+        if (intersect.object == grid) {
             pos.sub(intersect.face.normal);
             pos.multiplyScalar(0.5);
             pos.add(intersect.point);
-            socket.emit("place", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
-        } else {        
+            socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+        } else {
             pos.add(intersect.object.position)
             pos.add(intersect.face.normal)
             console.log(pos)
-            socket.emit("place", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
+            socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
         }
     }
-    
+
 }
 
 function breakCube(pos) {
-    raycaster.setFromCamera( {"x" : 0.0, "y" : 0.0}, camera );
-        
-    const intersects = raycaster.intersectObjects( scene.children );
+    raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 
-    if ( intersects.length > 0 ) {
-        const intersect = intersects[ 0 ];
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+        const intersect = intersects[0];
         let pos = new THREE.Vector3();
         pos.add(intersect.object.position)
         console.log(pos)
-        socket.emit("break", {"pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5),  ~~(pos.z + 0.5)]});
+        socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
     }
-    
+
 }
 
 let cubes = [];
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
-material = new THREE.MeshStandardMaterial( {color: 0xffffff} );
+material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
 function addCube(pos) {
-    let cube = new THREE.Mesh( geometry, material, 100);
+    let cube = new THREE.Mesh(geometry, material, 100);
     cube.position.set(pos.x, pos.y, pos.z);
     cube.receiveShadow = true;
     cube.castShadow = true;
@@ -284,29 +284,18 @@ function addCube(pos) {
 
 function removeCube(pos) {
     cubes.forEach(e => {
-        if(~~e.position.x == ~~pos.x && ~~e.position.y == ~~pos.y && ~~e.position.z == ~~pos.z) {
+        if (~~e.position.x == ~~pos.x && ~~e.position.y == ~~pos.y && ~~e.position.z == ~~pos.z) {
             scene.remove(e)
         }
     });
     directionalLight.shadow.needsUpdate = true;
 }
 
-socket.on('place', function(data) {
-    let pos = data.pos;
-    addCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
-});
-
-socket.on('break', function(data) {
-    let pos = data.pos;
-    removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
-});
-
 function scrollToBottom(element) {
     element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
-  }
+}
 
-function escapeHTML(unsafe)
-{
+function escapeHTML(unsafe) {
     return unsafe
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -315,74 +304,100 @@ function escapeHTML(unsafe)
         .replace(/'/g, "&#039;");
 }
 
-socket.on('message', function(data) {
-    document.getElementById("messages").insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b>: " + escapeHTML(data["message"]) + "<br>")
-    scrollToBottom(document.getElementById("messages"));
-});
-
-socket.on('connected', function(arr) {
-    console.log(arr);
-    window.arr = arr;
-    for(let x = 0; x < 64; x++) {
-        for(let y = 0; y < 64; y++) {
-            for(let z = 0; z < 64; z++) {
-                if(arr[x][y][z] == 1) {
-                    addCube({"x": x, "y": y, "z": z});
-                }
-            }
-        }
-    }
-})
-
 let nick = "";
-nickinput.onkeydown = function(input) {
-    if(input.keyCode == 13 && nickinput.value !== "") {
-        nick = nickinput.value;
-        document.getElementById("nick").style = "display: none";
+let verified = false;
+nickinput.onkeydown = function (input) {
+    if (input.keyCode == 13 && nickinput.value !== "") {
+        if (!verified) {
+            captchawarning.innerText = "Please verify captcha first!"
+        } else {
+            nick = nickinput.value;
+            document.getElementById("nick").style = "display: none";
+        }
     }
 };
 
-chatinput.onkeydown = function(chanter) {
-    if(chanter.keyCode == 13 && nick !== "" && chatinput.value !== "") {
-        socket.emit("message", {"message": chatinput.value, "sender": nick});
+export function verify(uuid) {
+    socket = io({
+        extraHeaders: {
+            "uuid": uuid
+        }
+    }
+    )
+    verified = true;
+    socket.on('message', function (data) {
+        document.getElementById("messages").insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b>: " + escapeHTML(data["message"]) + "<br>")
+        scrollToBottom(document.getElementById("messages"));
+    });
+    
+    socket.on('connected', function (arr) {
+        console.log(arr);
+        window.arr = arr;
+        for (let x = 0; x < 64; x++) {
+            for (let y = 0; y < 64; y++) {
+                for (let z = 0; z < 64; z++) {
+                    if (arr[x][y][z] == 1) {
+                        addCube({ "x": x, "y": y, "z": z });
+                    }
+                }
+            }
+        }
+    })
+        
+    socket.on('place', function (data) {
+        let pos = data.pos;
+        addCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
+    });
+
+    socket.on('break', function (data) {
+        let pos = data.pos;
+        removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
+    });
+}
+
+window.verify = verify;
+
+chatinput.onkeydown = function (chanter) {
+    if (chanter.keyCode == 13 && nick !== "" && chatinput.value !== "") {
+        socket.emit("message", { "message": chatinput.value, "sender": nick });
         chatinput.value = "";
     }
 };
 
 const box = document.getElementsByClassName("box");
 var bgopacity = document.getElementById("bgopacity");
-for(var i = 0; i < box.length; i++){
-	box[i].style.background = "rgb(0 0 0 / " + window.localStorage.getItem("bgopacity") + "%)";
+for (var i = 0; i < box.length; i++) {
+    box[i].style.background = "rgb(0 0 0 / " + window.localStorage.getItem("bgopacity") + "%)";
 }
-bgopacity.oninput = function() {
-	for(var i = 0; i < box.length; i++){
-		box[i].style.background = "rgb(0 0 0 / " + bgopacity.value + "%)";
-		window.localStorage.setItem("bgopacity", bgopacity.value);
-	}
+bgopacity.oninput = function () {
+    for (var i = 0; i < box.length; i++) {
+        box[i].style.background = "rgb(0 0 0 / " + bgopacity.value + "%)";
+        window.localStorage.setItem("bgopacity", bgopacity.value);
+    }
 }
 
 settingsexit.onclick = function settingsExit() {
-	settings.style.display = "none";
+    settings.style.display = "none";
 };
 
 
 function render() {
     requestAnimationFrame(render)
-	const delta = clock.getDelta();
+    const delta = clock.getDelta();
 
     velocity.x *= 0.9;
     velocity.z *= 0.9;
     velocity.y *= 0.9;
-	
+
     if (moveForward) velocity.z += 50.0 * delta;
-	if (moveBackward) velocity.z -= 50.0 * delta;
+    if (moveBackward) velocity.z -= 50.0 * delta;
     if (moveRight) velocity.x += 50.0 * delta;
     if (moveLeft) velocity.x -= 50.0 * delta;
     if (moveUp) velocity.y += 50.0 * delta;
     if (moveDown) velocity.y -= 50.0 * delta;
-	
-    controls.moveRight(velocity.x * delta );
-    controls.moveForward(velocity.z * delta );
+
+    controls.moveRight(velocity.x * delta);
+    controls.moveForward(velocity.z * delta);
     controls.getObject().position.y += velocity.y * delta;
 
     pos = controls.getObject().position;

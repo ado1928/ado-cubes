@@ -37,7 +37,7 @@
 			padding: 6px;
 			border: 1px solid #000;
 			border-radius: 6px;
-			backdrop-filter: blur(8px);
+			backdrop-filter: blur(4px);
 		}
 
 		.center {
@@ -73,11 +73,16 @@
 			font-size: 25px;
 		}
 
+		.io-captcha {
+			margin-top: 10px;
+		}
 	</style>
 </head>
 
 <body>
 	<div>
+		<script>function solve(uuid) {verify(uuid)}</script>
+		<script src="static/iocaptcha.js" type="module" async defer></script>
 		<div id="crosshair" class="center">+</div>
 
 		<div id="nick" class="box center">
@@ -93,6 +98,8 @@
 			L - Open settings<br><br>
 			Please enter a nickname: <br>
 			<input type="text" id="nickinput" style="width:300px">
+			<div id="captchawarning"></div>
+			<div class="io-captcha" data-pubkey="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADO" data-theme="dark" data-scale="1.1" data-font="mono" data-callback-solve="solve"></div>
 		</div>
 		<div id="chat" class="box">
 			<div id="messages">
@@ -110,7 +117,7 @@
 			</div>
 			<div style="margin-top: 12px">
 				<strong>UI</strong>
-				<div>Background opacity<input type="range" min="0" max="100" step="1" value="64" id="bgopacity">
+				<div>Background opacity<input type="range" min="0" max="100" step="1" value="50" id="bgopacity">
 				</div>
 			</div>
 		</div>
@@ -125,6 +132,8 @@
 			  }
 			}
 		  </script>
+
+
 	<script type="module" src="static/main.js"></script>
 </body>
 

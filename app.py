@@ -1,10 +1,16 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, request
 from flask_socketio import SocketIO, emit
 import os
 import numpy as np
+import requests
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+headers = {
+    "API-Pub": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADO",
+    "API-Priv": os.environ.get("PRIV")
+}
 
 size = (64, 64, 64)
 world = np.zeros(size, dtype=np.int8)
@@ -50,7 +56,17 @@ def breakcube(data):
 
 @socketio.on('connect')
 def test_connect():
-    emit("connected", world.tolist())
+    uuid = request.headers.get("uuid")
+    
+    req = requests.post("https://eu-dev-c1.iocaptcha.com/api/v1/score", json={"pass_uuid" : uuid, "invalidate": True}, headers=headers)
+    print(req.status_code)
+    if(req.status_code == 200):
+        res = req.json
+        print(req.text)
+        emit("connected", world.tolist())
+        return True
+    else:
+        return False
 
 if __name__ == '__main__':
     socketio.run(app, host="0.0.0.0", port=int(os.environ.get('PORT', 80)))
