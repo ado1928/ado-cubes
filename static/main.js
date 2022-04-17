@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-
 import { PointerLockControls } from "/static/jsm/controls/PointerLockControls.js";
 
 const renderer = new THREE.WebGLRenderer();
