@@ -96,7 +96,8 @@ let moveUp = false;
 let moveDown = false;
 
 const onKeyDown = function (event) {
-    if (inputChat !== document.activeElement) {
+    if (document.activeElement.tagName !== "INPUT") {
+//  if (inputChat !== document.activeElement) {
         switch (event.code) {
             case 'ArrowUp':
             case 'KeyW':
@@ -130,10 +131,8 @@ const onKeyDown = function (event) {
                 grid.visible = !grid.visible;
                 break;
             case "Enter":
-                chatinput.focus();
-                break;
-            case "KeyL":
-                settings.style.display = "block";
+                controls.unlock();
+                inputChat.focus();
                 break;
         }
     }
@@ -169,7 +168,12 @@ const onKeyUp = function (event) {
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
-renderer.domElement.addEventListener('click', function () { controls.lock(); });
+renderer.domElement.addEventListener('click', function() {
+    controls.lock()
+    esc.style.display = "none";
+    winSettings.style.display = "none";
+    winControls.style.display = "none";
+});
 //controls.addEventListener('lock', function () {menu.style.display = 'none';});
 //controls.addEventListener('unlock', function () {menu.style.display = 'block';});
 scene.add(controls.getObject());
@@ -182,7 +186,7 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-}
+};
 
 const loader = new THREE.CubeTextureLoader();
 const texture = loader.load([
@@ -225,9 +229,7 @@ scene.add(dlight2);
 const light = new THREE.AmbientLight(0x606070);
 scene.add(light);
 
-let socket;
-
-console.log(socket)
+let socket = io();
 
 function placeCube(pos) {
     raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
@@ -312,22 +314,28 @@ inputUsername.onkeydown = function (input) {
             captchawarning.innerText = "Please verify captcha first!"
         } else {
             nick = inputUsername.value;
-            document.getElementById("nick").style = "display: none";
+            winWelcome.style.display = "none";
+            palette.style.display = "flex";
+            coordinates.style.display = "block"
+            chat.style.display = "block";
+            messages.insertAdjacentHTML('beforeend', "Welcome to adocubes, " + nick + "!")
         }
     }
 };
 
-export function verify(uuid) {
-    socket = io({
-        extraHeaders: {
-            "uuid": uuid
-        }
+inputChat.onkeydown = function (chanter) {
+    if (chanter.keyCode == 13 && inputChat.value !== "") {
+        socket.emit("message", { "message": inputChat.value, "sender": nick });
+        inputChat.value = "";
     }
-    )
+};
+
+export function verify(uuid) {
+    socket = io({extraHeaders: {"uuid": uuid}});
     verified = true;
     socket.on('message', function (data) {
-        document.getElementById("messages").insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b>: " + escapeHTML(data["message"]) + "<br>")
-        scrollToBottom(document.getElementById("messages"));
+        messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b>: " + escapeHTML(data["message"]) + "<br>")
+        scrollToBottom(messages);
     });
     
     socket.on('connected', function (arr) {
@@ -357,6 +365,8 @@ export function verify(uuid) {
 
 window.verify = verify;
 
+let speed = 64.0;
+
 function render() {
     requestAnimationFrame(render)
     const delta = clock.getDelta();
@@ -365,12 +375,12 @@ function render() {
     velocity.z *= 0.9;
     velocity.y *= 0.9;
 
-    if (moveForward) velocity.z += 50.0 * delta;
-    if (moveBackward) velocity.z -= 50.0 * delta;
-    if (moveRight) velocity.x += 50.0 * delta;
-    if (moveLeft) velocity.x -= 50.0 * delta;
-    if (moveUp) velocity.y += 50.0 * delta;
-    if (moveDown) velocity.y -= 50.0 * delta;
+    if (moveForward) velocity.z += speed * delta;
+    if (moveBackward) velocity.z -= speed * delta;
+    if (moveRight) velocity.x += speed * delta;
+    if (moveLeft) velocity.x -= speed * delta;
+    if (moveUp) velocity.y += speed * delta;
+    if (moveDown) velocity.y -= speed * delta;
 
     controls.moveRight(velocity.x * delta);
     controls.moveForward(velocity.z * delta);

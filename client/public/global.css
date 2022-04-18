@@ -62,9 +62,14 @@ input:hover {
 	background: #202020aa;
 }
 
-input:focus {
+input[type="text"]:focus {
 	background: #000;
 	border: #fff;
+}
+
+input[type="range"] {
+	width: -moz-available;
+	width: -webkit-fill-available;
 }
 
 .box {
@@ -83,6 +88,11 @@ input:focus {
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
+
+#palette, #coordinates, #chat, #esc, #winSettings, #winControls {
+	display: none;
+}
+
 
 #winWelcome {
 	padding: 16px;
@@ -111,7 +121,6 @@ input:focus {
 }
 
 #palette {
-	display: flex;
 	bottom: 6px;
 	right: 6px;
 	width: fit-content;
@@ -124,18 +133,11 @@ input:focus {
 }
 
 #esc {
-	display: none;
 	flex-direction: column;
 	width: 320px;
 }
 
-#winSettings {
-	display: none;
-}
-#winControls {
-	display: none;
-}
-
-#esc, #winSettings, #winControls {
-	outline: 2000px solid #000d;
+#winSettings, #winControls {
+	width: 500px;
+	height: 400px;
 }

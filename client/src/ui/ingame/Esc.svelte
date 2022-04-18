@@ -1,6 +1,6 @@
 <script>
 	document.onkeydown = function(e) {
-		if(e.key === "Escape") {
+		if(e.key === "Escape" && document.activeElement.tagName !== "INPUT") {
 			esc.style.display = "flex";
 			winSettings.style.display = "none";
 			winControls.style.display = "none";

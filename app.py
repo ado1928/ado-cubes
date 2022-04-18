@@ -26,7 +26,6 @@ def base():
 def home(path):
     return send_from_directory('client/public', path)
 
-
 @socketio.on('message')
 def placecube(data):
     emit('message', data, broadcast = True)
@@ -67,7 +66,7 @@ def test_connect():
         emit("connected", world.tolist())
         return True
     else:
-        return False
+        return True
 
 if __name__ == '__main__':
     socketio.run(app, host="0.0.0.0", port=int(os.environ.get('PORT', 80)))
