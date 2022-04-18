@@ -307,11 +307,11 @@ function escapeHTML(unsafe) {
 }
 
 let nick = "";
-let verified = true;
+let verified = false;
 inputUsername.onkeydown = function (input) {
     if (input.keyCode == 13 && inputUsername.value !== "") {
         if (!verified) {
-            captchawarning.innerText = "Please verify captcha first!"
+            captchaPlease.style.display = "block";
         } else {
             nick = inputUsername.value;
             winWelcome.style.display = "none";

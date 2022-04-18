@@ -19,9 +19,12 @@ html body {
 	font-size: 14px;
 }
 
-p {
-	margin: 0;
+iframe {
+	position: relative !important;
+	overflow: visible !important;
 }
+
+p { margin: 0; }
 
 button {
 	color: #fff;
@@ -34,10 +37,7 @@ button {
 	height: fit-content;
 }
 
-@keyframes buttonhover {
-	from {letter-spacing: 0px;}
-	to {letter-spacing: 1px;}
-}
+@keyframes buttonhover { from {letter-spacing: 0px;} to {letter-spacing: 1px;} }
 
 button:hover {
 	background: #fff4;
@@ -58,19 +58,9 @@ input {
 	height: 16px;
 }
 
-input:hover {
-	background: #202020aa;
-}
-
-input[type="text"]:focus {
-	background: #000;
-	border: #fff;
-}
-
-input[type="range"] {
-	width: -moz-available;
-	width: -webkit-fill-available;
-}
+input:hover				 { background: #202020aa; }
+input[type="text"]:focus { background: #000; border: #fff; }
+input[type="range"]		 { width: -moz-available; width: -webkit-fill-available; }
 
 .box {
 	color: var(--boxfg);
@@ -89,17 +79,24 @@ input[type="range"] {
 	transform: translate(-50%, -50%);
 }
 
-#palette, #coordinates, #chat, #esc, #winSettings, #winControls {
-	display: none;
+.io-captcha { padding-top: 16px; padding-bottom: 0 !important; }
+
+#palette, #coordinates, #chat, #esc, #winSettings, #winControls { display: none; }
+
+#winWelcome { padding: 16px; }
+#inputUsername, #inputPassword { width: 260px; }
+
+#palette {
+	bottom: 6px;
+	right: 6px;
+	width: fit-content;
 }
 
-
-#winWelcome {
-	padding: 16px;
-}
-
-#inputUsername, #inputPassword {
-	width: 260px;
+#coordinates {
+	top: 6px;
+	left: 50%;
+	width: fit-content;
+	transform: translate(-50%, 0);
 }
 
 #chat {
@@ -113,31 +110,11 @@ input[type="range"] {
 	margin-top: 4px;
 }
 
-#coordinates {
-	top: 6px;
-	left: 50%;
-	width: fit-content;
-	transform: translate(-50%, 0);
-}
-
-#palette {
-	bottom: 6px;
-	right: 6px;
-	width: fit-content;
-}
-
 #palette *:hover {
 	transform: scale(1.05);
 	outline: 2.5px solid #fff;
 	filter: drop-shadow(0 0 6px #000);
 }
 
-#esc {
-	flex-direction: column;
-	width: 320px;
-}
-
-#winSettings, #winControls {
-	width: 500px;
-	height: 400px;
-}
+#esc { flex-direction: column; width: 320px; }
+#winSettings, #winControls { width: 500px; height: 400px; }
