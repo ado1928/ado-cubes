@@ -1,0 +1,133 @@
+:root {
+	--boxfg: #fff;
+	--boxbg: rgb(0 0 0 / 64%);
+	--boxblur: 6px;
+}
+
+@font-face {
+	font-family: 'Cousine';
+	font-style: normal;
+	font-weight: 400;
+	src: url(https://fonts.gstatic.com/s/cousine/v23/d6lIkaiiRdih4SpP_SQvzA.woff2) format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+html body {
+	background: #000;
+	margin: 0;
+	font-family: 'Cousine';
+	font-size: 14px;
+}
+
+p {
+	margin: 0;
+}
+
+button {
+	color: #fff;
+	background: 0;
+	border: 0;
+	border-radius: 2px;
+	font-family: 'Cousine';
+	font-size: 14px;
+	padding: 6px;
+	height: fit-content;
+}
+
+@keyframes buttonhover {
+	from {letter-spacing: 0px;}
+	to {letter-spacing: 1px;}
+}
+
+button:hover {
+	background: #fff4;
+	font-weight: bold;
+	letter-spacing: 0px;
+	animation-name: buttonhover;
+	animation-duration: 0.08s;
+	animation-timing-function: ease-out;
+	animation-iteration-count: 2;
+	animation-direction: alternate;
+}
+
+input {
+	color: #fff;
+	background: #101010aa;
+	border: 1px solid #505050aa;
+	border-radius: 3px;
+	height: 16px;
+}
+
+input:hover {
+	background: #202020aa;
+}
+
+input:focus {
+	background: #000;
+	border: #fff;
+}
+
+.box {
+	color: var(--boxfg);
+	background: var(--boxbg);
+	backdrop-filter: blur(var(--boxblur));
+	border: 1px solid #000;
+	border-radius: 6px;
+	width: fit-content;
+	padding: 6px;
+	position: absolute;
+}
+
+.center {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#inputUsername, #inputPassword {
+	width: 260px;
+}
+
+#chat {
+	bottom: 6px;
+	left: 6px;
+	width: 420px;
+}
+#inputChat {
+	width: -moz-available;
+	width: -webkit-fill-available;
+	margin-top: 4px;
+}
+
+#coordinates {
+	top: 6px;
+	left: 50%;
+	width: fit-content;
+	transform: translate(-50%, 0);
+}
+
+#palette {
+	display: flex;
+	bottom: 6px;
+	right: 6px;
+	width: fit-content;
+}
+
+#palette *:hover {
+	transform: scale(1.05);
+	outline: 2.5px solid #fff;
+	filter: drop-shadow(0 0 6px #000);
+}
+
+#esc {
+	display: none;
+	flex-direction: column;
+	width: 320px;
+}
+
+#winSettings {
+	display: none;
+}
+#winControls {
+	display: none;
+}

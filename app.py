@@ -18,13 +18,14 @@ world = np.zeros(size, dtype=np.int8)
 import w
 world = w.world
 
-@app.route('/', methods=['GET'])
-def index():
-    return render_template("index.html")
+@app.route("/")
+def base():
+    return send_from_directory('client/public', 'index.html')
 
-@app.route('/static/<path:path>')
-def send_file(path):
-    return send_from_directory("/static", path)
+@app.route("/<path:path>")
+def home(path):
+    return send_from_directory('client/public', path)
+
 
 @socketio.on('message')
 def placecube(data):
