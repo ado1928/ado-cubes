@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { PointerLockControls } from "/static/jsm/controls/PointerLockControls.js";
+import { PointerLockControls } from "/game/jsm/controls/PointerLockControls.js";
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -186,12 +186,12 @@ function onWindowResize() {
 
 const loader = new THREE.CubeTextureLoader();
 const texture = loader.load([
-    '/static/sky/Daylight Box_Right.bmp',
-    '/static/sky/Daylight Box_Left.bmp',
-    '/static/sky/Daylight Box_Top.bmp',
-    '/static/sky/Daylight Box_Bottom.bmp',
-    '/static/sky/Daylight Box_Front.bmp',
-    '/static/sky/Daylight Box_Back.bmp',
+    '/game/sky/Daylight Box_Right.bmp',
+    '/game/sky/Daylight Box_Left.bmp',
+    '/game/sky/Daylight Box_Top.bmp',
+    '/game/sky/Daylight Box_Bottom.bmp',
+    '/game/sky/Daylight Box_Front.bmp',
+    '/game/sky/Daylight Box_Back.bmp',
 ]);
 scene.background = texture
 
@@ -225,7 +225,9 @@ scene.add(dlight2);
 const light = new THREE.AmbientLight(0x606070);
 scene.add(light);
 
-var socket;
+let socket;
+
+console.log(socket)
 
 function placeCube(pos) {
     raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);

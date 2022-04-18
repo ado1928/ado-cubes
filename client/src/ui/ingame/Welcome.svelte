@@ -15,5 +15,6 @@
 
 	Please login.<br>
 	Username: <input id="inputUsername"><br>
-	Password: <input id="inputPassword" value="this input does nothing for now. pls ignore">
+	Password: <input id="inputPassword" value="this input does nothing for now. pls ignore"><br>
+	Captcha: captcha here
 </main>

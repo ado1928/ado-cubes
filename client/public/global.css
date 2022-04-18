@@ -84,6 +84,10 @@ input:focus {
 	transform: translate(-50%, -50%);
 }
 
+#winWelcome {
+	padding: 16px;
+}
+
 #inputUsername, #inputPassword {
 	width: 260px;
 }
@@ -130,4 +134,8 @@ input:focus {
 }
 #winControls {
 	display: none;
+}
+
+#esc, #winSettings, #winControls {
+	outline: 2000px solid #000d;
 }
