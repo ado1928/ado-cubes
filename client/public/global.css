@@ -78,7 +78,7 @@ input[type="text"]:focus { background: #000; border: #fff; }
 	position: absolute;
 }
 
-.center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.center { top: 50%; left: 50%; transform: translate(-50%, -50%); position: absolute; }
 
 .io-captcha { padding-top: 16px; padding-bottom: 0 !important; }
 

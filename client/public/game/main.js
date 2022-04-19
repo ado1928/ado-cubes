@@ -318,7 +318,7 @@ inputUsername.onkeydown = function (input) {
             palette.style.display = "flex";
             coordinates.style.display = "block"
             chat.style.display = "block";
-            messages.insertAdjacentHTML('beforeend', "Welcome to adocubes, " + nick + "!")
+            messages.insertAdjacentHTML('beforeend', "Welcome to adocubes, " + nick + "!<br>")
         }
     }
 };
