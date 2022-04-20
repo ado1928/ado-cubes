@@ -10,7 +10,6 @@
 	<link rel='stylesheet' href='/global.css'>
 
 	<script defer src='/build/bundle.js'></script>
-
 </head>
 <body>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js" crossorigin="anonymous"referrerpolicy="no-referrer"></script>
@@ -21,10 +20,9 @@
 			}
 		}
 	</script>
-	
-	<script type="module" src="/game/main.js"></script>
+	<script type="module" src="./game/main.js"></script>
 
-	<script src="/game/iocaptcha.js" type="module" async defer></script>
+	<script src="./game/iocaptcha.js" type="module" async defer></script>
 	<script>function solve(uuid) {verify(uuid)}</script>
 </body>
 </html>

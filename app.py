@@ -64,7 +64,6 @@ def test_connect():
         res = req.json
         print(req.text)
         emit("connected", world.tolist())
-        emit("Welcome to wh", data, broadcast = True)
         return True
     else:
         return True

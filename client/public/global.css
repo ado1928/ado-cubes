@@ -2,6 +2,9 @@
 	--boxfg: #fff;
 	--boxbg: rgb(0 0 0 / 64%);
 	--boxblur: 6px;
+	--boxpadding: 6px;
+	--chatwidth: 420px;
+	--chatmaxheight: 420px;
 }
 
 @font-face {
@@ -65,7 +68,7 @@ input[type="range"] {
 }
 
 input[type="text"]:hover { background: #202020aa; }
-input[type="text"]:focus { background: #000; border: #fff; }
+input[type="text"]:focus { background: #000; border: #fff; transform: scale(1.1); }
 
 .box {
 	color: var(--boxfg);
@@ -88,11 +91,12 @@ input[type="text"]:focus { background: #000; border: #fff; }
 #inputUsername, #inputPassword { width: 260px; }
 
 #palette		 { bottom: 6px; right: 6px; width: fit-content; }
+#palette *		 { width: 16px; height: 16px; }
 #palette *:hover { transform: scale(1.05); outline: 2.5px solid #fff; filter: drop-shadow(0 0 6px #000); }
 #coordinates	 { top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0); }
-#chat			 { bottom: 6px; left: 6px; width: 420px; }
-
-#inputChat { width: -moz-available; width: -webkit-fill-available; margin-top: 4px;}
+#chat			 { bottom: 6px; left: 6px; width: var(--chatwidth); max-height: var(--chatmaxheight); }
+#messages		 { max-height: calc(var(--chatmaxheight) - (var(--boxpadding)*4)); overflow-y: scroll; }
+#inputChat		 { width: -moz-available; width: -webkit-fill-available; margin-top: 4px;}
 
 #esc { flex-direction: column; width: 320px; }
 #winSettings, #winControls { width: 500px; height: 400px; }

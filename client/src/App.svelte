@@ -1,14 +1,18 @@
 <script>
-	import Welcome from './ui/ingame/Welcome.svelte';
-	import Chat from './ui/ingame/Chat.svelte';
-	import Coordinates from './ui/ingame/Coordinates.svelte';
-	import Palette from './ui/ingame/Palette.svelte'
+
+	import Palette from './ui/canvas/Palette.svelte'
+	import Coordinates from './ui/canvas/Coordinates.svelte';
+	import Chat from './ui/canvas/Chat.svelte';
 	//menu
-	import Esc from './ui/ingame/Esc.svelte';
-	import EscMenuNavs from './ui/ingame/EscMenuNavs.svelte';
-	import Settings from './ui/menu/Settings.svelte';
-	import Controls from './ui/menu/Controls.svelte';
+	import Esc from './ui/esc/Esc.svelte';
+	import EscMenuNavs from './ui/esc/EscMenuNavs.svelte';
+
+	import Welcome from './ui/misc/Welcome.svelte';
+	import Settings from './ui/misc/Settings.svelte';
+	import Controls from './ui/misc/Controls.svelte';
 </script>
+
+<p id="crosshair" class="center" style="text-align:center;font-size:31px;">＋</p>
 
 <Welcome/>
 <Chat/>

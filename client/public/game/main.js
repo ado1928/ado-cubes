@@ -169,11 +169,12 @@ document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
 renderer.domElement.addEventListener('click', function() {
-    controls.lock()
+    controls.lock();
     esc.style.display = "none";
     winSettings.style.display = "none";
     winControls.style.display = "none";
 });
+
 //controls.addEventListener('lock', function () {menu.style.display = 'none';});
 //controls.addEventListener('unlock', function () {menu.style.display = 'block';});
 scene.add(controls.getObject());
@@ -293,10 +294,6 @@ function removeCube(pos) {
     directionalLight.shadow.needsUpdate = true;
 }
 
-function scrollToBottom(element) {
-    element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
-}
-
 function escapeHTML(unsafe) {
     return unsafe
         .replace(/&/g, "&amp;")
@@ -309,7 +306,7 @@ function escapeHTML(unsafe) {
 let nick = "";
 let verified = false;
 inputUsername.onkeydown = function (input) {
-    if (input.keyCode == 13 && inputUsername.value !== "") {
+    if (input.key == "Enter" && inputUsername.value !== "") {
         if (!verified) {
             captchaPlease.style.display = "block";
         } else {
@@ -318,23 +315,27 @@ inputUsername.onkeydown = function (input) {
             palette.style.display = "flex";
             coordinates.style.display = "block"
             chat.style.display = "block";
-            messages.insertAdjacentHTML('beforeend', "Welcome to adocubes, " + nick + "!<br>")
+            socket.emit("message", { "message": "has joined the game!", "sender": nick });
         }
     }
 };
 
 inputChat.onkeydown = function (chanter) {
-    if (chanter.keyCode == 13 && inputChat.value !== "") {
-        socket.emit("message", { "message": inputChat.value, "sender": nick });
+    if (chanter.key == "Enter" && inputChat.value !== "") {
+        socket.emit("message", { "message": inputChat.value, "sender": "<" + nick + ">s " });
         inputChat.value = "";
     }
 };
+
+function scrollToBottom(element) {
+    element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+}
 
 export function verify(uuid) {
     socket = io({extraHeaders: {"uuid": uuid}});
     verified = true;
     socket.on('message', function (data) {
-        messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b>: " + escapeHTML(data["message"]) + "<br>")
+        messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b> " + escapeHTML(data["message"]) + "<br>")
         scrollToBottom(messages);
     });
     
@@ -389,6 +390,5 @@ function render() {
     pos = controls.getObject().position;
     document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
     renderer.render(scene, camera);
-
 }
 render();
