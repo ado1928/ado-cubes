@@ -25,8 +25,8 @@
 </script>
 
 <div id="esc" class="box center">
-	<button id="escReturn" onclick="escReturn()">Return</button>
-	<button id="escControls" onclick="escControls()">Controls</button>
-	<button id="escSettings" onclick="escSettings()">Settings</button>
-	<button id="escExitServer" onclick="escExitServer()">Exit server</button>
+	<button id="escReturn" onclick="escReturn">Return</button>
+	<button id="escControls" onclick="escControls">Controls</button>
+	<button id="escSettings" onclick="escSettings">Settings</button>
+	<button id="escExitServer" onclick="escExitServer">Exit server</button>
 </div>

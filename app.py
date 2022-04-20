@@ -18,16 +18,19 @@ world = np.zeros(size, dtype=np.int8)
 import w
 world = w.world
 
-@app.route("/")
-def base():
+@app.route('/', methods=['GET'])
+def index():
+    print("Have your game")
     return send_from_directory('client/public', 'index.html')
 
-@app.route("/<path:path>")
+@app.route('/<path:path>')
 def home(path):
+    print("Have the stuff")
     return send_from_directory('client/public', path)
 
 @socketio.on('message')
-def placecube(data):
+def message(data):
+    print(message)
     emit('message', data, broadcast = True)
 
 @socketio.on('place')
@@ -39,6 +42,7 @@ def placecube(data):
             if(world[pos[0], pos[1], pos[2]] != 1):
                 world[pos[0], pos[1], pos[2]] = 1
                 emit('place', data, broadcast = True)
+                print("place a cube!!")
         else:
             print("nah")
 
@@ -51,12 +55,14 @@ def breakcube(data):
             if(world[pos[0], pos[1], pos[2]] != 0):
                 world[pos[0], pos[1], pos[2]] = 0
                 emit('break', data, broadcast = True)
+                print("break a cube!")
         else:
             print("nah")
 
-@socketio.on('connect')
+@socketio.on('test_connect')
 def test_connect():
     uuid = request.headers.get("uuid")
+    print(uuid)
     
     req = requests.post("https://eu-dev-c1.iocaptcha.com/api/v1/score", json={"pass_uuid" : uuid, "invalidate": True}, headers=headers)
     print(req.status_code)

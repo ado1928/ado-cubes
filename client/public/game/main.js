@@ -322,7 +322,7 @@ inputUsername.onkeydown = function (input) {
 
 inputChat.onkeydown = function (chanter) {
     if (chanter.key == "Enter" && inputChat.value !== "") {
-        socket.emit("message", { "message": inputChat.value, "sender": "<" + nick + ">s " });
+        socket.emit("message", { "message": inputChat.value, "sender": "<" + nick + "> " });
         inputChat.value = "";
     }
 };

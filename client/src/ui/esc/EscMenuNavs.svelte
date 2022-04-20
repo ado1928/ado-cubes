@@ -1,18 +1,16 @@
 <script>
-	window.onload = function() {
-		escBack.onclick = function escBack() {
-			winSettings.style.display = "none";
-			esc.style.display = "flex";
-		}
-		escExit.onclick = function escExit() {
-			winSettings.style.display = "none";
-			winControls.style.display = "none";
-		}
+	function escBack() {
+		escExit();
+		esc.style.display = "flex";
+	}
+	function escExit() {
+		winSettings.style.display = "none";
+		winControls.style.display = "none";
 	}
 </script>
 
 <div>
-	<button id="escBack" onclick="escBack()"><img src="./images/svgs/menu back.svg"/></button>
+	<button on:click={escBack}><img src="./images/svgs/menu back.svg"/></button>
 	<strong><slot/></strong>
-	<button id="escExit" onclick="escExit()"><img src="./images/svgs/exit.svg"/></button><br><br>
+	<button on:click={escExit}><img src="./images/svgs/exit.svg"/></button><br><br>
 </div>

@@ -12,7 +12,7 @@
 	import Controls from './ui/misc/Controls.svelte';
 </script>
 
-<p id="crosshair" class="center" style="text-align:center;font-size:31px;">＋</p>
+<p id="crosshair" class="center" style="text-align:center;"><img src="./images/svgs/crosshair.svg"></p>
 
 <Welcome/>
 <Chat/>

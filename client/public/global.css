@@ -58,6 +58,8 @@ input {
 	height: 16px;
 }
 
+input:focus { filter: drop-shadow(0 0 6px #000); }
+
 input[type="range"] {
 	color: #000;
 	background: #fff;
@@ -68,7 +70,7 @@ input[type="range"] {
 }
 
 input[type="text"]:hover { background: #202020aa; }
-input[type="text"]:focus { background: #000; border: #fff; transform: scale(1.1); }
+input[type="text"]:focus { background: #000; border: #fff; }
 
 .box {
 	color: var(--boxfg);
@@ -77,7 +79,7 @@ input[type="text"]:focus { background: #000; border: #fff; transform: scale(1.1)
 	border: 1px solid #000;
 	border-radius: 6px;
 	width: fit-content;
-	padding: 6px;
+	padding: var(--boxpadding);
 	position: absolute;
 }
 
