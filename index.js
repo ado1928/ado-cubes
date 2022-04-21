@@ -5,12 +5,10 @@ const io = require('socket.io')(http);
 const fs = require('fs');
 const path = require('path');
 
-const port = 1180;
+const port = 1928;
 
 var world = require('./world.json');
 var lastsaved = Date.now();
-
-console.log(world);
 
 io.on('connection', (socket) => {
 	socket.emit('connected', world);
@@ -22,16 +20,14 @@ io.on('connection', (socket) => {
 		// Set the block serverside
 		world[pos[0]][pos[1]][pos[2]] = 1;
 		io.emit('place', data);
-		console.log("i sense someone placing cube")
 		// If 10 minutes passed since last place event, save the world
-		if (Date.now() - lastsaved > 6000){
+		if (Date.now() - lastsaved > 600000){
 			console.log('Autosaving...');
 			lastsaved = Date.now();
 			fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
 		}
 	});
 
-  // Identical to placement
 	socket.on('break', (data) => {
 		pos = data.pos;
 		for (const coord of pos){if (0 > coord > 64) return;}
@@ -54,5 +50,5 @@ app.get('/', (req, res) => {
 });
 
 http.listen(port, () => {
-	console.log(`Socket.IO server running at http://localhost:${port}/`);
+	console.log(`listening to http://localhost:${port}/`);
 });

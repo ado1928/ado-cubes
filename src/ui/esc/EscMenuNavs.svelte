@@ -9,8 +9,8 @@
 	}
 </script>
 
-<div>
-	<button on:click={escBack}><img src="./images/svgs/menu back.svg"/></button>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+	<button on:click={escBack}><img src="./images/icons/menu back.svg"/></button>
 	<strong><slot/></strong>
-	<button on:click={escExit}><img src="./images/svgs/exit.svg"/></button><br><br>
+	<button on:click={escExit}><img src="./images/icons/exit.svg"/></button>
 </div>
