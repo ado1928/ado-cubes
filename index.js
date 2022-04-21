@@ -20,11 +20,11 @@ io.on('connection', (socket) => {
 		// Set the block serverside
 		world[pos[0]][pos[1]][pos[2]] = 1;
 		io.emit('place', data);
-		
-		if (Date.now() - lastsaved > 60000){
-			console.log("Saved world on " + Date.now);
-				lastsaved = Date.now();
-		fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
+
+		if (Date.now() - lastsaved > 60000) {
+			console.log('Saved world.');
+			lastsaved = Date.now();
+			fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
 		}
 	});
 
@@ -49,6 +49,4 @@ app.get('/', (req, res) => {
 	if (req.url == '/') res.sendFile(__dirname + '/' + 'public/index.html');
 });
 
-http.listen(port, () => {
-	console.log(`listening to http://localhost:${port}/`);
-});
+http.listen(port, () => {console.log(`listening to http://localhost:${port}/`)});

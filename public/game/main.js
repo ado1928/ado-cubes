@@ -380,12 +380,14 @@ function render() {
 	velocity.z *= 0.9;
 	velocity.y *= 0.9;
 
-	if (moveForward) velocity.z += cameraSpeed * delta;
-	if (moveBackward) velocity.z -= cameraSpeed * delta;
-	if (moveRight) velocity.x += cameraSpeed * delta;
-	if (moveLeft) velocity.x -= cameraSpeed * delta;
-	if (moveUp) velocity.y += cameraSpeed * delta;
-	if (moveDown) velocity.y -= cameraSpeed * delta;
+	if (verified) {
+		if (moveForward) velocity.z += cameraSpeed * delta;
+		if (moveBackward) velocity.z -= cameraSpeed * delta;
+		if (moveRight) velocity.x += cameraSpeed * delta;
+		if (moveLeft) velocity.x -= cameraSpeed * delta;
+		if (moveUp) velocity.y += cameraSpeed * delta;
+		if (moveDown) velocity.y -= cameraSpeed * delta;
+	};
 
 	controls.moveRight(velocity.x * delta);
 	controls.moveForward(velocity.z * delta);

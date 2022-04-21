@@ -17,7 +17,7 @@
 }
 
 html body { background: #000; margin: 0; font-family: 'Cousine'; font-size: var(--font-size);}
-iframe { position: relative !important; overflow: visible !important; }
+iframe { position: absolute !important; overflow: visible !important; }
 
 p { margin: 0; }
 a { color: #90bcff; }
@@ -48,8 +48,8 @@ button:hover {
 	animation-direction: alternate;
 }
 
-input					 { color: #fff; background: #101010aa; border: 1px solid #505050aa; border-radius: 3px; height: 16px; }
-input:focus				 { filter: drop-shadow(0 0 6px #000); }
+*:focus					 { filter: drop-shadow(0 0 6px #000); }
+input					 { color: #fff; background: #101010aa; border: 1px solid #505050aa; border-radius: 3px; height: 18px }
 input[type="text"]:hover { background: #202020aa; }
 input[type="text"]:focus { background: #000; border: #fff; }
 input[type="range"]		 { color: #000; background: #fff; outline: 0; width: -moz-available; width: -webkit-fill-available; margin: 0; }
@@ -82,6 +82,6 @@ input[type="range"]		 { color: #000; background: #fff; outline: 0; width: -moz-a
 #inputChat		 { width: -moz-available; width: -webkit-fill-available; margin-top: 4px; }
 
 #winWelcome		 { display: block; padding: 16px; width: 620px; height: auto; }
-#inputUsername, #inputPassword { width: 260px; margin: 6px 0; }
+#inputUsername, #inputPassword { width: -moz-available ;width: -webkit-fill-available; margin: 6px 0; padding: 0 3px; }
 
 #esc			 { flex-direction: column; width: 320px; }
