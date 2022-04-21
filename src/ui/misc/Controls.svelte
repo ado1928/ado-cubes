@@ -1,4 +1,4 @@
-<div id="winControls" class="box center">
+<div id="winControls" class="box win center">
 	<slot/>
 	WASD - Move<br>
 	Space - Fly up<br>

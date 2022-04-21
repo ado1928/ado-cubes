@@ -1,24 +1,27 @@
 <script>
-
 	import Palette from './ui/canvas/Palette.svelte'
 	import Coordinates from './ui/canvas/Coordinates.svelte';
 	import Chat from './ui/canvas/Chat.svelte';
 
 	import Esc from './ui/esc/Esc.svelte';
-	import EscMenuNavs from './ui/esc/EscMenuNavs.svelte';
+	import EscWinNavs from './ui/esc/EscWinNavs.svelte';
 
 	import Welcome from './ui/misc/Welcome.svelte';
-	import Settings from './ui/misc/Settings.svelte';
 	import Controls from './ui/misc/Controls.svelte';
+	import Settings from './ui/misc/Settings.svelte';
+	import Credits from './ui/misc/Credits.svelte';
 </script>
 
-<p id="crosshair" class="center" style="text-align:center;"><img src="./images/svgs/crosshair.svg"></p>
-
 <Welcome/>
-<Chat/>
-<Coordinates/>
-<Palette/>
-<Esc/>
-<Settings><EscMenuNavs>Settings</EscMenuNavs></Settings>
-<Controls><EscMenuNavs>Controls</EscMenuNavs></Controls>
 
+<div id="uiCanvas">
+	<Palette/>
+	<Coordinates/>
+	<Chat/>
+	<img id="crosshair" class="center" src="./images/svgs/crosshair.svg" alt="+">
+</div>
+
+<Esc/>
+<Controls><EscWinNavs>Controls</EscWinNavs></Controls>
+<Settings><EscWinNavs>Settings</EscWinNavs></Settings>
+<Credits><EscWinNavs>Credits</EscWinNavs></Credits>

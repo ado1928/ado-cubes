@@ -21,9 +21,9 @@ varying vec2 vUv;
 
 void main()
 {
-    vUv = uv;
-    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-    gl_Position = projectionMatrix * mvPosition;
+	vUv = uv;
+	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+	gl_Position = projectionMatrix * mvPosition;
 }`
 
 
@@ -33,50 +33,49 @@ uniform sampler2D colorTexture;
 varying vec2 vUv;
 
 void main( void ) {
-    vec4 color = vec4(0.0, 0.0, 0.0, 0.1);
+	vec4 color = vec4(0.0, 0.0, 0.0, 0.1);
 
-    if(mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
+	if(mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
+		color = vec4(1.0, 1.0, 0.0, 0.5);
+	}
 
-    else if(mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
+	else if(mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
+		color = vec4(1.0, 1.0, 0.0, 0.5);
+	}
 
-    else if(mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
+	else if(mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
+		color = vec4(1.0, 1.0, 0.0, 0.5);
+	}
 
-    else if(mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
+	else if(mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
+		color = vec4(1.0, 1.0, 0.0, 0.5);
+	}
 
-    else if(mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
+	else if(mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
+		color = vec4(1.0, 1.0, 0.0, 0.5);
+	}
 
-    else if(mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
-        color = vec4(1.0, 1.0, 0.0, 0.5);
-    }
+	else if(mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
+		color = vec4(1.0, 1.0, 0.0, 0.5);
+	}
 
 
 
-    gl_FragColor = vec4( color);
+	gl_FragColor = vec4( color);
 
 }`
 
 let geometry, material, grid, pos
 
 material = new THREE.ShaderMaterial({
+	uniforms: {
+		time: { value: 1.0 },
+		resolution: { value: new THREE.Vector2() }
+	},
+	vertexShader: vert,
+	fragmentShader: frag,
 
-    uniforms: {
-        time: { value: 1.0 },
-        resolution: { value: new THREE.Vector2() }
-    },
-    vertexShader: vert,
-    fragmentShader: frag,
-
-    side: THREE.BackSide
+	side: THREE.BackSide
 });
 
 material.transparent = true;
@@ -96,83 +95,84 @@ let moveUp = false;
 let moveDown = false;
 
 const onKeyDown = function (event) {
-    if (document.activeElement.tagName !== "INPUT") {
+	if (document.activeElement.tagName !== "INPUT") {
 //  if (inputChat !== document.activeElement) {
-        switch (event.code) {
-            case 'ArrowUp':
-            case 'KeyW':
-                moveForward = true;
-                break;
-            case 'ArrowLeft':
-            case 'KeyA':
-                moveLeft = true;
-                break;
-            case 'ArrowDown':
-            case 'KeyS':
-                moveBackward = true;
-                break;
-            case 'ArrowRight':
-            case 'KeyD':
-                moveRight = true;
-                break;
-            case 'Space':
-                moveUp = true;
-                break;
-            case 'ShiftLeft':
-                moveDown = true;
-                break;
-            case "KeyX":
-                placeCube(controls.getObject().position);
-                break;
-            case "KeyC":
-                breakCube(controls.getObject().position);
-                break;
-            case "KeyG":
-                grid.visible = !grid.visible;
-                break;
-            case "Enter":
-                controls.unlock();
-                inputChat.focus();
-                break;
-        }
-    }
+		switch (event.code) {
+			case 'ArrowUp':
+			case 'KeyW':
+				moveForward = true;
+				break;
+			case 'ArrowLeft':
+			case 'KeyA':
+				moveLeft = true;
+				break;
+			case 'ArrowDown':
+			case 'KeyS':
+				moveBackward = true;
+				break;
+			case 'ArrowRight':
+			case 'KeyD':
+				moveRight = true;
+				break;
+			case 'Space':
+				moveUp = true;
+				break;
+			case 'ShiftLeft':
+				moveDown = true;
+				break;
+			case "KeyX":
+				placeCube(controls.getObject().position);
+				break;
+			case "KeyC":
+				breakCube(controls.getObject().position);
+				break;
+			case "KeyG":
+				grid.visible = !grid.visible;
+				break;
+			case "Enter":
+				controls.unlock();
+				inputChat.focus();
+				break;
+		}
+	}
 };
 
 const onKeyUp = function (event) {
-    switch (event.code) {
-        case 'ArrowUp':
-        case 'KeyW':
-            moveForward = false;
-            break;
-        case 'ArrowLeft':
-        case 'KeyA':
-            moveLeft = false;
-            break;
-        case 'ArrowDown':
-        case 'KeyS':
-            moveBackward = false;
-            break;
-        case 'ArrowRight':
-        case 'KeyD':
-            moveRight = false;
-            break;
-        case 'Space':
-            moveUp = false;
-            break;
-        case 'ShiftLeft':
-            moveDown = false;
-            break;
-    }
+	switch (event.code) {
+		case 'ArrowUp':
+		case 'KeyW':
+			moveForward = false;
+			break;
+		case 'ArrowLeft':
+		case 'KeyA':
+			moveLeft = false;
+			break;
+		case 'ArrowDown':
+		case 'KeyS':
+			moveBackward = false;
+			break;
+		case 'ArrowRight':
+		case 'KeyD':
+			moveRight = false;
+			break;
+		case 'Space':
+			moveUp = false;
+			break;
+		case 'ShiftLeft':
+			moveDown = false;
+			break;
+	}
 };
 
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
 renderer.domElement.addEventListener('click', function() {
-    controls.lock();
-    esc.style.display = "none";
-    winSettings.style.display = "none";
-    winControls.style.display = "none";
+	controls.lock();
+	esc.style.display = "none";
+	winSettings.style.display = "none";
+	winControls.style.display = "none";
+	winCredits.style.display = "none";
 });
 
 //controls.addEventListener('lock', function () {menu.style.display = 'none';});
@@ -184,19 +184,19 @@ const velocity = new THREE.Vector3();
 
 window.addEventListener('resize', onWindowResize);
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize(window.innerWidth, window.innerHeight);
 };
 
 const loader = new THREE.CubeTextureLoader();
 const texture = loader.load([
-    '/game/sky/Daylight Box_Right.bmp',
-    '/game/sky/Daylight Box_Left.bmp',
-    '/game/sky/Daylight Box_Top.bmp',
-    '/game/sky/Daylight Box_Bottom.bmp',
-    '/game/sky/Daylight Box_Front.bmp',
-    '/game/sky/Daylight Box_Back.bmp',
+	'/game/sky/Daylight Box_Right.bmp',
+	'/game/sky/Daylight Box_Left.bmp',
+	'/game/sky/Daylight Box_Top.bmp',
+	'/game/sky/Daylight Box_Bottom.bmp',
+	'/game/sky/Daylight Box_Front.bmp',
+	'/game/sky/Daylight Box_Back.bmp',
 ]);
 scene.background = texture
 
@@ -233,40 +233,40 @@ scene.add(light);
 let socket = io();
 
 function placeCube(pos) {
-    raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+	raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 
-    const intersects = raycaster.intersectObjects(scene.children);
+	const intersects = raycaster.intersectObjects(scene.children);
 
-    if (intersects.length > 0) {
-        const intersect = intersects[0];
-        let pos = new THREE.Vector3();
-        if (intersect.object == grid) {
-            pos.sub(intersect.face.normal);
-            pos.multiplyScalar(0.5);
-            pos.add(intersect.point);
-            socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
-        } else {
-            pos.add(intersect.object.position)
-            pos.add(intersect.face.normal)
-            console.log(pos)
-            socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
-        }
-    }
+	if (intersects.length > 0) {
+		const intersect = intersects[0];
+		let pos = new THREE.Vector3();
+		if (intersect.object == grid) {
+			pos.sub(intersect.face.normal);
+			pos.multiplyScalar(0.5);
+			pos.add(intersect.point);
+			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+		} else {
+			pos.add(intersect.object.position)
+			pos.add(intersect.face.normal)
+			console.log(pos)
+			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+		}
+	}
 
 }
 
 function breakCube(pos) {
-    raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+	raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 
-    const intersects = raycaster.intersectObjects(scene.children);
+	const intersects = raycaster.intersectObjects(scene.children);
 
-    if (intersects.length > 0) {
-        const intersect = intersects[0];
-        let pos = new THREE.Vector3();
-        pos.add(intersect.object.position)
-        console.log(pos)
-        socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
-    }
+	if (intersects.length > 0) {
+		const intersect = intersects[0];
+		let pos = new THREE.Vector3();
+		pos.add(intersect.object.position)
+		console.log(pos)
+		socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+	}
 
 }
 
@@ -276,92 +276,90 @@ geometry = new THREE.BoxGeometry(1, 1, 1);
 material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
 function addCube(pos) {
-    let cube = new THREE.Mesh(geometry, material, 100);
-    cube.position.set(pos.x, pos.y, pos.z);
-    cube.receiveShadow = true;
-    cube.castShadow = true;
-    cubes.push(cube)
-    scene.add(cube);
-    directionalLight.shadow.needsUpdate = true;
+	let cube = new THREE.Mesh(geometry, material, 100);
+	cube.position.set(pos.x, pos.y, pos.z);
+	cube.receiveShadow = true;
+	cube.castShadow = true;
+	cubes.push(cube)
+	scene.add(cube);
+	directionalLight.shadow.needsUpdate = true;
 }
 
 function removeCube(pos) {
-    cubes.forEach(e => {
-        if (~~e.position.x == ~~pos.x && ~~e.position.y == ~~pos.y && ~~e.position.z == ~~pos.z) {
-            scene.remove(e)
-        }
-    });
-    directionalLight.shadow.needsUpdate = true;
+	cubes.forEach(e => {
+		if (~~e.position.x == ~~pos.x && ~~e.position.y == ~~pos.y && ~~e.position.z == ~~pos.z) {
+			scene.remove(e)
+		}
+	});
+	directionalLight.shadow.needsUpdate = true;
 }
 
 function escapeHTML(unsafe) {
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+	return unsafe
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
 }
 
 let nick = "";
 let verified = false;
 inputUsername.onkeydown = function (input) {
-    if (input.key == "Enter" && inputUsername.value !== "") {
-        if (!verified) {
-            captchaPlease.style.display = "block";
-        } else {
-            nick = inputUsername.value;
-            winWelcome.style.display = "none";
-            palette.style.display = "flex";
-            coordinates.style.display = "block"
-            chat.style.display = "block";
-            socket.emit("message", { "message": "has joined the game!", "sender": nick });
-        }
-    }
+	if (input.key == "Enter" && inputUsername.value !== "") {
+		if (!verified) {
+			captchaPlease.style.display = "block";
+		} else {
+			nick = inputUsername.value;
+			winWelcome.style.display = "none";
+			uiCanvas.style.display = "block";
+			socket.emit("message", { "message": "has joined the game!", "sender": nick });
+		}
+	}
 };
 
 inputChat.onkeydown = function (chanter) {
-    if (chanter.key == "Enter" && inputChat.value !== "") {
-        socket.emit("message", { "message": inputChat.value, "sender": "<" + nick + "> " });
-        inputChat.value = "";
-    }
+	if (chanter.key == "Enter" && inputChat.value !== "") {
+		socket.emit("message", { "message": inputChat.value, "sender": "<" + nick + "> " });
+		inputChat.value = "";
+	}
 };
 
 function scrollToBottom(element) {
-    element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+	element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
 }
 
 export function verify(uuid) {
-    socket = io({extraHeaders: {"uuid": uuid}});
-    verified = true;
-    socket.on('message', function (data) {
-        messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b> " + escapeHTML(data["message"]) + "<br>")
-        scrollToBottom(messages);
-    });
-    
-    socket.on('connected', function (arr) {
-        console.log(arr);
-        window.arr = arr;
-        for (let x = 0; x < 64; x++) {
-            for (let y = 0; y < 64; y++) {
-                for (let z = 0; z < 64; z++) {
-                    if (arr[x][y][z] == 1) {
-                        addCube({ "x": x, "y": y, "z": z });
-                    }
-                }
-            }
-        }
-    })
-        
-    socket.on('place', function (data) {
-        let pos = data.pos;
-        addCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
-    });
+	socket = io({extraHeaders: {"uuid": uuid}});
+	verified = true;
+	socket.on('message', function (data) {
+		messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b> " + escapeHTML(data["message"]) + "<br>")
+		scrollToBottom(messages);
+	});
+	
+	socket.on('connected', function (arr) {
+		console.log(arr);
+		window.arr = arr;
+		for (let x = 0; x < 64; x++) {
+			for (let y = 0; y < 64; y++) {
+				for (let z = 0; z < 64; z++) {
+					if (arr[x][y][z] == 1) {
+						addCube({ "x": x, "y": y, "z": z });
+					}
+				}
+			}
+		}
+	})
+		
+	socket.on('place', function (data) {
+		let pos = data.pos;
+		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
+	});
 
-    socket.on('break', function (data) {
-        let pos = data.pos;
-        removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
-    });
+	socket.on('break', function (data) {
+		let pos = data.pos;
+		removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
+	});
 }
 
 window.verify = verify;
@@ -369,26 +367,28 @@ window.verify = verify;
 let speed = 64.0;
 
 function render() {
-    requestAnimationFrame(render)
-    const delta = clock.getDelta();
+	requestAnimationFrame(render)
+	const delta = clock.getDelta();
 
-    velocity.x *= 0.9;
-    velocity.z *= 0.9;
-    velocity.y *= 0.9;
+	velocity.x *= 0.9;
+	velocity.z *= 0.9;
+	velocity.y *= 0.9;
 
-    if (moveForward) velocity.z += speed * delta;
-    if (moveBackward) velocity.z -= speed * delta;
-    if (moveRight) velocity.x += speed * delta;
-    if (moveLeft) velocity.x -= speed * delta;
-    if (moveUp) velocity.y += speed * delta;
-    if (moveDown) velocity.y -= speed * delta;
+	if (moveForward) velocity.z += speed * delta;
+	if (moveBackward) velocity.z -= speed * delta;
+	if (moveRight) velocity.x += speed * delta;
+	if (moveLeft) velocity.x -= speed * delta;
+	if (moveUp) velocity.y += speed * delta;
+	if (moveDown) velocity.y -= speed * delta;
 
-    controls.moveRight(velocity.x * delta);
-    controls.moveForward(velocity.z * delta);
-    controls.getObject().position.y += velocity.y * delta;
+	controls.moveRight(velocity.x * delta);
+	controls.moveForward(velocity.z * delta);
+	controls.getObject().position.y += velocity.y * delta;
 
-    pos = controls.getObject().position;
-    document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
-    renderer.render(scene, camera);
+	let pos = controls.getObject().position;
+
+	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
+
+	renderer.render(scene, camera);
 }
 render();

@@ -1,6 +1,6 @@
-<div id="winWelcome" class="box center" style="top:60%">
-	<img src="./images/svgs/adocubes-logo.svg" style="position:absolute;transform: translate(0, -162px);z-index:-1;">
-	<br>
+<div id="winWelcome" class="box win center" style="top:62%">
+	<img src="./images/svgs/adocubes-logo.svg" style="position:absolute;transform:translate(-50%, -174px);left:50%;z-index:-1;">
+	<br><br>
 	Username: <input id="inputUsername"><br>
 	Password: <input id="inputPassword" value="this input does nothing for now. pls ignore"><br><br>
 

@@ -2,31 +2,33 @@
 	document.onkeydown = function(e) {
 		if(e.key === "Escape" && document.activeElement.tagName !== "INPUT") {
 			esc.style.display = "flex";
-			winSettings.style.display = "none";
 			winControls.style.display = "none";
-
-			escReturn.onclick = function escReturn() {
-				esc.style.display = "none";
-			}
-			escControls.onclick = function escControls() {
-				esc.style.display = "none";
-				winControls.style.display = "block";
-			}
-			escSettings.onclick = function escSettings() {
-				esc.style.display = "none";
-				winSettings.style.display = "block";
-			}
-			escExitServer.onclick = function escExitServer() {
-				//code for exiting server
-				esc.style.display = "none";
-			}
+			winCredits.style.display = "none";
+			winSettings.style.display = "none";
 		}
 	}
+
+	function escReturn() {
+		esc.style.display = "none";
+	}
+	function escControls() {
+		esc.style.display = "none";
+		winControls.style.display = "block";
+	}
+	function escCredits() {
+		esc.style.display = "none";
+		winCredits.style.display = "block";
+	}
+	function escSettings() {
+		esc.style.display = "none";
+		winSettings.style.display = "block";
+	}
+
 </script>
 
 <div id="esc" class="box center">
-	<button id="escReturn" onclick="escReturn">Return</button>
-	<button id="escControls" onclick="escControls">Controls</button>
-	<button id="escSettings" onclick="escSettings">Settings</button>
-	<button id="escExitServer" onclick="escExitServer">Exit server</button>
+	<button id="escReturn" on:click={escReturn}>Return</button>
+	<button id="escControls" on:click={escControls}>Controls</button>
+	<button id="escCredits" on:click={escCredits}>Credits</button>
+	<button id="escSettings" on:click={escSettings}>Settings</button>
 </div>
