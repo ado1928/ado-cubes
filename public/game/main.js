@@ -10,56 +10,51 @@ document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500);
 camera.position.set(2, 2, 2);
-camera.lookAt(64, 10, 64);
+camera.lookAt(64, 32, 64);
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const controls = new PointerLockControls(camera, renderer.domElement)
 
-
 let vert = `
 varying vec2 vUv;
 
-void main()
-{
+void main() {
 	vUv = uv;
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 	gl_Position = projectionMatrix * mvPosition;
 }`
-
 
 let frag = `
 uniform sampler2D colorTexture;
 
 varying vec2 vUv;
 
-void main( void ) {
+void main(void) {
 	vec4 color = vec4(0.0, 0.0, 0.0, 0.1);
 
 	if(mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
-		color = vec4(1.0, 1.0, 0.0, 0.5);
+		color = vec4(0.1, 0.25, 1.0, 0.5);
 	}
 
 	else if(mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
-		color = vec4(1.0, 1.0, 0.0, 0.5);
+		color = vec4(0.1, 0.25, 1.0, 0.5);
 	}
 
 	else if(mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
-		color = vec4(1.0, 1.0, 0.0, 0.5);
+		color = vec4(0.1, 0.25, 1.0, 0.5);
 	}
 
 	else if(mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
-		color = vec4(1.0, 1.0, 0.0, 0.5);
+		color = vec4(0.1, 0.25, 1.0, 0.5);
 	}
 
 	else if(mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
-		color = vec4(1.0, 1.0, 0.0, 0.5);
+		color = vec4(0.1, 0.25, 1.0, 0.5);
 	}
 
 	else if(mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
-		color = vec4(1.0, 1.0, 0.0, 0.5);
+		color = vec4(0.1, 0.25, 1.0, 0.5);
 	}
-
-
 
 	gl_FragColor = vec4( color);
 
@@ -68,10 +63,7 @@ void main( void ) {
 let geometry, material, grid, pos
 
 material = new THREE.ShaderMaterial({
-	uniforms: {
-		time: { value: 1.0 },
-		resolution: { value: new THREE.Vector2() }
-	},
+	uniforms: { time: { value: 1.0 }, resolution: { value: new THREE.Vector2() } },
 	vertexShader: vert,
 	fragmentShader: frag,
 
@@ -87,92 +79,14 @@ grid.visible = true;
 
 let raycaster = new THREE.Raycaster();
 
-let moveForward = false;
-let moveBackward = false;
-let moveLeft = false;
-let moveRight = false;
-let moveUp = false;
-let moveDown = false;
-
-const onKeyDown = function (event) {
-	if (document.activeElement.tagName !== "INPUT") {
-//  if (inputChat !== document.activeElement) {
-		switch (event.code) {
-			case 'ArrowUp':
-			case 'KeyW':
-				moveForward = true;
-				break;
-			case 'ArrowLeft':
-			case 'KeyA':
-				moveLeft = true;
-				break;
-			case 'ArrowDown':
-			case 'KeyS':
-				moveBackward = true;
-				break;
-			case 'ArrowRight':
-			case 'KeyD':
-				moveRight = true;
-				break;
-			case 'Space':
-				moveUp = true;
-				break;
-			case 'ShiftLeft':
-				moveDown = true;
-				break;
-			case "KeyX":
-				placeCube(controls.getObject().position);
-				break;
-			case "KeyC":
-				breakCube(controls.getObject().position);
-				break;
-			case "KeyG":
-				grid.visible = !grid.visible;
-				break;
-			case "Enter":
-				controls.unlock();
-				inputChat.focus();
-				break;
-		}
-	}
-};
-
-const onKeyUp = function (event) {
-	switch (event.code) {
-		case 'ArrowUp':
-		case 'KeyW':
-			moveForward = false;
-			break;
-		case 'ArrowLeft':
-		case 'KeyA':
-			moveLeft = false;
-			break;
-		case 'ArrowDown':
-		case 'KeyS':
-			moveBackward = false;
-			break;
-		case 'ArrowRight':
-		case 'KeyD':
-			moveRight = false;
-			break;
-		case 'Space':
-			moveUp = false;
-			break;
-		case 'ShiftLeft':
-			moveDown = false;
-			break;
-	}
-};
-
-document.addEventListener('keydown', onKeyDown);
-document.addEventListener('keyup', onKeyUp);
-
 renderer.domElement.addEventListener('click', function() {
-	controls.lock();
-	esc.style.display = "none";
-	winSettings.style.display = "none";
+	if (verified) {
+		controls.lock();
+		esc.style.display = "none";
+		winSettings.style.display = "none";
 	winControls.style.display = "none";
 	winCredits.style.display = "none";
+	}
 });
 
 //controls.addEventListener('lock', function () {menu.style.display = 'none';});
@@ -364,7 +278,99 @@ export function verify(uuid) {
 
 window.verify = verify;
 
-let speed = 64.0;
+export let cameraSpeed = 64.0;
+
+let moveForward = false;
+let moveBackward = false;
+let moveLeft = false;
+let moveRight = false;
+let moveUp = false;
+let moveDown = false;
+
+const onKeyDown = function (event) {
+	if (document.activeElement.tagName !== "INPUT") {
+//  if (inputChat !== document.activeElement) {
+		switch (event.code) {
+			case 'ArrowUp':
+			case 'KeyW':
+				moveForward = true;
+				break;
+			case 'ArrowLeft':
+			case 'KeyA':
+				moveLeft = true;
+				break;
+			case 'ArrowDown':
+			case 'KeyS':
+				moveBackward = true;
+				break;
+			case 'ArrowRight':
+			case 'KeyD':
+				moveRight = true;
+				break;
+			case 'Space':
+				moveUp = true;
+				break;
+			case 'ShiftLeft':
+				moveDown = true;
+				break;
+			case "KeyX":
+				placeCube(controls.getObject().position);
+				break;
+			case "KeyC":
+				breakCube(controls.getObject().position);
+				break;
+			case "KeyG":
+				grid.visible = !grid.visible;
+				break;
+			case "Enter":
+				controls.unlock();
+				inputChat.focus();
+				break;
+			case "KeyL":
+				winSettings.style.display = "block";
+				break;
+			case "BracketLeft":
+				cameraSpeed = cameraSpeed - 8;
+				break;
+			case "BracketRight":
+				cameraSpeed = cameraSpeed + 8;
+				break;
+			case "Backslash":
+				cameraSpeed = 64.0;
+				break;
+		}
+	}
+};
+
+const onKeyUp = function (event) {
+	switch (event.code) {
+		case 'ArrowUp':
+		case 'KeyW':
+			moveForward = false;
+			break;
+		case 'ArrowLeft':
+		case 'KeyA':
+			moveLeft = false;
+			break;
+		case 'ArrowDown':
+		case 'KeyS':
+			moveBackward = false;
+			break;
+		case 'ArrowRight':
+		case 'KeyD':
+			moveRight = false;
+			break;
+		case 'Space':
+			moveUp = false;
+			break;
+		case 'ShiftLeft':
+			moveDown = false;
+			break;
+	}
+};
+
+document.addEventListener('keydown', onKeyDown);
+document.addEventListener('keyup', onKeyUp);
 
 function render() {
 	requestAnimationFrame(render)
@@ -374,12 +380,12 @@ function render() {
 	velocity.z *= 0.9;
 	velocity.y *= 0.9;
 
-	if (moveForward) velocity.z += speed * delta;
-	if (moveBackward) velocity.z -= speed * delta;
-	if (moveRight) velocity.x += speed * delta;
-	if (moveLeft) velocity.x -= speed * delta;
-	if (moveUp) velocity.y += speed * delta;
-	if (moveDown) velocity.y -= speed * delta;
+	if (moveForward) velocity.z += cameraSpeed * delta;
+	if (moveBackward) velocity.z -= cameraSpeed * delta;
+	if (moveRight) velocity.x += cameraSpeed * delta;
+	if (moveLeft) velocity.x -= cameraSpeed * delta;
+	if (moveUp) velocity.y += cameraSpeed * delta;
+	if (moveDown) velocity.y -= cameraSpeed * delta;
 
 	controls.moveRight(velocity.x * delta);
 	controls.moveForward(velocity.z * delta);

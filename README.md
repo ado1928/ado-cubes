@@ -1,5 +1,5 @@
 <p align=center>
-<img src="https://i.imgur.com/hA3MLNQ.png" height="160">
+<img src="https://raw.githubusercontent.com/ado1928/ado-cubes/svelte/public/images/svgs/adocubes-logo.svg">
 <h1 align=center>adocubes<br>
 <a href="https://discord.gg/rNMTeADfnc"><img src="https://i.imgur.com/HPnB3JL.png"></a>
 </h1>

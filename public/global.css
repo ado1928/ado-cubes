@@ -48,11 +48,11 @@ button:hover {
 	animation-direction: alternate;
 }
 
-input					 { color: #fff; background: #101010aa; border: 1px solid #505050aa; border-radius: 3px; margin: 6px 0; height: 16px; }
+input					 { color: #fff; background: #101010aa; border: 1px solid #505050aa; border-radius: 3px; height: 16px; }
 input:focus				 { filter: drop-shadow(0 0 6px #000); }
 input[type="text"]:hover { background: #202020aa; }
 input[type="text"]:focus { background: #000; border: #fff; }
-input[type="range"]		 { color: #000; background: #fff; outline: 0; margin: 0; width: -moz-available; width: -webkit-fill-available; }
+input[type="range"]		 { color: #000; background: #fff; outline: 0; width: -moz-available; width: -webkit-fill-available; margin: 0; }
 
 .box {
 	color: var(--box-foreground);
@@ -79,9 +79,9 @@ input[type="range"]		 { color: #000; background: #fff; outline: 0; margin: 0; wi
 #coordinates	 { top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0); }
 #chat			 { bottom: 6px; left: 6px; width: var(--chat-width); max-height: var(--chat-maxheight); }
 #messages		 { max-height: calc(var(--chat-maxheight) - (var(--box-padding)*4)); overflow-y: scroll; }
-#inputChat		 { width: -moz-available; width: -webkit-fill-available; margin-top: 4px; margin-bottom: 0; }
+#inputChat		 { width: -moz-available; width: -webkit-fill-available; margin-top: 4px; }
 
-#winWelcome		 { display: block; padding: 16px; width: 620px; }
-#inputUsername, #inputPassword { width: 260px; }
+#winWelcome		 { display: block; padding: 16px; width: 620px; height: auto; }
+#inputUsername, #inputPassword { width: 260px; margin: 6px 0; }
 
 #esc			 { flex-direction: column; width: 320px; }
