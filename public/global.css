@@ -71,6 +71,8 @@ input[type="range"]		 { color: #000; background: #fff; outline: 0; width: -moz-a
 
 .io-captcha		 { padding-top: 16px; padding-bottom: 0 !important; }
 
+/* am thinking about moving most of them into their respective compenents */
+
 #uiCanvas, #esc, .win { display: none; }
 
 #palette		 { display: flex; bottom: 6px; right: 6px; width: fit-content; }
@@ -78,6 +80,7 @@ input[type="range"]		 { color: #000; background: #fff; outline: 0; width: -moz-a
 #palette *:hover { transform: scale(1.05); outline: 2.5px solid #fff; filter: drop-shadow(0 0 6px #000); }
 #coordinates	 { top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0); }
 #chat			 { bottom: 6px; left: 6px; width: var(--chat-width); max-height: var(--chat-maxheight); }
+#switchPlacement { top: 6px; right: 6px; }
 #messages		 { max-height: calc(var(--chat-maxheight) - (var(--box-padding)*4)); overflow-y: scroll; }
 #inputChat		 { width: -moz-available; width: -webkit-fill-available; margin-top: 4px; }
 

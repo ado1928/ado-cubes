@@ -1,6 +1,7 @@
 <script>
 	import Palette from './ui/canvas/Palette.svelte'
 	import Coordinates from './ui/canvas/Coordinates.svelte';
+	import SwitchPlacement from './ui/canvas/SwitchPlacement.svelte'
 	import Chat from './ui/canvas/Chat.svelte';
 
 	import Esc from './ui/esc/Esc.svelte';
@@ -15,7 +16,11 @@
 <Welcome/>
 
 <div id="uiCanvas">
-	<Palette/>
+	<!-- maybe -->
+	<div>
+		<SwitchPlacement/>
+		<Palette/>
+	</div>
 	<Coordinates/>
 	<Chat/>
 	<img id="crosshair" class="center" src="./images/svgs/crosshair.svg" alt="+">

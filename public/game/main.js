@@ -146,42 +146,58 @@ scene.add(light);
 
 let socket = io();
 
+let raycastPlacement = true
+
+placeAtRaycast.onclick = function() {
+	raycastPlacement = true;
+}
+
+placeInCamera.onclick = function() {
+	raycastPlacement = false;
+}
+
 function placeCube(pos) {
-	raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+	if (raycastPlacement) {
+		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 
-	const intersects = raycaster.intersectObjects(scene.children);
+		const intersects = raycaster.intersectObjects(scene.children);
 
-	if (intersects.length > 0) {
-		const intersect = intersects[0];
-		let pos = new THREE.Vector3();
-		if (intersect.object == grid) {
-			pos.sub(intersect.face.normal);
-			pos.multiplyScalar(0.5);
-			pos.add(intersect.point);
-			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
-		} else {
-			pos.add(intersect.object.position)
-			pos.add(intersect.face.normal)
-			console.log(pos)
-			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+		if (intersects.length > 0) {
+			const intersect = intersects[0];
+			let pos = new THREE.Vector3();
+			if (intersect.object == grid) {
+				pos.sub(intersect.face.normal);
+				pos.multiplyScalar(0.5);
+				pos.add(intersect.point);
+				socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+			} else {
+				pos.add(intersect.object.position)
+				pos.add(intersect.face.normal)
+				console.log(pos)
+				socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+			}
 		}
+	} else {
+		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
 	}
-
 }
 
 function breakCube(pos) {
-	raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+	if (raycastPlacement) {
+		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 
-	const intersects = raycaster.intersectObjects(scene.children);
+		const intersects = raycaster.intersectObjects(scene.children);
 
-	if (intersects.length > 0) {
-		const intersect = intersects[0];
-		let pos = new THREE.Vector3();
-		pos.add(intersect.object.position)
-		console.log(pos)
+		if (intersects.length > 0) {
+			const intersect = intersects[0];
+			let pos = new THREE.Vector3();
+			pos.add(intersect.object.position)
+			console.log(pos)
+			socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+		}
+	} else {
 		socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
 	}
-
 }
 
 let cubes = [];
