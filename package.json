@@ -1,0 +1,24 @@
+{
+  "name": "ado-cubes-vertex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ado1928/ado-cubes.git"
+  },
+  "author": "ifritdiezel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ifritdiezel/ado-cubes-vertex/issues"
+  },
+  "homepage": "https://github.com/ifritdiezel/ado-cubes-vertex",
+  "dependencies": {
+    "express": "^4.17.3",
+    "http": "^0.0.1-security",
+    "socket.io": "^4.4.1"
+  }
+}
