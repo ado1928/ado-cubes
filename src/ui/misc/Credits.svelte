@@ -8,5 +8,5 @@
 	Back-End developer - <a href="https://github.com/ifritdiezel" target="_blank" rel="noopener noreferrer">ifritdiezel</a><br>
 	Front-End developer - <a href="https://github.com/macimas" target="_blank" rel="noopener noreferrer">macimas</a><br><br>
 
-	Made with <a href="https://nodejs.org" target="_blank" rel="noopener noreferrer">Node.js</a>, <a href="https://threejs.org" target="_blank" rel="noopener noreferrer">Three.js</a>, and <a href="https://svelte.dev" target="_blank" rel="noopener noreferrer">Svelte</a>
+	Made with <a href="https://nodejs.org" target="_blank" rel="noopener noreferrer">Node.js</a>, <a href="https://threejs.org" target="_blank" rel="noopener noreferrer">Three.js</a>, and <a href="https://svelte.dev" target="_blank" rel="noopener noreferrer">Svelte</a><br><br>
 </div>

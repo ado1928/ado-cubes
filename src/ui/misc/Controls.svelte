@@ -12,6 +12,9 @@
 	] to increase camera speed<br>
 	\ to reset camera speed<br><br>
 
+	O to hide UI<br>
+	P to show UI<br><br>
+
 	Enter to open chat<br>
 	L to open settings<br><br>
 </div>
