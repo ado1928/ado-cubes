@@ -16,7 +16,7 @@ io.on('connection', (socket) => {
 	socket.on('place', (data) => {
 		pos = data.pos;
 		// Validate placement coordinates
-		for (const coord of pos){if (0 > coord > 64) return;}
+		for (const coord of pos){if (0 > coord > 63) return;}
 		// Set the block serverside
 		world[pos[0]][pos[1]][pos[2]] = 1;
 		io.emit('place', data);
@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
 
 	socket.on('break', (data) => {
 		pos = data.pos;
-		for (const coord of pos){if (0 > coord > 64) return;}
+		for (const coord of pos){if (0 > coord > 63) return;}
 		world[pos[0]][pos[1]][pos[2]] = 0;
 		io.emit('break', data);
 	});

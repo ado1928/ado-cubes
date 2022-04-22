@@ -1,10 +1,12 @@
 <div id="winCredits" class="box win center">
 	<slot/>
 
-	<img src="./images/svgs/adocubes.svg" alt="adocubes"><br>
-	adocubes by <a href="https://github.com/ado1928">Ado1928</a><br>
-	Back-End developer - <a href="https://github.com/ifritdiezel">ifritdiezel</a><br>
-	Front-End developer - <a href="https://github.com/macimas">macimas</a><br><br>
-	Made with <a href="https://nodejs.org">Node.js</a>, <a href="https://threejs.org">Three.js</a>, and <a href="https://svelte.dev">Svelte</a><br>
-	add more credits here i guess
+	<img src="./images/svgs/adocubes.svg" alt="adocubes" target="_blank" rel="noopener noreferrer"><br>
+	<a href="https://github.com/ado1928/ado-cubes" target="_blank" rel="noopener noreferrer">Source code</a> • <a href="https://discord.gg/rNMTeADfnc" target="_blank" rel="noopener noreferrer">Discord server</a><br><br>
+
+	adocubes by <a href="https://github.com/ado1928" target="_blank" rel="noopener noreferrer">Ado1928</a><br>
+	Back-End developer - <a href="https://github.com/ifritdiezel" target="_blank" rel="noopener noreferrer">ifritdiezel</a><br>
+	Front-End developer - <a href="https://github.com/macimas" target="_blank" rel="noopener noreferrer">macimas</a><br><br>
+
+	Made with <a href="https://nodejs.org" target="_blank" rel="noopener noreferrer">Node.js</a>, <a href="https://threejs.org" target="_blank" rel="noopener noreferrer">Three.js</a>, and <a href="https://svelte.dev" target="_blank" rel="noopener noreferrer">Svelte</a>
 </div>

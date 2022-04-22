@@ -2,7 +2,8 @@
 	<img src="./images/svgs/adocubes-logo.svg" style="position:absolute;transform:translate(-50%, -174px);left:50%;z-index:-1;">
 	<br><br>
 	Username: <input id="inputUsername" type="text"><br>
-	Password: <input id="inputPassword" type="text" value="this input does nothing for now. pls ignore"><br><br>
+	Password: <input id="inputPassword" type="text" value="this input does nothing for now. pls ignore"><br>
+	<p id="noNeedToVerify" style="display:none;">It's seems you have disabled verification.<br>Please note that you won't be able to connect to the server.<br></p><br>
 
 	<strong>IMPORTANT: </strong>You can check controls by pressing Escape, and then selecting Controls.<br><br>
 

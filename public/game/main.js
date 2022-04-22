@@ -80,12 +80,12 @@ grid.visible = true;
 let raycaster = new THREE.Raycaster();
 
 renderer.domElement.addEventListener('click', function() {
-	if (verified) {
+	if (nick !== "") {
 		controls.lock();
 		esc.style.display = "none";
 		winSettings.style.display = "none";
-	winControls.style.display = "none";
-	winCredits.style.display = "none";
+		winControls.style.display = "none";
+		winCredits.style.display = "none";
 	}
 });
 
@@ -147,13 +147,13 @@ scene.add(light);
 let socket = io();
 
 let raycastPlacement = true
-
 placeAtRaycast.onclick = function() {
 	raycastPlacement = true;
+	crosshair.style.display = "block";
 }
-
 placeInCamera.onclick = function() {
 	raycastPlacement = false;
+	crosshair.style.display = "none";
 }
 
 function placeCube(pos) {
@@ -235,6 +235,10 @@ function escapeHTML(unsafe) {
 
 let nick = "";
 let verified = false;
+if (verified) {
+	noNeedToVerify.style.display = "block"
+}
+
 inputUsername.onkeydown = function (input) {
 	if (input.key == "Enter" && inputUsername.value !== "") {
 		if (!verified) {
@@ -249,7 +253,7 @@ inputUsername.onkeydown = function (input) {
 };
 
 inputChat.onkeydown = function (chanter) {
-	if (chanter.key == "Enter" && inputChat.value !== "") {
+	if (chanter.key == "Enter" && nick !== "" && inputChat.value !== "") {
 		socket.emit("message", { "message": inputChat.value, "sender": "<" + nick + "> " });
 		inputChat.value = "";
 	}
@@ -278,8 +282,8 @@ export function verify(uuid) {
 					}
 				}
 			}
-		}
-	})
+		};
+	});
 		
 	socket.on('place', function (data) {
 		let pos = data.pos;
@@ -290,11 +294,11 @@ export function verify(uuid) {
 		let pos = data.pos;
 		removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
 	});
-}
+};
 
 window.verify = verify;
 
-export let cameraSpeed = 64.0;
+let cameraSpeed = 64.0;
 
 let moveForward = false;
 let moveBackward = false;
@@ -304,8 +308,7 @@ let moveUp = false;
 let moveDown = false;
 
 const onKeyDown = function (event) {
-	if (document.activeElement.tagName !== "INPUT") {
-//  if (inputChat !== document.activeElement) {
+	if (document.activeElement.tagName !== "INPUT" && nick !== "") {
 		switch (event.code) {
 			case 'ArrowUp':
 			case 'KeyW':
@@ -354,6 +357,14 @@ const onKeyDown = function (event) {
 			case "Backslash":
 				cameraSpeed = 64.0;
 				break;
+			// this should be combined into one key
+			case "KeyO":
+				uiCanvas.style.display = "block";
+				break;
+			case "KeyP":
+				uiCanvas.style.display = "none";
+				break;
+			//
 		}
 	}
 };

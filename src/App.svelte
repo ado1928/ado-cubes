@@ -17,7 +17,7 @@
 
 <div id="uiCanvas">
 	<!-- maybe -->
-	<div>
+	<div id="itsEditTime">
 		<SwitchPlacement/>
 		<Palette/>
 	</div>
