@@ -77,6 +77,18 @@ grid.position.set(31.5, 31.5, 31.5);
 scene.add(grid);
 grid.visible = true;
 
+
+geometry = new THREE.PlaneBufferGeometry(2000, 2000);
+material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+let ground = new THREE.Mesh(geometry, material);
+ground.position.set(0, -0.5, 0)
+ground.rotateX( - Math.PI / 2);
+ground.receiveShadow = true;
+ground.renderOrder = -1 
+ground.material.depthTest = false;
+ground.material.depthWrite = false;
+scene.add(ground);
+
 let raycaster = new THREE.Raycaster();
 
 renderer.domElement.addEventListener('click', function() {
@@ -114,22 +126,22 @@ const texture = loader.load([
 ]);
 scene.background = texture
 
-const directionalLight = new THREE.DirectionalLight(0xffffe0, 0.3);
-directionalLight.position.set(20, 90, 50);
-directionalLight.castShadow = true;
-scene.add(directionalLight);
+const sun = new THREE.DirectionalLight(0xffffe0, 0.3);
+sun.position.set(20, 90, 50);
+sun.castShadow = true;
+scene.add(sun);
 
-directionalLight.shadow.bias = 0;
-directionalLight.shadow.normalBias = 0.1;
-directionalLight.shadow.mapSize.width = 4096; // default
-directionalLight.shadow.mapSize.height = 4096; // default
-directionalLight.shadow.camera.near = 0.5; // default
-directionalLight.shadow.camera.far = 115;
-directionalLight.shadow.camera.right = 60;
-directionalLight.shadow.camera.left = - 30;
-directionalLight.shadow.camera.top = 35;
-directionalLight.shadow.camera.bottom = -71;
-directionalLight.shadow.autoUpdate = false;
+sun.shadow.bias = 0;
+sun.shadow.normalBias = 0.1;
+sun.shadow.mapSize.width = 4096;
+sun.shadow.mapSize.height = 4096;
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 130;
+sun.shadow.camera.right = 60;
+sun.shadow.camera.left = - 30;
+sun.shadow.camera.top = 35;
+sun.shadow.camera.bottom = -71;
+sun.shadow.autoUpdate = false;
 
 const dlight = new THREE.DirectionalLight(0xffffe0, 0.2);
 dlight.position.set(0.3, 0.6, 0.5);
@@ -212,7 +224,7 @@ function addCube(pos) {
 	cube.castShadow = true;
 	cubes.push(cube)
 	scene.add(cube);
-	directionalLight.shadow.needsUpdate = true;
+	sun.shadow.needsUpdate = true;
 }
 
 function removeCube(pos) {
@@ -221,7 +233,7 @@ function removeCube(pos) {
 			scene.remove(e)
 		}
 	});
-	directionalLight.shadow.needsUpdate = true;
+	sun.shadow.needsUpdate = true;
 }
 
 function escapeHTML(unsafe) {
@@ -297,6 +309,9 @@ export function verify(uuid) {
 };
 
 window.verify = verify;
+
+// bypass captcha in debug
+// verify()
 
 let cameraSpeed = 64.0;
 
