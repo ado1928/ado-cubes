@@ -74,6 +74,7 @@ input[type="range"]		 { color: #000; background: #fff; outline: 0; width: -moz-a
 
 .io-captcha	{ padding-top: 16px }
 
+.selectedbox {outline: 2px solid #fff; z-index: 1; }
 /* am thinking about moving most of them into their respective compenents */
 
 #uiCanvas, #esc, .win { display: none; }
@@ -81,7 +82,7 @@ input[type="range"]		 { color: #000; background: #fff; outline: 0; width: -moz-a
 #itsEditTime		 { position: absolute; display: flex; flex-direction: column; align-items: flex-end; bottom: 6px; right: 6px; }
 	#palette		 { position: relative; display: flex; width: fit-content; margin-top: 6px; }
 	#palette *		 { width: 16px; height: 16px; }
-	#palette *:hover { transform: scale(1.05); outline: 2.5px solid #fff; filter: drop-shadow(0 0 6px #000); }
+	#palette *:hover { transform: scale(1.15); }
 	#switchPlacement { position: relative ;font-size: 0; }
 	#switchPlacement *:not(:last-child) { margin-right: var(--box-padding) }
 #coordinates		 { top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0); }

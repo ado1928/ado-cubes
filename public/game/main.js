@@ -81,17 +81,17 @@ grid.visible = true;
 geometry = new THREE.PlaneBufferGeometry(2000, 2000);
 material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 let ground = new THREE.Mesh(geometry, material);
-ground.position.set(0, -0.5, 0)
-ground.rotateX( - Math.PI / 2);
+ground.position.set(0, -0.51, 0)
+ground.rotateX(- Math.PI / 2);
 ground.receiveShadow = true;
-ground.renderOrder = -1 
+ground.renderOrder = -1
 ground.material.depthTest = false;
 ground.material.depthWrite = false;
 scene.add(ground);
 
 let raycaster = new THREE.Raycaster();
 
-renderer.domElement.addEventListener('click', function() {
+renderer.domElement.addEventListener('click', function () {
 	if (nick !== "") {
 		controls.lock();
 		esc.style.display = "none";
@@ -159,11 +159,11 @@ scene.add(light);
 let socket = io();
 
 let raycastPlacement = true
-placeAtRaycast.onclick = function() {
+placeAtRaycast.onclick = function () {
 	raycastPlacement = true;
 	crosshair.style.display = "block";
 }
-placeInCamera.onclick = function() {
+placeInCamera.onclick = function () {
 	raycastPlacement = false;
 	crosshair.style.display = "none";
 }
@@ -181,16 +181,16 @@ function placeCube(pos) {
 				pos.sub(intersect.face.normal);
 				pos.multiplyScalar(0.5);
 				pos.add(intersect.point);
-				socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+				socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color" : color});
 			} else {
 				pos.add(intersect.object.position)
 				pos.add(intersect.face.normal)
 				console.log(pos)
-				socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+				socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] , "color" : color});
 			}
 		}
 	} else {
-		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] , "color" : color});
 	}
 }
 
@@ -214,10 +214,38 @@ function breakCube(pos) {
 
 let cubes = [];
 
-geometry = new THREE.BoxGeometry(1, 1, 1);
-material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
-function addCube(pos) {
+let colors = document.getElementById("palette").children;
+let color = colors.length - 1
+
+function updateColor() {
+	color = (color % colors.length + colors.length) % colors.length;
+	for (let i = 0; i < colors.length; i++) {
+		colors[i].className = "";
+	}
+	colors[color].className = "selectedbox"
+}
+updateColor();
+
+for (let i = 0; i < colors.length; i++) {
+	console.log(colors[i]);
+	colors[i].onclick = function () {
+		color = i;
+		updateColor();
+	}
+}
+
+window.onwheel = function (event) {
+	if (event.deltaY > 0) { color -= 1 }
+	else if (event.deltaY < 0) { color += 1 }
+	updateColor();
+}
+
+
+geometry = new THREE.BoxGeometry(1, 1, 1);
+
+function addCube(pos, col) {
+	material = new THREE.MeshStandardMaterial({ color: colors[col].style.backgroundColor });
 	let cube = new THREE.Mesh(geometry, material, 100);
 	cube.position.set(pos.x, pos.y, pos.z);
 	cube.receiveShadow = true;
@@ -275,31 +303,33 @@ function scrollToBottom(element) {
 	element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
 }
 
+
+
 export function verify(uuid) {
-	socket = io({extraHeaders: {"uuid": uuid}});
+	socket = io({ extraHeaders: { "uuid": uuid } });
 	verified = true;
 	socket.on('message', function (data) {
 		messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + "</b> " + escapeHTML(data["message"]) + "<br>")
 		scrollToBottom(messages);
 	});
-	
+
 	socket.on('connected', function (arr) {
 		console.log(arr);
 		window.arr = arr;
 		for (let x = 0; x < 64; x++) {
 			for (let y = 0; y < 64; y++) {
 				for (let z = 0; z < 64; z++) {
-					if (arr[x][y][z] == 1) {
-						addCube({ "x": x, "y": y, "z": z });
+					if (arr[x][y][z] > 0) {
+						addCube({ "x": x, "y": y, "z": z }, arr[x][y][z]);
 					}
 				}
 			}
 		};
 	});
-		
+
 	socket.on('place', function (data) {
 		let pos = data.pos;
-		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
+		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
 	});
 
 	socket.on('break', function (data) {
@@ -312,6 +342,7 @@ window.verify = verify;
 
 // bypass captcha in debug
 // verify()
+
 
 let cameraSpeed = 64.0;
 
