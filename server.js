@@ -16,58 +16,31 @@ io.on('connection', (socket) => {
 
 	socket.on('place', (data) => {
 		pos = data.pos;
-<<<<<<< HEAD
 		if (posvalid(pos) && !world[pos[0]][pos[1]][pos[2]] ){
 			world[pos[0]][pos[1]][pos[2]] = data.color;
 			io.emit('place', data);
 			if (Date.now() - lastsaved > 60000) worldsave();
-=======
-		// Validate placement coordinates
-		for (const coord of pos){if (0 > coord > 63) return;}
-		// Set the block serverside
-		world[pos[0]][pos[1]][pos[2]] = data.color;
-		io.emit('place', data);
-
-		if (Date.now() - lastsaved > 60000) {
-			console.log('Saved world.');
-			lastsaved = Date.now();
-			fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
->>>>>>> 98dcd6bf069d212aa786fda2e4c89f2fae718bf5
 		}
 	});
 
 	socket.on('break', (data) => {
 		pos = data.pos;
-<<<<<<< HEAD
 		if (posvalid(pos)){
 			world[pos[0]][pos[1]][pos[2]] = 0;
 			io.emit('break', data);
 		}
-=======
-		for (const coord of pos){if (0 > coord > 64) return;}
-		world[pos[0]][pos[1]][pos[2]] = 0;
-		io.emit('break', data);
->>>>>>> 98dcd6bf069d212aa786fda2e4c89f2fae718bf5
 	});
 
 	socket.on('message', (data) => {
 		io.emit('message', data);
 	});
 
-<<<<<<< HEAD
-	socket.on('disconnect', (reason) => {
-		if (io.engine.clientsCount == 0) worldsave();
-	});
-
-
-=======
     socket.on('disconnect', (reason) => {
         if (io.engine.clientsCount == 0) {
             lastsaved = Date.now();
-            fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
+            worldsave()
         }
     });
->>>>>>> 98dcd6bf069d212aa786fda2e4c89f2fae718bf5
 });
 
 
