@@ -15,3 +15,5 @@ Name        | Contribution
 Ado1928     | Creator
 ifritdiezel | Back-End
 macimas     | Front-End
+
+![frog](https://user-images.githubusercontent.com/54080182/124795209-3d6c4d00-df69-11eb-9325-433a2f56f578.png)
