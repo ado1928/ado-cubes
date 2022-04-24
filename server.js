@@ -4,8 +4,12 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const fs = require('fs');
 const path = require('path');
+
 const { Webhook } = require('discord-webhook-node');
-const { webhooktoken } = require('./dsbridgeconfig');
+const dsbridgeconfig = require('./dsbridgeconfig');
+const { Client, Intents } = require('discord.js');
+const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES + Intents.FLAGS.GUILDS ] });
+
 const port = 1928;
 
 var world = require('./world.json');
@@ -34,8 +38,8 @@ io.on('connection', (socket) => {
 
 	socket.on('message', (data) => {
 		io.emit('message', data);
-		if (webhooktoken){
-      const hook = new Webhook(webhooktoken);
+		if (dsbridgeconfig.webhooktoken){
+      const hook = new Webhook(dsbridgeconfig.webhooktoken);
       hook.setUsername(data.sender);
       hook.send(data.message.replace('@', '(at)'));
 		}
@@ -61,6 +65,22 @@ function worldsave(){
 	lastsaved = Date.now();
 	fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
 }
+
+// Discord bot bridging
+client.on("messageCreate", async message => {
+  if (message.author.bot) return;
+  if (message.webhookID) return;
+	if (message.channel != dsbridgeconfig.channelid) return;
+	const data = {"sender": "@<" + message.author.username + ">", "message":message.content};
+	io.emit('message', data);
+});
+
+client.once('ready', () => {
+	console.log('Bridge is ready!');
+});
+
+if (dsbridgeconfig.bottoken) client.login(dsbridgeconfig.bottoken);
+
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
