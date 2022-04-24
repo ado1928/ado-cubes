@@ -4,7 +4,8 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const fs = require('fs');
 const path = require('path');
-
+const { Webhook } = require('discord-webhook-node');
+const { webhooktoken } = require('./dsbridgeconfig');
 const port = 1928;
 
 var world = require('./world.json');
@@ -33,6 +34,11 @@ io.on('connection', (socket) => {
 
 	socket.on('message', (data) => {
 		io.emit('message', data);
+		if (webhooktoken){
+      const hook = new Webhook(webhooktoken);
+      hook.setUsername(data.sender);
+      hook.send(data.message.replace('@', '(at)'));
+		}
 	});
 
     socket.on('disconnect', (reason) => {
