@@ -10,36 +10,50 @@ const port = 1928;
 var world = require('./world.json');
 var lastsaved = Date.now();
 
+
 io.on('connection', (socket) => {
 	socket.emit('connected', world);
 
 	socket.on('place', (data) => {
 		pos = data.pos;
-		// Validate placement coordinates
-		for (const coord of pos){if (0 > coord > 63) return;}
-		// Set the block serverside
-		world[pos[0]][pos[1]][pos[2]] = data.color;
-		io.emit('place', data);
-
-		if (Date.now() - lastsaved > 60000) {
-			console.log('Saved world.');
-			lastsaved = Date.now();
-			fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
+		if (posvalid(pos) && !world[pos[0]][pos[1]][pos[2]] ){
+			world[pos[0]][pos[1]][pos[2]] = data.color;
+			io.emit('place', data);
+			if (Date.now() - lastsaved > 60000) worldsave();
 		}
 	});
 
 	socket.on('break', (data) => {
 		pos = data.pos;
-		for (const coord of pos){if (0 > coord > 63) return;}
-		world[pos[0]][pos[1]][pos[2]] = 0;
-		io.emit('break', data);
+		if (posvalid(pos)){
+			world[pos[0]][pos[1]][pos[2]] = 0;
+			io.emit('break', data);
+		}
 	});
 
 	socket.on('message', (data) => {
 		io.emit('message', data);
 	});
+
+	socket.on('disconnect', (reason) => {
+		if (io.engine.clientsCount == 0) worldsave();
+	});
+
+
 });
 
+
+function posvalid(pos){
+	let valid = true;
+	for (const coord of pos){if (0 > coord || coord > 63) valid=false;}
+	return(valid);
+}
+
+function worldsave(){
+	console.log('Saved world.');
+	lastsaved = Date.now();
+	fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
+}
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
