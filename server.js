@@ -18,7 +18,7 @@ io.on('connection', (socket) => {
 		// Validate placement coordinates
 		for (const coord of pos){if (0 > coord > 63) return;}
 		// Set the block serverside
-		world[pos[0]][pos[1]][pos[2]] = 1;
+		world[pos[0]][pos[1]][pos[2]] = data.color;
 		io.emit('place', data);
 
 		if (Date.now() - lastsaved > 60000) {
