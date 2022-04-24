@@ -306,7 +306,6 @@ function scrollToBottom(element) {
 }
 
 
-
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
 	verified = true;
@@ -343,7 +342,7 @@ export function verify(uuid) {
 window.verify = verify;
 
 // bypass captcha in debug
-// verify()
+verify()
 
 let cameraSpeed = 64.0;
 
