@@ -343,7 +343,7 @@ export function verify(uuid) {
 window.verify = verify;
 
 // bypass captcha in debug
-// verify()
+verify()
 
 let cameraSpeed = 64.0;
 
