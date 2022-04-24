@@ -218,7 +218,7 @@ let cubes = [];
 
 
 let colors = document.getElementById("palette").children;
-let color = colors.length - 1
+let color = 0
 
 function updateColor() {
 	color = (color % colors.length + colors.length) % colors.length;
@@ -243,12 +243,15 @@ window.onwheel = function (event) {
 	updateColor();
 }
 
+let materials = []
+for(var i = 0; i < colors.length; i++) {
+	materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor })
+}
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 
 function addCube(pos, col) {
-	material = new THREE.MeshStandardMaterial({ color: colors[col].style.backgroundColor });
-	let cube = new THREE.Mesh(geometry, material, 100);
+	let cube = new THREE.Mesh(geometry, materials[col], 100);
 	cube.position.set(pos.x, pos.y, pos.z);
 	cube.receiveShadow = true;
 	cube.castShadow = true;
@@ -321,7 +324,7 @@ export function verify(uuid) {
 			for (let y = 0; y < 64; y++) {
 				for (let z = 0; z < 64; z++) {
 					if (arr[x][y][z] > 0) {
-						addCube({ "x": x, "y": y, "z": z }, arr[x][y][z]);
+						addCube({ "x": x, "y": y, "z": z }, arr[x][y][z] - 1);
 					}
 				}
 			}

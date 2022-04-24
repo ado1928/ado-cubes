@@ -22,7 +22,7 @@ io.on('connection', (socket) => {
 	socket.on('place', (data) => {
 		pos = data.pos;
 		if (posvalid(pos) && !world[pos[0]][pos[1]][pos[2]] ){
-			world[pos[0]][pos[1]][pos[2]] = data.color;
+			world[pos[0]][pos[1]][pos[2]] = data.color + 1;
 			io.emit('place', data);
 			if (Date.now() - lastsaved > 60000) worldsave();
 		}
