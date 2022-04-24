@@ -1,3 +1,6 @@
 {
-  "webhooktoken":""
+  "webhooktoken":"",
+  "bottoken":"",
+  "channelid":""
 }
+
