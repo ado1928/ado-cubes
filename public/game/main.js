@@ -80,6 +80,8 @@ grid.visible = true;
 
 geometry = new THREE.PlaneBufferGeometry(2000, 2000);
 material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+
+// should be togglable
 let ground = new THREE.Mesh(geometry, material);
 ground.position.set(0, -0.51, 0)
 ground.rotateX(- Math.PI / 2);

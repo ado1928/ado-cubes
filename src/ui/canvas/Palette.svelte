@@ -1,4 +1,8 @@
 <div id="palette" class="box">
+	<div style="background:#FFFFFF;"/>
+	<div style="background:#D4D7D9;"/>
+	<div style="background:#898D90;"/>
+	<div style="background:#000000;"/>
 	<div style="background:#6D001A;"/>
 	<div style="background:#BE0039;"/>
 	<div style="background:#FF4500;"/>
@@ -26,8 +30,4 @@
 	<div style="background:#6D482F;"/>
 	<div style="background:#9C6926;"/>
 	<div style="background:#FFB470;"/>
-	<div style="background:#000000;"/>
-	<div style="background:#898D90;"/>
-	<div style="background:#D4D7D9;"/>
-	<div style="background:#FFFFFF;"/>
 </div>
