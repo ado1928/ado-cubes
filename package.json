@@ -4,7 +4,8 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "rollup -c",
-		"dev": "rollup -c -w"
+		"dev": "rollup -c -w",
+		"start": "sirv public --no-clear"
 	},
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "^21.1.0",
@@ -20,6 +21,7 @@
 	"dependencies": {
 		"express": "^4.17.3",
 		"http": "^0.0.1-security",
-		"socket.io": "^4.4.1"
+		"socket.io": "^4.4.1",
+		"sirv-cli": "^2.0.0"
 	}
 }

@@ -345,7 +345,6 @@ window.verify = verify;
 // bypass captcha in debug
 // verify()
 
-
 let cameraSpeed = 64.0;
 
 let moveForward = false;
