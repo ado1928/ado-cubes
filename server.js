@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
 
 	socket.on('break', (data) => {
 		pos = data.pos;
-		for (const coord of pos){if (0 > coord > 63) return;}
+		for (const coord of pos){if (0 > coord > 64) return;}
 		world[pos[0]][pos[1]][pos[2]] = 0;
 		io.emit('break', data);
 	});
@@ -38,6 +38,13 @@ io.on('connection', (socket) => {
 	socket.on('message', (data) => {
 		io.emit('message', data);
 	});
+
+    socket.on('disconnect', (reason) => {
+        if (io.engine.clientsCount == 0) {
+            lastsaved = Date.now();
+            fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
+        }
+    });
 });
 
 

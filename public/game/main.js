@@ -306,7 +306,6 @@ function scrollToBottom(element) {
 }
 
 
-
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
 	verified = true;
