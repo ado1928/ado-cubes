@@ -336,7 +336,7 @@ export function verify(uuid) {
 	socket.on('place', function (data) {
 		let pos = data.pos;
 		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
-		
+
 		//fancy block illumination, do not uncomment unless you want framerate to die
 		/*const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
 		bl.position.set(pos[0], pos[1], pos[2]);
@@ -354,7 +354,7 @@ export function verify(uuid) {
 window.verify = verify;
 
 // bypass captcha in debug
-verify()
+// verify()
 
 let cameraSpeed = 64.0;
 
