@@ -393,6 +393,12 @@ const onKeyDown = function (event) {
 			case "KeyG":
 				grid.visible = !grid.visible;
 				break;
+			case "KeyX":
+				placeCube(controls.getObject().position);
+				break;
+			case "KeyC":
+				breakCube(controls.getObject().position);
+				break;
 			case "Enter":
 				controls.unlock();
 				inputChat.focus();
@@ -409,11 +415,9 @@ const onKeyDown = function (event) {
 			case "Backslash":
 				cameraSpeed = 64.0;
 				break;
-			// this should be combined into one key
 			case "KeyO":
 				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none" :"block";
 				break;
-			//
 		}
 	}
 };
