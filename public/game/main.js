@@ -390,12 +390,6 @@ const onKeyDown = function (event) {
 			case 'ShiftLeft':
 				moveDown = true;
 				break;
-			case "KeyX":
-				placeCube(controls.getObject().position);
-				break;
-			case "KeyC":
-				breakCube(controls.getObject().position);
-				break;
 			case "KeyG":
 				grid.visible = !grid.visible;
 				break;
@@ -417,10 +411,7 @@ const onKeyDown = function (event) {
 				break;
 			// this should be combined into one key
 			case "KeyO":
-				uiCanvas.style.display = "block";
-				break;
-			case "KeyP":
-				uiCanvas.style.display = "none";
+				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none" :"block";
 				break;
 			//
 		}
@@ -453,7 +444,18 @@ const onKeyUp = function (event) {
 			break;
 	}
 };
+const onMouseDown = (event) => {
+    switch (event.which){
+        case 1:
+            breakCube(controls.getObject().position);
+            break;
+        case 3:
+            placeCube(controls.getObject().position);
+            break;
+    }
+}
 
+document.addEventListener("mousedown", onMouseDown);
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
