@@ -128,7 +128,7 @@ const texture = loader.load([
 ]);
 scene.background = texture
 
-const sun = new THREE.DirectionalLight(0xffffe0, 0.3);
+const sun = new THREE.DirectionalLight(0xffffff, 0.35);
 sun.position.set(20, 90, 50);
 sun.castShadow = true;
 scene.add(sun);
@@ -145,12 +145,12 @@ sun.shadow.camera.top = 35;
 sun.shadow.camera.bottom = -71;
 sun.shadow.autoUpdate = false;
 
-const dlight = new THREE.DirectionalLight(0xffffe0, 0.2);
+const dlight = new THREE.DirectionalLight(0xffffff, 0.2);
 dlight.position.set(0.3, 0.6, 0.5);
 dlight.castShadow = false;
 scene.add(dlight);
 
-const dlight2 = new THREE.DirectionalLight(0xffffe0, 0.15);
+const dlight2 = new THREE.DirectionalLight(0xffffff, 0.15);
 dlight2.position.set(-0.3, 0.6, -0.2);
 dlight2.castShadow = false;
 scene.add(dlight2);
@@ -171,6 +171,7 @@ placeInCamera.onclick = function () {
 }
 
 function placeCube(pos) {
+	
 	if (raycastPlacement) {
 		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 
@@ -250,6 +251,7 @@ for(var i = 0; i < colors.length; i++) {
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 
+
 function addCube(pos, col) {
 	let cube = new THREE.Mesh(geometry, materials[col], 100);
 	cube.position.set(pos.x, pos.y, pos.z);
@@ -308,7 +310,6 @@ function scrollToBottom(element) {
 	element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
 }
 
-
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
 	verified = true;
@@ -320,6 +321,7 @@ export function verify(uuid) {
 	socket.on('connected', function (arr) {
 		console.log(arr);
 		window.arr = arr;
+		cubes.forEach(e => {scene.remove(e)});
 		for (let x = 0; x < 64; x++) {
 			for (let y = 0; y < 64; y++) {
 				for (let z = 0; z < 64; z++) {
@@ -334,6 +336,13 @@ export function verify(uuid) {
 	socket.on('place', function (data) {
 		let pos = data.pos;
 		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
+		
+		//fancy block illumination, do not uncomment unless you want framerate to die
+		/*const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
+		bl.position.set(pos[0], pos[1], pos[2]);
+		bl.castShadow = false;
+		console.log(bl);
+		scene.add( bl );*/
 	});
 
 	socket.on('break', function (data) {
