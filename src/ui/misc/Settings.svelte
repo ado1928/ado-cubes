@@ -6,48 +6,51 @@
 
 		return `${r} ${g} ${b}`;
 	}
-
-	function loadSettings() {
-		document.documentElement.style.setProperty("--box-foreground", localStorage.getItem("boxfg"));
-		document.documentElement.style.setProperty("--box-background", localStorage.getItem("boxbg"));
-		document.documentElement.style.setProperty("--box-background-blur", localStorage.getItem("boxbgblur"));
-		document.documentElement.style.setProperty("--box-padding", localStorage.getItem("boxpadding"));
-		document.documentElement.style.setProperty("--chat-width", localStorage.getItem("chatwidth"));
-		document.documentElement.style.setProperty("--chat-maxheight", localStorage.getItem("chatmaxheight"));
-	};
-
-
-	function defaultSettings() {
-		localStorage.clear()
-		loadSettings();
-	};
-
-	function applySettings() {
-		// will need to put them all into one item, but for now i am too lazy to get into that
-		localStorage.setItem("boxfg", boxfg.value);
-		localStorage.setItem("boxbg", "rgb(" + HexToRGB(boxbg.value) + " / " + boxopacity.value + "%)");
-		localStorage.setItem("boxbgblur", boxbgblur.value + "px");
-		localStorage.setItem("boxpadding", boxpadding.value + "px");
-		localStorage.setItem("chatwidth", chatwidth.value + "px");
-		localStorage.setItem("chatmaxheight", chatmaxheight.value + "px");
-		loadSettings();
-	};
-
-	window.onload = function() {
-		loadSettings();
-	};
 </script>
 
 <div id="winSettings" class="box win center">
 	<slot/>
-	<strong>UI</strong><br>
-	<div><strong>NOTE:</strong> Blur does not properly work in Firefox</div>
-	<div>Foreground color <input id="boxfg" type="color" value="#ffffff"></div>
-	<div>Background color <input id="boxbg" type="color" value="#000000"></div>
-	<div>Background opacity <input id="boxopacity" type="range" min="0" max="100" value="64"></div>
-	<div>Background blur <input id="boxbgblur" type="range" min="0" max="16" value="6"/></div>
-	<div>Padding <input id="boxpadding" type="range" min="4" max="8" value="6"></div>
-	<div>Chat width<input id="chatwidth" type="range" min="160" max="1600" value="420"></div>
-	<div>Chat max height<input id="chatmaxheight" type="range" min="160" max="1600" value="420"></div>
-	<button on:click={applySettings}>Apply</button><button on:click={defaultSettings}>Default</button>
+	<div>
+		<h1>General</h1>
+		<div>Language
+			<select id="generalLanguage">
+				<option value="english">English</option>
+				<option value="onlyEnglish">Only English.</option>
+			</select>
+		</div>
+
+		<h1>Input</h1>
+		<div>Movement
+			<select id="inputMovement">
+				<option value="wasd">WASD</option>
+				<option value="arrow">Arrow keys</option>
+				<option value="custom">Custom</option>
+			</select>
+			<input value="KeyW">
+			<input value="KeyA">
+			<input value="KeyS">
+			<input value="KeyD">
+		</div>
+		<div>Place blocks <input id="inputPlaceBlocks" value="KeyX"></div>
+		<div>Remove blocks <input id="inputRemoveBlocks" value="KeyC"></div>
+
+		<h1>Audio</h1>
+		<div>Master <input id="volumeMaster" type="range"></div>
+		<div>Music <input id="volumeMusic" type="range"></div>
+		<div>SFX <input id="volumeSFX" type="range"></div>
+		<div>UI <input id="volumeUI" type="range"></div>
+
+		<h1>Performance</h1>
+		<div>idk what to put here</div>
+
+		<h1>Miscellaneous</h1>
+		<div>Disable shadows (why?) <input type="checkbox"></div>
+		<div>Disable ground <input type="checkbox"></div>
+
+		<h1>Theme</h1>
+		<div><strong>NOTE:</strong> Blur does not properly work in Firefox</div>
+		<div style="background:#000;height:130px;width:-moz-available;width:-webkit-fill-available"></div>
+		<input type="file">
+		<!-- <button on:click={applySettings}>Apply</button><button on:click={defaultSettings}>Default</button> -->
+	</div>
 </div>

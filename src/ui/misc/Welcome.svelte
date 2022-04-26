@@ -1,5 +1,15 @@
+<script>
+	let src = "./images/logo/adocubes-logo.svg";
+	let style = "position:absolute;transform:translate(-50%, -174px);left:50%;z-index:-1;";
+	//  when you see it
+	if (Math.floor(Math.random() * 727) == 1) {
+		src = "./images/logo/ado.svg";
+		style = "position:absolute;transform:translate(-50%, -164px);left:50%;z-index:-1;";
+	}
+</script>
+
 <div id="winWelcome" class="box win center" style="top:62%">
-	<img src="./images/svgs/adocubes-logo.svg" style="position:absolute;transform:translate(-50%, -174px);left:50%;z-index:-1;">
+	<img id="welcomeLogo" {src} {style}>
 	<br><br>
 	Username: <input id="inputUsername" type="text"><br>
 	Password: <input id="inputPassword" type="text" value="this input does nothing for now. pls ignore"><br>
