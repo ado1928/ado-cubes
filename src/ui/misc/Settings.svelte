@@ -26,13 +26,18 @@
 				<option value="arrow">Arrow keys</option>
 				<option value="custom">Custom</option>
 			</select>
-			<input value="KeyW">
-			<input value="KeyA">
-			<input value="KeyS">
-			<input value="KeyD">
+			<div id="customMovement">
+				<input value="KeyW">
+				<input value="KeyA">
+				<input value="KeyS">
+				<input value="KeyD">
+			</div>
 		</div>
 		<div>Place blocks <input id="inputPlaceBlocks" value="KeyX"></div>
+		<div>Secondary <input id="inputSecondaryPlaceBlocks" value="MouseRight"></div>
 		<div>Remove blocks <input id="inputRemoveBlocks" value="KeyC"></div>
+		<div>Secondary <input id="inputSecondaryRemoveBlocks" value="MouseLeft"></div>
+		<div>Palette skip <input id="inputPaletteSkip" value="AltLeft"></div>
 
 		<h1>Audio</h1>
 		<div>Master <input id="volumeMaster" type="range"></div>

@@ -15,6 +15,7 @@ const port = 1928;
 var world = require('./world.json');
 var lastsaved = Date.now();
 
+const hook = new Webhook(dsbridgeconfig.webhooktoken);
 
 io.on('connection', (socket) => {
 	socket.emit('connected', world);
@@ -24,7 +25,7 @@ io.on('connection', (socket) => {
 		if (posvalid(pos) && !world[pos[0]][pos[1]][pos[2]] ){
 			world[pos[0]][pos[1]][pos[2]] = data.color + 1;
 			io.emit('place', data);
-			if (Date.now() - lastsaved > 60000) worldsave();
+			if (Date.now() - lastsaved > 60000) worldsave()
 		}
 	});
 
@@ -32,38 +33,45 @@ io.on('connection', (socket) => {
 		pos = data.pos;
 		if (posvalid(pos)){
 			world[pos[0]][pos[1]][pos[2]] = 0;
-			io.emit('break', data);
+			io.emit('break', data)
 		}
 	});
 
 	socket.on('message', (data) => {
 		io.emit('message', data);
-		if (dsbridgeconfig.webhooktoken){
-      const hook = new Webhook(dsbridgeconfig.webhooktoken);
-      hook.setUsername(data.sender);
-      hook.send(data.message.replace('@', '(at)'));
+		if (dsbridgeconfig.webhooktoken) {
+			hook.setUsername(data.sender);
+			hook.send(data.message.replace('@', '(at)'))
 		}
 	});
 
-    socket.on('disconnect', (reason) => {
-        if (io.engine.clientsCount == 0) {
-            lastsaved = Date.now();
-            worldsave()
-        }
-    });
+	socket.on('serverMessage', (data) => {
+		io.emit('serverMessage', data);
+		if (dsbridgeconfig.webhooktoken) {
+			hook.setUsername("Server");
+			hook.send(data.message)
+		}
+	});
+
+	socket.on('disconnect', (reason) => {
+		if (io.engine.clientsCount == 0) {
+			lastsaved = Date.now();
+			worldsave()
+		}
+	});
 });
 
 
-function posvalid(pos){
+function posvalid(pos) {
 	let valid = true;
-	for (const coord of pos){if (0 > coord || coord > 63) valid=false;}
-	return(valid);
+	for (const coord of pos) { if (0 > coord || coord > 63) valid=false; }
+	return(valid)
 }
 
-function worldsave(){
+function worldsave() {
 	console.log('Saved world.');
 	lastsaved = Date.now();
-	fs.writeFile('./world.json', JSON.stringify(world), err => {if(err) throw err;});
+	fs.writeFile('./world.json', JSON.stringify(world), err => { if(err) throw err; });
 }
 
 // Discord bot bridging
@@ -75,9 +83,7 @@ client.on("messageCreate", async message => {
 	io.emit('message', data);
 });
 
-client.once('ready', () => {
-	console.log('Bridge is ready!');
-});
+client.once('ready', () => { console.log('Bridge is ready!') });
 
 if (dsbridgeconfig.bottoken) client.login(dsbridgeconfig.bottoken);
 
@@ -90,4 +96,4 @@ app.get('/', (req, res) => {
 	if (req.url == '/') res.sendFile(__dirname + '/' + 'public/index.html');
 });
 
-http.listen(port, () => {console.log(`listening to http://localhost:${port}/`)});
+http.listen(port, () => { console.log(`listening to http://localhost:${port}/`) });

@@ -1,8 +1,7 @@
 <div id="winCredits" class="box win center">
 	<slot/>
 
-	<img src="./images/svgs/adocubes.svg" alt="adocubes" target="_blank" rel="noopener noreferrer"><br>
-	<a href="https://github.com/ado1928/ado-cubes" target="_blank" rel="noopener noreferrer">Source code</a> • <a href="https://discord.gg/rNMTeADfnc" target="_blank" rel="noopener noreferrer">Discord server</a><br><br>
+	<img src="./images/logo/adocubes.svg" alt="adocubes" target="_blank" rel="noopener noreferrer"><br>
 
 	adocubes by <a href="https://github.com/ado1928" target="_blank" rel="noopener noreferrer">Ado1928</a><br>
 	Back-End developer - <a href="https://github.com/ifritdiezel" target="_blank" rel="noopener noreferrer">ifritdiezel</a><br>

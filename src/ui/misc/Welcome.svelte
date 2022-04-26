@@ -1,5 +1,5 @@
 <script>
-	let src = "./images/logo/adocubes-logo.svg";
+	let src = "./images/logo/adocubes-full.svg";
 	let style = "position:absolute;transform:translate(-50%, -174px);left:50%;z-index:-1;";
 	//  when you see it
 	if (Math.floor(Math.random() * 727) == 1) {
