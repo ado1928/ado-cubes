@@ -286,7 +286,6 @@ function removeCube(pos) {
 			
 			for(var j = 0; j < geometries[e.col].length; j++) {
 				if(c.igeometry.id == geometries[e.col][j].id) {
-					
 					geometries[e.col].splice(j, 1);
 					updateWorld(e.col);
 					sun.shadow.needsUpdate = true;
@@ -338,16 +337,14 @@ function scrollToBottom(element) {
 
 function updateWorld(col) {
 	//console.log(col)
-	if(geometries[col].length > 0) {
-		scene.remove(worlds[col])
-		const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
-		//console.log(mergedGeometry)
-		worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
-		worlds[col].castShadow = true;
-		worlds[col].receiveShadow = true;
-		scene.add(worlds[col]);
-		sun.shadow.needsUpdate = true;
-	}
+	scene.remove(worlds[col])
+	const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+	//console.log(mergedGeometry)
+	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
+	worlds[col].castShadow = true;
+	worlds[col].receiveShadow = true;
+	scene.add(worlds[col]);
+	sun.shadow.needsUpdate = true;
 }
 
 window.updateWorld = updateWorld;
