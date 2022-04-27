@@ -505,14 +505,11 @@ const onKeyUp = function (event) {
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
+
 function render() {
 	requestAnimationFrame(render)
 
 	const delta = clock.getDelta();
-
-	velocity.x *= 0.9;
-	velocity.z *= 0.9;
-	velocity.y *= 0.9;
 
 	if (verified) {
 		if (moveForward) velocity.z += cameraSpeed * delta;
@@ -523,12 +520,14 @@ function render() {
 		if (moveDown) velocity.y -= cameraSpeed * delta;
 	};
 
+	velocity.multiplyScalar(Math.pow(0.02, delta));
+
 	controls.moveRight(velocity.x * delta);
 	controls.moveForward(velocity.z * delta);
 	controls.getObject().position.y += velocity.y * delta;
 
 	let pos = controls.getObject().position;
-
+	
 	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
 
 	renderer.render(scene, camera);
