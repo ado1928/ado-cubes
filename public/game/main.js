@@ -338,12 +338,15 @@ function scrollToBottom(element) {
 function updateWorld(col) {
 	//console.log(col)
 	scene.remove(worlds[col])
-	const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
-	//console.log(mergedGeometry)
-	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
-	worlds[col].castShadow = true;
-	worlds[col].receiveShadow = true;
-	scene.add(worlds[col]);
+	if(geometries[col].length > 0) {
+		const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+		//console.log(mergedGeometry)
+		worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
+		worlds[col].castShadow = true;
+		worlds[col].receiveShadow = true;
+		scene.add(worlds[col]);
+		sun.shadow.needsUpdate = true;
+	}
 	sun.shadow.needsUpdate = true;
 }
 
