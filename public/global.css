@@ -22,40 +22,53 @@
 html body { background: #000; margin: 0; font-family: 'Cousine'; font-size: var(--font-size);}
 iframe { position: absolute !important; overflow: visible !important; }
 
-* { text-shadow: 1px 1px #000; }
-p { margin: 0; }
-h1 { margin-bottom: 0; }
-a { color: #90bcff; }
+*		{ text-shadow: 1px 1px #000; }
+p		{ margin: 0; }
+h1		{ margin-bottom: 0; }
+a		{ color: #90bcff; }
+a:hover	{ font-weight: bold; }
 
 button {
 	color: var(--box-foreground);
 	background: 0;
 	border: 0;
-	border-radius: 2px;
+	border-radius: 4px;
 	padding: 6px;
 	height: fit-content;
 	font-family: 'Cousine';
 	font-size: var(--font-size);
 }
 
-@keyframes buttonhover { from {letter-spacing: 0px;} to {letter-spacing: 1px;} }
+@keyframes buttonhover { from {letter-spacing: 0px;} to {letter-spacing: 2px;} }
 
 button:hover {
-	background: #fff4;
+	cursor: pointer;
+	background: #fff3;
+	outline: 1px solid #fff6;
 	font-weight: bold;
 	letter-spacing: 0px;
 	animation-name: buttonhover;
-	animation-duration: 0.08s;
+	animation-duration: 0.1s;
+	animation-fill-mode: both;
 	animation-timing-function: ease-out;
-	animation-iteration-count: 2;
-	animation-direction: alternate;
 }
 
 *:focus					 { filter: drop-shadow(0 0 6px #000); }
-input					 { color: #fff; background: #101010aa; border: 1px solid #505050aa; border-radius: 3px; height: 18px }
+input					 { color: #fff; background: #101010aa; border: 1px solid #505050aa; border-radius: 6px; height: 18px; padding: 2px 6px; }
 input[type="text"]:hover { background: #202020aa; }
 input[type="text"]:focus { background: #000; border: #fff; }
 input[type="range"]		 { color: #000; background: #fff; outline: 0; width: -moz-available; width: -webkit-fill-available; margin: 0; }
+
+::-webkit-scrollbar {
+	background: var(--box-background);
+	width: 6px;
+	border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #aaa;
+	border-radius: 6px;
+}
 
 .box {
 	position: absolute;
@@ -97,8 +110,8 @@ input[type="range"]		 { color: #000; background: #fff; outline: 0; width: -moz-a
 #messages			 { max-height: calc(var(--chat-maxheight) - (var(--box-padding)*4)); overflow-y: scroll; }
 #inputChat			 { width: -moz-available; width: -webkit-fill-available; margin-top: 4px; }
 
-#winWelcome			 { display: block; padding: 16px; width: 620px; height: auto; }
-#inputUsername, #inputPassword { width: -moz-available ;width: -webkit-fill-available; margin: 6px 0; padding: 0 3px; }
+#winWelcome			 { display: block; padding: 16px; width: 620px; height: auto;}
+#inputUsername, #inputPassword { width: -moz-available ;width: -webkit-fill-available; margin: 6px 0; }
 
 #winSettings 		 { overflow-y: scroll; }
 #customMovement *	 { width: 72px; }

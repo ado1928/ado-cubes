@@ -1,15 +1,21 @@
 <script>
 	let src = "./images/logo/adocubes-full.svg";
-	let style = "position:absolute;transform:translate(-50%, -174px);left:50%;z-index:-1;";
-	//  when you see it
-	if (Math.floor(Math.random() * 727) == 1) {
-		src = "./images/logo/ado.svg";
-		style = "position:absolute;transform:translate(-50%, -164px);left:50%;z-index:-1;";
-	}
+	let style = "position:absolute;transform:translate(-50%, -174px);left:50%;";
+
+	if (Math.floor(Math.random() * 70) == 1) {
+		src = "./images/logo/odacebus.svg";
+	} else if (Math.floor(Math.random() * 9) == 1) {
+		src = "./images/logo/aaaaaaaa.svg"
+	} else if (Math.floor(Math.random() * 727) == 1) {
+		src = "./images/logo/ado!.svg";
+		style = "position:absolute;transform:translate(-50%, -164px);left:50%;";
+	} 
 </script>
 
 <div id="winWelcome" class="box win center" style="top:62%">
-	<img id="welcomeLogo" {src} {style}>
+	<div>
+		<img id="welcomeLogo" {src} {style}>
+	</div>
 	<br><br>
 	Username: <input id="inputUsername" type="text"><br>
 	Password: <input id="inputPassword" type="text" value="this input does nothing for now. pls ignore"><br>

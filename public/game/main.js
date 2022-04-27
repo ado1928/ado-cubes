@@ -169,8 +169,10 @@ placeInCamera.onclick = function () {
 	crosshair.style.display = "none"
 };
 
+let place = new Audio('./audio/place.ogg');
+let remove = new Audio('./audio/remove.ogg');
+
 function placeCube(pos) {
-	
 	if (raycastPlacement) {
 		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 
@@ -192,8 +194,10 @@ function placeCube(pos) {
 			}
 		}
 	} else {
-		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] , "color" : color });
-	}
+		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] , "color" : color })
+	};
+	place.currentTime = 0;
+	place.play()
 }
 
 function breakCube(pos) {
@@ -211,7 +215,9 @@ function breakCube(pos) {
 		}
 	} else {
 		socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
-	}
+	};
+	remove.currentTime = 0;
+	remove.play()
 };
 
 let cubes = [];
@@ -276,13 +282,11 @@ function escapeHTML(unsafe) {
 		.replace(/>/g, "&gt;")
 		.replace(/"/g, "&quot;")
 		.replace(/'/g, "&#039;")
+		.replace(/`/g, "&#96;")
 }
 
 let nick = "";
 let verified = false;
-if (verified) {
-	noNeedToVerify.style.display = "block"
-};
 
 inputUsername.onkeydown = function (input) {
 	if (input.key == "Enter" && inputUsername.value !== "") {
@@ -292,14 +296,14 @@ inputUsername.onkeydown = function (input) {
 			nick = inputUsername.value;
 			winWelcome.style.display = "none";
 			uiCanvas.style.display = "block";
-			socket.emit("message", { "message": "has joined the game!", "sender": nick })
+			socket.emit("serverMessage", { "message":  nick + " has joined the server!" })
 		}
 	}
 };
 
 inputChat.onkeydown = function (chanter) {
 	if (chanter.key == "Enter" && nick !== "" && inputChat.value !== "") {
-		socket.emit("message", { "message": inputChat.value, "sender": "<" + nick + ">" });
+		socket.emit("message", { "message": inputChat.value, "sender": nick });
 		inputChat.value = ""
 	}
 };
@@ -312,12 +316,13 @@ export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
 	verified = true;
 	socket.on('message', function (data) {
-		messages.insertAdjacentHTML('beforeend', "<b> " + escapeHTML(data["sender"]) + "</b> " + escapeHTML(data["message"]) + "<br>")
+		messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + ":</b> " + escapeHTML(data["message"]) + "<br>")
 		scrollToBottom(messages)
 	});
 
 	socket.on('serverMessage', function (data) {
-		messages.insertAdjacentHTML('beforeend', escapeHTML(data["serverMessage"]))
+		messages.insertAdjacentHTML('beforeend', escapeHTML(data["message"]) + "<br>");
+		scrollToBottom(messages)
 	});
 
 	socket.on('connected', function (arr) {
@@ -340,12 +345,13 @@ export function verify(uuid) {
 
 		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
 
-		//fancy block illumination, do not uncomment unless you want framerate to die
-		/*const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
+		// fancy block illumination, do not uncomment unless you want framerate to die
+		/*
+		const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
 		bl.position.set(pos[0], pos[1], pos[2]);
 		bl.castShadow = false;
-		console.log(bl);
-		scene.add( bl );*/
+		scene.add(bl);
+		*/
 	});
 
 	socket.on('break', function (data) {
@@ -476,6 +482,22 @@ const onMouseDown = (event) => {
 canvas.addEventListener('mousedown', onMouseDown);
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
+
+let click = new Audio('./audio/ui/click.ogg');
+let hover = new Audio('./audio/ui/hover.ogg');
+
+const buttons = document.getElementsByTagName('button');
+
+for (var i = 0; i < buttons.length; i++) {
+	buttons[i].onmouseover = function() {
+		hover.currentTime = 0;
+		hover.play()
+	}
+	buttons[i].onmousedown = function() {
+		click.currentTime = 0;
+		click.play()
+	}
+}
 
 function render() {
 	requestAnimationFrame(render);

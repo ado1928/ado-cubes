@@ -41,7 +41,8 @@ io.on('connection', (socket) => {
 		io.emit('message', data);
 		if (dsbridgeconfig.webhooktoken) {
 			hook.setUsername(data.sender);
-			hook.send(data.message.replace('@', '(at)'))
+			hook.setAvatar();
+			hook.send(data.message)
 		}
 	});
 
@@ -49,6 +50,7 @@ io.on('connection', (socket) => {
 		io.emit('serverMessage', data);
 		if (dsbridgeconfig.webhooktoken) {
 			hook.setUsername("Server");
+			hook.setAvatar("https://cdn.discordapp.com/attachments/968866349633896488/968866464150978620/favicon.png");
 			hook.send(data.message)
 		}
 	});
@@ -79,8 +81,7 @@ client.on("messageCreate", async message => {
   if (message.author.bot) return;
   if (message.webhookID) return;
 	if (message.channel != dsbridgeconfig.channelid) return;
-	const data = {"sender": "@<" + message.author.username + ">", "message":message.content};
-	io.emit('message', data);
+	io.emit('message', { "sender": "[" + message.author.username + "]", "message": message.content });
 });
 
 client.once('ready', () => { console.log('Bridge is ready!') });

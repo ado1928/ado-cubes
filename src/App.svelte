@@ -15,18 +15,20 @@
 
 <Welcome/>
 
-<div id="uiCanvas">
-	<!-- maybe -->
-	<div id="itsEditTime">
-		<SwitchPlacement/>
-		<Palette/>
+<main>
+	<div id="uiCanvas">
+		<!-- maybe -->
+		<div id="itsEditTime">
+			<SwitchPlacement/>
+			<Palette/>
+		</div>
+		<Coordinates/>
+		<Chat/>
+		<img id="crosshair" class="center" src="./images/svgs/crosshair.svg" alt="+">
 	</div>
-	<Coordinates/>
-	<Chat/>
-	<img id="crosshair" class="center" src="./images/svgs/crosshair.svg" alt="+">
-</div>
 
-<Esc/>
-<Controls><EscWinNavs>Controls</EscWinNavs></Controls>
-<Settings><EscWinNavs>Settings</EscWinNavs></Settings>
-<Credits><EscWinNavs>Credits</EscWinNavs></Credits>
+	<Esc/>
+	<Controls><EscWinNavs>Controls</EscWinNavs></Controls>
+	<Settings><EscWinNavs>Settings</EscWinNavs></Settings>
+	<Credits><EscWinNavs>Credits</EscWinNavs></Credits>
+</main>

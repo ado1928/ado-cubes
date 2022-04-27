@@ -6,6 +6,11 @@
 
 		return `${r} ${g} ${b}`;
 	}
+
+	let masterVolume = 100;
+	let musicVolume = 100;
+	let sfxVolume = 100;
+	let uiVolume = 100;
 </script>
 
 <div id="winSettings" class="box win center">
@@ -21,7 +26,7 @@
 
 		<h1>Input</h1>
 		<div>Movement
-			<select id="inputMovement">
+			<select id="inputMovement" value="wasd">
 				<option value="wasd">WASD</option>
 				<option value="arrow">Arrow keys</option>
 				<option value="custom">Custom</option>
@@ -37,19 +42,21 @@
 		<div>Secondary <input id="inputSecondaryPlaceBlocks" value="MouseRight"></div>
 		<div>Remove blocks <input id="inputRemoveBlocks" value="KeyC"></div>
 		<div>Secondary <input id="inputSecondaryRemoveBlocks" value="MouseLeft"></div>
-		<div>Palette skip <input id="inputPaletteSkip" value="AltLeft"></div>
+		<div>Faster palette scroll <input id="inputFasterPaletteScroll" value="AltLeft"></div>
 
 		<h1>Audio</h1>
-		<div>Master <input id="volumeMaster" type="range"></div>
-		<div>Music <input id="volumeMusic" type="range"></div>
-		<div>SFX <input id="volumeSFX" type="range"></div>
-		<div>UI <input id="volumeUI" type="range"></div>
+		<div>Master {masterVolume} <input id="masterVolume" type="range" bind:value={masterVolume}></div>
+		<div>Music {musicVolume} <input id="musicVolume" type="range" bind:value={musicVolume}></div>
+		<div>SFX {sfxVolume} <input id="sfxVolume" type="range" bind:value={sfxVolume}></div>
+		<div>UI {uiVolume} <input id="uiVolume" type="range" bind:value={uiVolume}></div>
+
+		<div>Disable place and remove sounds <input type="checkbox"></div>
 
 		<h1>Performance</h1>
 		<div>idk what to put here</div>
 
 		<h1>Miscellaneous</h1>
-		<div>Disable shadows (why?) <input type="checkbox"></div>
+		<div>Disable text shadows <input type="checkbox"></div>
 		<div>Disable ground <input type="checkbox"></div>
 
 		<h1>Theme</h1>
