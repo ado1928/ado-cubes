@@ -32,23 +32,23 @@
 				<option value="custom">Custom</option>
 			</select>
 			<div id="customMovement">
-				<input value="KeyW">
-				<input value="KeyA">
-				<input value="KeyS">
-				<input value="KeyD">
+				<input type="text" value="KeyW">
+				<input type="text" value="KeyA">
+				<input type="text" value="KeyS">
+				<input type="text" value="KeyD">
 			</div>
 		</div>
-		<div>Place blocks <input id="inputPlaceBlocks" value="KeyX"></div>
-		<div>Secondary <input id="inputSecondaryPlaceBlocks" value="MouseRight"></div>
-		<div>Remove blocks <input id="inputRemoveBlocks" value="KeyC"></div>
-		<div>Secondary <input id="inputSecondaryRemoveBlocks" value="MouseLeft"></div>
-		<div>Faster palette scroll <input id="inputFasterPaletteScroll" value="AltLeft"></div>
+		<div>Place blocks <input id="inputPlaceBlocks" type="text" value="KeyX"></div>
+		<div>Secondary <input id="inputSecondaryPlaceBlocks" type="text" value="MouseRight"></div>
+		<div>Remove blocks <input id="inputRemoveBlocks" type="text" value="KeyC"></div>
+		<div>Secondary <input id="inputSecondaryRemoveBlocks" type="text" value="MouseLeft"></div>
+		<div>Faster palette scroll <input id="inputFasterPaletteScroll" type="text" value="AltLeft"></div>
 
 		<h1>Audio</h1>
-		<div>Master {masterVolume} <input id="masterVolume" type="range" bind:value={masterVolume}></div>
-		<div>Music {musicVolume} <input id="musicVolume" type="range" bind:value={musicVolume}></div>
-		<div>SFX {sfxVolume} <input id="sfxVolume" type="range" bind:value={sfxVolume}></div>
-		<div>UI {uiVolume} <input id="uiVolume" type="range" bind:value={uiVolume}></div>
+		<div>Master {masterVolume} <input id="masterVolume" class="slider" type="range" bind:value={masterVolume}></div>
+		<div>Music {musicVolume} <input id="musicVolume" class="slider" type="range" bind:value={musicVolume}></div>
+		<div>SFX {sfxVolume} <input id="sfxVolume" class="slider" type="range" bind:value={sfxVolume}></div>
+		<div>UI {uiVolume} <input id="uiVolume" class="slider" type="range" bind:value={uiVolume}></div>
 
 		<div>Disable place and remove sounds <input type="checkbox"></div>
 
