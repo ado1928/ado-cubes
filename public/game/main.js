@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { PointerLockControls } from "/game/jsm/controls/PointerLockControls.js";
+import * as BufferGeometryUtils from '/game/jsm/utils/BufferGeometryUtils.js';
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -14,6 +15,8 @@ camera.lookAt(64, 32, 64);
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const controls = new PointerLockControls(camera, renderer.domElement)
+
+let worlds = [];
 
 let vert = `
 varying vec2 vUv;
@@ -171,29 +174,26 @@ placeInCamera.onclick = function () {
 }
 
 function placeCube(pos) {
-	
+
 	if (raycastPlacement) {
 		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
-
 		const intersects = raycaster.intersectObjects(scene.children);
-
 		if (intersects.length > 0) {
 			const intersect = intersects[0];
 			let pos = new THREE.Vector3();
 			if (intersect.object == grid) {
 				pos.sub(intersect.face.normal);
-				pos.multiplyScalar(0.5);
-				pos.add(intersect.point);
-				socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color" : color});
 			} else {
-				pos.add(intersect.object.position)
 				pos.add(intersect.face.normal)
-				console.log(pos)
-				socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] , "color" : color});
 			}
+
+			pos.multiplyScalar(0.5);
+			pos.add(intersect.point)
+			console.log(pos)
+			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
 		}
 	} else {
-		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] , "color" : color});
+		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
 	}
 }
 
@@ -206,7 +206,9 @@ function breakCube(pos) {
 		if (intersects.length > 0) {
 			const intersect = intersects[0];
 			let pos = new THREE.Vector3();
-			pos.add(intersect.object.position)
+			pos.sub(intersect.face.normal);
+			pos.multiplyScalar(0.5);
+			pos.add(intersect.point)
 			console.log(pos)
 			socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
 		}
@@ -245,30 +247,54 @@ window.onwheel = function (event) {
 }
 
 let materials = []
-for(var i = 0; i < colors.length; i++) {
+for (var i = 0; i < colors.length; i++) {
 	materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor })
 }
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 
+let geometries = []
+for(var i = 0; i < colors.length; i++) {
+	geometries[i] = [];
+}
 
 function addCube(pos, col) {
 	let cube = new THREE.Mesh(geometry, materials[col], 100);
 	cube.position.set(pos.x, pos.y, pos.z);
 	cube.receiveShadow = true;
 	cube.castShadow = true;
+	cube.col = col;
 	cubes.push(cube)
-	scene.add(cube);
-	sun.shadow.needsUpdate = true;
+
+	const matrix = new THREE.Matrix4();
+	matrix.compose(pos, new THREE.Quaternion(1, 0, 0, 0), new THREE.Vector3(1, 1, 1));
+	const instanceGeometry = geometry.clone();
+	instanceGeometry.applyMatrix4(matrix);
+	cube.igeometry = instanceGeometry;
+	geometries[col].push(instanceGeometry);
+
+	//scene.add(cube);
+
 }
 
 function removeCube(pos) {
-	cubes.forEach(e => {
-		if (~~e.position.x == ~~pos.x && ~~e.position.y == ~~pos.y && ~~e.position.z == ~~pos.z) {
-			scene.remove(e)
+	console.log(pos)
+	for(var i = 0; i < cubes.length; i++) {
+		let e = cubes[i]
+		if (~~e.position.x == ~~(pos.x + 0.5) && ~~e.position.y == ~~(pos.y + 0.5) && ~~e.position.z == ~~(pos.z + 0.5)) {
+			let c = cubes.splice(i, 1)[0];
+			
+			for(var j = 0; j < geometries[e.col].length; j++) {
+				if(c.igeometry.id == geometries[e.col][j].id) {
+					
+					geometries[e.col].splice(j, 1);
+					updateWorld(e.col);
+					sun.shadow.needsUpdate = true;
+					return;
+				}
+			}
 		}
-	});
-	sun.shadow.needsUpdate = true;
+	}
 }
 
 function escapeHTML(unsafe) {
@@ -310,6 +336,22 @@ function scrollToBottom(element) {
 	element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
 }
 
+function updateWorld(col) {
+	//console.log(col)
+	if(geometries[col].length > 0) {
+		scene.remove(worlds[col])
+		const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+		//console.log(mergedGeometry)
+		worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
+		worlds[col].castShadow = true;
+		worlds[col].receiveShadow = true;
+		scene.add(worlds[col]);
+		sun.shadow.needsUpdate = true;
+	}
+}
+
+window.updateWorld = updateWorld;
+
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
 	verified = true;
@@ -321,7 +363,8 @@ export function verify(uuid) {
 	socket.on('connected', function (arr) {
 		console.log(arr);
 		window.arr = arr;
-		cubes.forEach(e => {scene.remove(e)});
+		cubes.forEach(e => { scene.remove(e) });
+
 		for (let x = 0; x < 64; x++) {
 			for (let y = 0; y < 64; y++) {
 				for (let z = 0; z < 64; z++) {
@@ -331,12 +374,17 @@ export function verify(uuid) {
 				}
 			}
 		};
+
+		for(var i = 0; i < colors.length; i++) {
+			updateWorld(i);
+		}
+		
 	});
 
 	socket.on('place', function (data) {
 		let pos = data.pos;
 		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
-
+		updateWorld(data.color)
 		//fancy block illumination, do not uncomment unless you want framerate to die
 		/*const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
 		bl.position.set(pos[0], pos[1], pos[2]);
@@ -354,7 +402,7 @@ export function verify(uuid) {
 window.verify = verify;
 
 // bypass captcha in debug
-// verify()
+verify()
 
 let cameraSpeed = 64.0;
 
@@ -459,6 +507,7 @@ document.addEventListener('keyup', onKeyUp);
 
 function render() {
 	requestAnimationFrame(render)
+
 	const delta = clock.getDelta();
 
 	velocity.x *= 0.9;
