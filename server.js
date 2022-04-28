@@ -13,6 +13,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES + Intents.FLA
 const port = 1928;
 
 var world = require('./world.json');
+//var world = Array(64).fill(null).map(()=>Array(64).fill(null).map(()=>Array(64).fill(1)))
 var lastsaved = Date.now();
 
 const hook = new Webhook(dsbridgeconfig.webhooktoken);
