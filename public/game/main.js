@@ -283,7 +283,7 @@ function removeCube(pos) {
 		let e = cubes[i]
 		if (~~e.position.x == ~~(pos.x + 0.5) && ~~e.position.y == ~~(pos.y + 0.5) && ~~e.position.z == ~~(pos.z + 0.5)) {
 			let c = cubes.splice(i, 1)[0];
-			
+
 			for(var j = 0; j < geometries[e.col].length; j++) {
 				if(c.igeometry.id == geometries[e.col][j].id) {
 					geometries[e.col].splice(j, 1);
@@ -361,15 +361,16 @@ export function verify(uuid) {
 	});
 
 	socket.on('connected', function (arr) {
-		console.log(arr);
-		window.arr = arr;
+		const view = new Uint8Array(arr);
+		console.log(view);
+		window.arr = view;
 		cubes.forEach(e => { scene.remove(e) });
 
 		for (let x = 0; x < 64; x++) {
 			for (let y = 0; y < 64; y++) {
 				for (let z = 0; z < 64; z++) {
-					if (arr[x][y][z] > 0) {
-						addCube({ "x": x, "y": y, "z": z }, arr[x][y][z] - 1);
+					if (view[x*4096+y*64+z] > 0) {
+						addCube({ "x": x, "y": y, "z": z }, view[x*4096+y*64+z] - 1);
 					}
 				}
 			}
@@ -378,7 +379,7 @@ export function verify(uuid) {
 		for(var i = 0; i < colors.length; i++) {
 			updateWorld(i);
 		}
-		
+
 	});
 
 	socket.on('place', function (data) {
@@ -527,7 +528,7 @@ function render() {
 	controls.getObject().position.y += velocity.y * delta;
 
 	let pos = controls.getObject().position;
-	
+
 	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
 
 	renderer.render(scene, camera);
