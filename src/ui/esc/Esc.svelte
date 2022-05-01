@@ -3,21 +3,21 @@
 		if(e.key === "Escape" && document.activeElement.tagName !== "INPUT") {
 			esc.style.display = (esc.style.display=="block") ? "none":"block";
 			winCredits.style.display = "none";
-			winSettings.style.display = "none";
+			winSettings.style.display = "none"
 		}
 	}
 
-	// will be a nice idea to switch case this
+	// should probably be switch case?
 	function escReturn() {
-		esc.style.display = "none";
+		esc.style.display = "none"
 	}
 	function escCredits() {
 		esc.style.display = "none";
-		winCredits.style.display = "block";
+		winCredits.style.display = "block"
 	}
 	function escSettings() {
 		esc.style.display = "none";
-		winSettings.style.display = "block";
+		winSettings.style.display = "block"
 	}
 
 </script>
@@ -30,7 +30,7 @@
 
 		<br>
 
-		<div style="display:flex;flex-direction:row;width:auto;">
+		<div style="display:flex;flex-direction:row;width:auto">
 			<a href="https://github.com/ado1928/ado-cubes" target="_blank" rel="noopener noreferrer">Source code</a>&nbsp•&nbsp<a href="https://discord.gg/rNMTeADfnc" target="_blank" rel="noopener noreferrer">Discord server</a>
 		</div>
 	</div>

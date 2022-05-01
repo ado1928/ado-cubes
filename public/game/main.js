@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { PointerLockControls } from "/game/jsm/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from '/game/jsm/utils/BufferGeometryUtils.js';
+let socket = io();
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -103,7 +104,7 @@ renderer.domElement.addEventListener('click', function () {
 		winControls.style.display = "none";
 		winCredits.style.display = "none"
 	}
-});
+})
 
 scene.add(controls.getObject());
 
@@ -115,7 +116,7 @@ function onWindowResize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize(window.innerWidth, window.innerHeight)
-};
+}
 
 const loader = new THREE.CubeTextureLoader();
 const texture = loader.load([
@@ -124,8 +125,8 @@ const texture = loader.load([
 	'/game/sky/Daylight Box_Top.png',
 	'/game/sky/Daylight Box_Bottom.png',
 	'/game/sky/Daylight Box_Front.png',
-	'/game/sky/Daylight Box_Back.png',
-]);
+	'/game/sky/Daylight Box_Back.png'
+])
 scene.background = texture;
 
 const sun = new THREE.DirectionalLight(0xffffff, 0.35);
@@ -158,21 +159,20 @@ scene.add(dlight2);
 const light = new THREE.AmbientLight(0x606070);
 scene.add(light);
 
-let socket = io();
+
 
 let raycastPlacement = true
 placeAtRaycast.onclick = function () {
 	raycastPlacement = true;
 	crosshair.style.display = "block"
-};
+}
 placeInCamera.onclick = function () {
 	raycastPlacement = false;
 	crosshair.style.display = "none"
-};
+}
 
 let place = new Audio('./audio/sfx/place.ogg');
 let remove = new Audio('./audio/sfx/remove.ogg');
-
 
 function placeCube(pos) {
 	if (raycastPlacement) {
@@ -185,16 +185,15 @@ function placeCube(pos) {
 				pos.sub(intersect.face.normal);
 			} else {
 				pos.add(intersect.face.normal)
-			}
-
+			};
 			pos.multiplyScalar(0.5);
-			pos.add(intersect.point)
-			console.log(pos)
-			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
+			pos.add(intersect.point);
+			console.log(pos);
+			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
 		}
 	} else {
-		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
-	};
+		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
+	}
 	if (!audioDisablePR.checked) {
 		place.currentTime = 0;
 		place.play()
@@ -212,8 +211,8 @@ function breakCube(pos) {
 			let pos = new THREE.Vector3();
 			pos.sub(intersect.face.normal);
 			pos.multiplyScalar(0.5);
-			pos.add(intersect.point)
-			console.log(pos)
+			pos.add(intersect.point);
+			// console.log(pos);
 			socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
 		}
 	} else {
@@ -223,7 +222,7 @@ function breakCube(pos) {
 		remove.currentTime = 0;
 		remove.play()
 	}
-};
+}
 
 let cubes = [];
 
@@ -241,9 +240,9 @@ for (let i = 0; i < colors.length; i++) {
 	// console.log(colors[i]);
 	colors[i].onclick = function () {
 		color = i;
-		updateColor();
+		updateColor()
 	}
-};
+}
 
 let colorSkip = 1;
 
@@ -251,12 +250,12 @@ window.onwheel = function (event) {
 	if (event.deltaY > 0) { color -= colorSkip }
 	else if (event.deltaY < 0) { color += colorSkip };
 	updateColor()
-};
+}
 
 let materials = []
 for (var i = 0; i < colors.length; i++) {
 	materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor })
-};
+}
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 
@@ -271,29 +270,28 @@ function addCube(pos, col) {
 	cube.receiveShadow = true;
 	cube.castShadow = true;
 	cube.col = col;
-	cubes.push(cube)
+	cubes.push(cube);
 
 	const matrix = new THREE.Matrix4();
 	matrix.compose(pos, new THREE.Quaternion(1, 0, 0, 0), new THREE.Vector3(1, 1, 1));
 	const instanceGeometry = geometry.clone();
 	instanceGeometry.applyMatrix4(matrix);
 	cube.igeometry = instanceGeometry;
-	geometries[col].push(instanceGeometry);
+	geometries[col].push(instanceGeometry)
 }
 
 function removeCube(pos) {
-	console.log(pos)
+	// console.log(pos);
 	for (var i = 0; i < cubes.length; i++) {
-		let e = cubes[i]
+		let e = cubes[i];
 		if (~~e.position.x == ~~(pos.x + 0.5) && ~~e.position.y == ~~(pos.y + 0.5) && ~~e.position.z == ~~(pos.z + 0.5)) {
 			let c = cubes.splice(i, 1)[0];
-
 			for (var j = 0; j < geometries[e.col].length; j++) {
 				if (c.igeometry.id == geometries[e.col][j].id) {
 					geometries[e.col].splice(j, 1);
 					updateWorld(e.col);
 					sun.shadow.needsUpdate = true;
-					return;
+					return
 				}
 			}
 		}
@@ -316,7 +314,7 @@ let verified = false;
 inputUsername.onkeydown = function (input) {
 	if (input.key == "Enter" && inputUsername.value !== "") {
 		if (!verified) {
-			captchaPlease.style.display = "block";
+			captchaPlease.style.display = "block"
 		} else {
 			nick = inputUsername.value;
 			winWelcome.style.display = "none";
@@ -324,18 +322,18 @@ inputUsername.onkeydown = function (input) {
 			socket.emit("serverMessage", { "message":  nick + " has joined the server!" })
 		}
 	}
-};
+}
 
 inputChat.onkeydown = function (chanter) {
 	if (chanter.key == "Enter" && nick !== "" && inputChat.value !== "") {
 		socket.emit("message", { "message": inputChat.value, "sender": nick });
 		inputChat.value = ""
 	}
-};
+}
 
 function scrollToBottom(element) {
 	element.scroll({ top: element.scrollHeight, behavior: 'smooth' })
-};
+}
 
 function updateWorld(col) {
 	//console.log(col)
@@ -346,7 +344,7 @@ function updateWorld(col) {
 	worlds[col].castShadow = true;
 	worlds[col].receiveShadow = true;
 	scene.add(worlds[col]);
-	sun.shadow.needsUpdate = true;
+	sun.shadow.needsUpdate = true
 }
 
 window.updateWorld = updateWorld;
@@ -368,7 +366,6 @@ export function verify(uuid) {
 		console.log(arr);
 		window.arr = arr;
 		cubes.forEach(e => { scene.remove(e) });
-
 		for (let x = 0; x < 64; x++) {
 			for (let y = 0; y < 64; y++) {
 				for (let z = 0; z < 64; z++) {
@@ -380,7 +377,7 @@ export function verify(uuid) {
 		};
 
 		for(var i = 0; i < colors.length; i++) {
-			updateWorld(i);
+			updateWorld(i)
 		}
 		
 	});
@@ -404,7 +401,7 @@ export function verify(uuid) {
 		let pos = data.pos;
 		removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
 	})
-};
+}
 
 window.verify = verify;
 
@@ -412,6 +409,7 @@ window.verify = verify;
 verify()
 
 let cameraSpeed = 64.0;
+let cameraZoom = 70;
 
 let moveForward = false;
 let moveBackward = false;
@@ -420,96 +418,118 @@ let moveRight = false;
 let moveUp = false;
 let moveDown = false;
 
+function updateCameraZoom() {
+	if (cameraZoom < 10) {
+		cameraZoom = 10
+	} else if (cameraZoom > 70) {
+		cameraZoom = 70
+	}
+	camera.fov = cameraZoom;
+	camera.updateProjectionMatrix()
+}
+
 const onKeyDown = function (event) {
 	if (document.activeElement.tagName !== "INPUT" && nick !== "") {
 		switch (event.code) {
 			case 'ArrowUp':
 			case 'KeyW':
 				moveForward = true;
-				break;
+				break
 			case 'ArrowLeft':
 			case 'KeyA':
 				moveLeft = true;
-				break;
+				break
 			case 'ArrowDown':
 			case 'KeyS':
 				moveBackward = true;
-				break;
+				break
 			case 'ArrowRight':
 			case 'KeyD':
 				moveRight = true;
-				break;
+				break
 			case 'Space':
 				moveUp = true;
-				break;
+				break
 			case 'ShiftLeft':
 				moveDown = true;
-				break;
+				break
 			case inputPlaceCubes.value:
 				placeCube(controls.getObject().position);
-				break;
+				break
 			case inputRemoveCubes.value:
 				breakCube(controls.getObject().position);
-				break;
+				break
 			case inputToggleGrid.value:
 				grid.visible = !grid.visible;
-				break;
+				break
 			case "Enter":
 				controls.unlock();
 				inputChat.focus();
-				break;
+				break
 			case inputSettingsShortcut.value:
 				winSettings.style.display = (winSettings.style.display=="block") ? "none":"block";
-				break;
-			case "BracketLeft":
+				break
+			case 'BracketLeft':
 				cameraSpeed = cameraSpeed - 8;
-				break;
-			case "BracketRight":
+				break
+			case 'BracketRight':
 				cameraSpeed = cameraSpeed + 8;
-				break;
-			case "Backslash":
+				break
+			case 'Backslash':
 				cameraSpeed = 64.0;
-				break;
-			case "KeyO":
+				break
+			case 'Minus':
+				cameraZoom = cameraZoom + 1;
+				updateCameraZoom()
+				break
+			case 'Equal':
+				cameraZoom = cameraZoom - 1;
+				updateCameraZoom();
+				break
+			case 'Quote':
+				cameraZoom = 70;
+				updateCameraZoom();
+				break
+			case 'KeyO':
 				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block";
-				break;
-			case "AltLeft":
+				break
+			case 'AltLeft':
 				colorSkip = 5;
 				// colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
-				break;
+				break
 		}
 	}
-};
+}
 
 const onKeyUp = function (event) {
 	switch (event.code) {
 		case 'ArrowUp':
 		case 'KeyW':
 			moveForward = false;
-			break;
+			break
 		case 'ArrowLeft':
 		case 'KeyA':
 			moveLeft = false;
-			break;
+			break
 		case 'ArrowDown':
 		case 'KeyS':
 			moveBackward = false;
-			break;
+			break
 		case 'ArrowRight':
 		case 'KeyD':
 			moveRight = false;
-			break;
+			break
 		case 'Space':
 			moveUp = false;
-			break;
+			break
 		case 'ShiftLeft':
 			moveDown = false;
-			break;
+			break
 		case 'AltLeft':
 			colorSkip = 1;
 			break;
 	}
-};
+}
 
 const canvas = document.getElementsByTagName("canvas")[0];
 
@@ -518,10 +538,10 @@ const onMouseDown = (event) => {
 	   	switch (event.which) {
 			case 1:
 				breakCube(controls.getObject().position);
-				break;
+				break
 			case 3:
 				placeCube(controls.getObject().position);
-				break;
+				break
 		}
 	}
 }
@@ -561,7 +581,7 @@ function render() {
 		if (moveRight) velocity.x += cameraSpeed * delta;
 		if (moveLeft) velocity.x -= cameraSpeed * delta;
 		if (moveUp) velocity.y += cameraSpeed * delta;
-		if (moveDown) velocity.y -= cameraSpeed * delta;
+		if (moveDown) velocity.y -= cameraSpeed * delta
 	};
 
 	controls.moveRight(velocity.x * delta);
@@ -573,6 +593,6 @@ function render() {
 	// this should be updated when pos is changed, not always
 	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
 
-	renderer.render(scene, camera);
-};
-render();
+	renderer.render(scene, camera)
+}
+render()

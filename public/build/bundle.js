@@ -1294,29 +1294,29 @@ var app = (function () {
     			a1 = element("a");
     			a1.textContent = "Discord server";
     			attr_dev(button0, "id", "escReturn");
-    			add_location(button0, file$5, 26, 2, 636);
+    			add_location(button0, file$5, 26, 2, 624);
     			attr_dev(button1, "id", "escCredits");
-    			add_location(button1, file$5, 27, 2, 698);
+    			add_location(button1, file$5, 27, 2, 686);
     			attr_dev(button2, "id", "escSettings");
-    			add_location(button2, file$5, 28, 2, 763);
-    			add_location(br, file$5, 30, 2, 832);
+    			add_location(button2, file$5, 28, 2, 751);
+    			add_location(br, file$5, 30, 2, 820);
     			attr_dev(a0, "href", "https://github.com/ado1928/ado-cubes");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noopener noreferrer");
-    			add_location(a0, file$5, 33, 3, 901);
+    			add_location(a0, file$5, 33, 3, 888);
     			attr_dev(a1, "href", "https://discord.gg/rNMTeADfnc");
     			attr_dev(a1, "target", "_blank");
     			attr_dev(a1, "rel", "noopener noreferrer");
-    			add_location(a1, file$5, 33, 118, 1016);
+    			add_location(a1, file$5, 33, 118, 1003);
     			set_style(div0, "display", "flex");
     			set_style(div0, "flex-direction", "row");
     			set_style(div0, "width", "auto");
-    			add_location(div0, file$5, 32, 2, 840);
+    			add_location(div0, file$5, 32, 2, 828);
     			attr_dev(div1, "id", "escMenu");
     			attr_dev(div1, "class", "box center");
-    			add_location(div1, file$5, 25, 1, 596);
+    			add_location(div1, file$5, 25, 1, 584);
     			attr_dev(div2, "id", "esc");
-    			add_location(div2, file$5, 24, 0, 580);
+    			add_location(div2, file$5, 24, 0, 568);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1452,22 +1452,22 @@ var app = (function () {
     			img1 = element("img");
     			if (!src_url_equal(img0.src, img0_src_value = "./images/icons/left arrow.svg")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "<=");
-    			add_location(img0, file$4, 13, 43, 381);
+    			add_location(img0, file$4, 12, 43, 340);
     			attr_dev(button0, "class", "iconav");
-    			add_location(button0, file$4, 13, 1, 339);
+    			add_location(button0, file$4, 12, 1, 298);
     			set_style(h2, "margin", "0");
-    			add_location(h2, file$4, 14, 1, 442);
+    			add_location(h2, file$4, 13, 1, 401);
     			if (!src_url_equal(img1.src, img1_src_value = "./images/icons/exit.svg")) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "X");
-    			add_location(img1, file$4, 15, 43, 520);
+    			add_location(img1, file$4, 14, 43, 479);
     			attr_dev(button1, "class", "iconav");
-    			add_location(button1, file$4, 15, 1, 478);
+    			add_location(button1, file$4, 14, 1, 437);
     			set_style(div, "display", "flex");
     			set_style(div, "justify-content", "space-between");
     			set_style(div, "align-items", "center");
     			set_style(div, "padding", "4px 4px");
     			set_style(div, "margin-bottom", "12px");
-    			add_location(div, file$4, 12, 0, 226);
+    			add_location(div, file$4, 11, 0, 186);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1548,7 +1548,6 @@ var app = (function () {
 
     function escExit() {
     	winSettings.style.display = "none";
-    	winControls.style.display = "none";
     	winCredits.style.display = "none";
     }
 
@@ -1650,7 +1649,7 @@ var app = (function () {
     			t6 = space();
     			strong0 = element("strong");
     			strong0.textContent = "IMPORTANT: ";
-    			t8 = text("You can check controls by pressing Escape, and then selecting Controls.");
+    			t8 = text("Check controls by pressing Escape, click on Settings, and look at Input category.");
     			br7 = element("br");
     			br8 = element("br");
     			t9 = space();
@@ -1669,35 +1668,35 @@ var app = (function () {
     			attr_dev(img, "id", "welcomeLogo");
     			if (!src_url_equal(img.src, img_src_value = /*src*/ ctx[0])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "style", /*style*/ ctx[1]);
-    			add_location(img, file$3, 28, 2, 955);
-    			add_location(div0, file$3, 27, 1, 947);
-    			add_location(br0, file$3, 30, 1, 1001);
-    			add_location(br1, file$3, 30, 5, 1005);
+    			add_location(img, file$3, 45, 2, 1269);
+    			add_location(div0, file$3, 44, 1, 1261);
+    			add_location(br0, file$3, 47, 1, 1315);
+    			add_location(br1, file$3, 47, 5, 1319);
     			attr_dev(input0, "id", "inputUsername");
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file$3, 31, 11, 1021);
-    			add_location(br2, file$3, 31, 49, 1059);
+    			add_location(input0, file$3, 48, 11, 1335);
+    			add_location(br2, file$3, 48, 49, 1373);
     			attr_dev(input1, "id", "inputPassword");
     			attr_dev(input1, "type", "text");
     			input1.value = "this input does nothing for now. pls ignore";
-    			add_location(input1, file$3, 32, 11, 1075);
-    			add_location(br3, file$3, 32, 101, 1165);
-    			add_location(br4, file$3, 33, 88, 1258);
-    			add_location(br5, file$3, 33, 152, 1322);
+    			add_location(input1, file$3, 49, 11, 1389);
+    			add_location(br3, file$3, 49, 101, 1479);
+    			add_location(br4, file$3, 50, 88, 1572);
+    			add_location(br5, file$3, 50, 152, 1636);
     			attr_dev(p0, "id", "noNeedToVerify");
     			set_style(p0, "display", "none");
-    			add_location(p0, file$3, 33, 1, 1171);
-    			add_location(br6, file$3, 33, 160, 1330);
-    			add_location(strong0, file$3, 35, 1, 1337);
-    			add_location(br7, file$3, 35, 100, 1436);
-    			add_location(br8, file$3, 35, 104, 1440);
-    			add_location(strong1, file$3, 37, 1, 1447);
-    			add_location(br9, file$3, 37, 61, 1507);
-    			add_location(br10, file$3, 37, 134, 1580);
-    			add_location(br11, file$3, 39, 45, 1673);
+    			add_location(p0, file$3, 50, 1, 1485);
+    			add_location(br6, file$3, 50, 160, 1644);
+    			add_location(strong0, file$3, 52, 1, 1651);
+    			add_location(br7, file$3, 52, 110, 1760);
+    			add_location(br8, file$3, 52, 114, 1764);
+    			add_location(strong1, file$3, 54, 1, 1771);
+    			add_location(br9, file$3, 54, 61, 1831);
+    			add_location(br10, file$3, 54, 134, 1904);
+    			add_location(br11, file$3, 56, 45, 1997);
     			attr_dev(p1, "id", "captchaPlease");
     			set_style(p1, "display", "none");
-    			add_location(p1, file$3, 39, 1, 1629);
+    			add_location(p1, file$3, 56, 1, 1953);
     			attr_dev(div1, "class", "io-captcha");
     			attr_dev(div1, "data-pubkey", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADO");
     			attr_dev(div1, "data-theme", "dark");
@@ -1705,11 +1704,11 @@ var app = (function () {
     			attr_dev(div1, "data-font", "mono");
     			attr_dev(div1, "data-callback-solve", "solve");
     			attr_dev(div1, "data-widgetid", "iocaptcha");
-    			add_location(div1, file$3, 40, 1, 1749);
+    			add_location(div1, file$3, 57, 1, 2073);
     			attr_dev(div2, "id", "winWelcome");
     			attr_dev(div2, "class", "box win center");
     			set_style(div2, "top", "62%");
-    			add_location(div2, file$3, 26, 0, 885);
+    			add_location(div2, file$3, 43, 0, 1199);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1786,22 +1785,43 @@ var app = (function () {
     	let style = "position:absolute;transform:translate(-50%, -174px);left:50%;pointer-events:none";
 
     	window.onload = function () {
-    		// this is most likely some shitty code!
+    		// this is terrible.
     		if (miscEnableRandomLogos.checked) {
     			if (Math.floor(Math.random() * 70) == 1) {
-    				$$invalidate(0, src = "./images/logo/odacebus.svg");
+    				odacebus();
     			} else if (Math.floor(Math.random() * 900) == 1) {
-    				$$invalidate(0, src = "./images/logo/aaaaaaaa.svg");
-    				let aaaaaaaa = new Audio('./audio/screaming.ogg');
-    				aaaaaaaa.play();
+    				aaaaaaaa();
     			} else if (Math.floor(Math.random() * 727) == 1) {
-    				$$invalidate(0, src = "./images/logo/ado!.svg");
-    				$$invalidate(1, style = "position:absolute;transform:translate(-50%, -164px);left:50%;pointer-events:none");
-    				let ado = new Audio('./audio/welcome to ado.ogg');
-    				ado.play();
-    			} else {
+    				ado();
+    			} else if (audioEnableMusic.checked) {
     				let music = new Audio('./audio/music/The Moon.ogg');
     				music.play();
+    			}
+    		} else if (audioEnableMusic.checked) {
+    			let music = new Audio('./audio/music/The Moon.ogg');
+    			music.play();
+    		}
+
+    		function odacebus() {
+    			$$invalidate(0, src = "./images/logo/odacebus.svg");
+    		}
+
+    		function aaaaaaaa() {
+    			$$invalidate(0, src = "./images/logo/aaaaaaaa.svg");
+
+    			if (audioEnableMusic.checked) {
+    				let aaaaaaaa = new Audio('./audio/screaming.ogg');
+    				aaaaaaaa.play();
+    			}
+    		}
+
+    		function ado() {
+    			$$invalidate(0, src = "./images/logo/ado!.svg");
+    			$$invalidate(1, style = "position:absolute;transform:translate(-50%, -164px);left:50%;pointer-events:none");
+
+    			if (audioEnableMusic.checked) {
+    				let ado = new Audio('./audio/welcome to ado.ogg');
+    				ado.play();
     			}
     		}
     	};
@@ -1844,9 +1864,9 @@ var app = (function () {
     const file$2 = "src/ui/misc/Settings.svelte";
 
     function create_fragment$2(ctx) {
-    	let div21;
+    	let div24;
     	let t0;
-    	let div20;
+    	let div23;
     	let h20;
     	let t2;
     	let img0;
@@ -1902,97 +1922,115 @@ var app = (function () {
     	let t29;
     	let input5;
     	let t30;
-    	let h23;
-    	let t32;
     	let div8;
+    	let t31;
+    	let input6;
+    	let t32;
+    	let div9;
+    	let t33;
+    	let input7;
+    	let t34;
+    	let div10;
+    	let t35;
+    	let input8;
+    	let t36;
+    	let div11;
+    	let t37;
+    	let input9;
+    	let t38;
+    	let h23;
+    	let t40;
+    	let div12;
     	let img4;
     	let img4_src_value;
-    	let t33;
-    	let t34;
-    	let t35;
-    	let input6;
-    	let t36;
-    	let div9;
-    	let img5;
-    	let img5_src_value;
-    	let t37;
-    	let t38;
-    	let t39;
-    	let input7;
-    	let t40;
-    	let div10;
-    	let img6;
-    	let img6_src_value;
     	let t41;
     	let t42;
     	let t43;
-    	let input8;
+    	let input10;
     	let t44;
-    	let div11;
-    	let img7;
-    	let img7_src_value;
+    	let div13;
+    	let img5;
+    	let img5_src_value;
     	let t45;
     	let t46;
     	let t47;
-    	let input9;
+    	let input11;
     	let t48;
-    	let div12;
+    	let div14;
+    	let img6;
+    	let img6_src_value;
+    	let t49;
+    	let t50;
+    	let t51;
+    	let input12;
+    	let t52;
+    	let div15;
+    	let img7;
+    	let img7_src_value;
+    	let t53;
+    	let input13;
+    	let t54;
+    	let div16;
+    	let t55;
+    	let input14;
+    	let t56;
+    	let div17;
+    	let t57;
+    	let input15;
+    	let t58;
+    	let h24;
+    	let t60;
+    	let div18;
     	let img8;
     	let img8_src_value;
-    	let t49;
-    	let input10;
-    	let t50;
-    	let div13;
-    	let t51;
-    	let input11;
-    	let t52;
-    	let div14;
-    	let t53;
-    	let input12;
-    	let t54;
-    	let h24;
-    	let t56;
-    	let div15;
+    	let t61;
+    	let input16;
+    	let t62;
+    	let h25;
+    	let t64;
+    	let div19;
     	let img9;
     	let img9_src_value;
-    	let t57;
-    	let input13;
-    	let t58;
-    	let h25;
-    	let t60;
-    	let div16;
+    	let t65;
+    	let input17;
+    	let t66;
+    	let h26;
+    	let t68;
+    	let div20;
+    	let strong;
+    	let t70;
+    	let t71;
+    	let div21;
     	let img10;
     	let img10_src_value;
-    	let t61;
-    	let input14;
-    	let t62;
-    	let h26;
-    	let t64;
-    	let div17;
-    	let strong;
-    	let t66;
-    	let t67;
-    	let div18;
-    	let t68;
-    	let input15;
-    	let t69;
-    	let div19;
-    	let t70;
-    	let input16;
-    	let t71;
-    	let button;
+    	let t72;
+    	let input18;
+    	let t73;
+    	let div22;
+    	let img11;
+    	let img11_src_value;
+    	let t74;
+    	let input19;
+    	let t75;
+    	let button0;
+    	let t77;
+    	let button1;
+    	let t79;
+    	let button2;
+    	let t81;
+    	let button3;
     	let current;
     	let mounted;
     	let dispose;
-    	const default_slot_template = /*#slots*/ ctx[11].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[10], null);
+    	const default_slot_template = /*#slots*/ ctx[16].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[15], null);
 
     	const block = {
     		c: function create() {
-    			div21 = element("div");
+    			div24 = element("div");
     			if (default_slot) default_slot.c();
     			t0 = space();
-    			div20 = element("div");
+    			div23 = element("div");
     			h20 = element("h2");
     			h20.textContent = "Legend";
     			t2 = space();
@@ -2045,261 +2083,295 @@ var app = (function () {
     			input3 = element("input");
     			t26 = space();
     			div6 = element("div");
-    			t27 = text("Settings shortcut ");
+    			t27 = text("Increase camera speed ");
     			input4 = element("input");
     			t28 = space();
     			div7 = element("div");
-    			t29 = text("Disable mouse place and remove ");
+    			t29 = text("decrease camera speed ");
     			input5 = element("input");
     			t30 = space();
+    			div8 = element("div");
+    			t31 = text("Increase camera zoom ");
+    			input6 = element("input");
+    			t32 = space();
+    			div9 = element("div");
+    			t33 = text("decrease camera zoom ");
+    			input7 = element("input");
+    			t34 = space();
+    			div10 = element("div");
+    			t35 = text("Settings shortcut ");
+    			input8 = element("input");
+    			t36 = space();
+    			div11 = element("div");
+    			t37 = text("Disable mouse place and remove ");
+    			input9 = element("input");
+    			t38 = space();
     			h23 = element("h2");
     			h23.textContent = "Audio";
-    			t32 = space();
-    			div8 = element("div");
-    			img4 = element("img");
-    			t33 = text(" Master ");
-    			t34 = text(/*audioMasterVolume*/ ctx[5]);
-    			t35 = space();
-    			input6 = element("input");
-    			t36 = space();
-    			div9 = element("div");
-    			img5 = element("img");
-    			t37 = text(" Music ");
-    			t38 = text(/*audioMusicVolume*/ ctx[6]);
-    			t39 = space();
-    			input7 = element("input");
     			t40 = space();
-    			div10 = element("div");
-    			img6 = element("img");
-    			t41 = text(" SFX ");
-    			t42 = text(/*audioSfxVolume*/ ctx[7]);
-    			t43 = space();
-    			input8 = element("input");
-    			t44 = space();
-    			div11 = element("div");
-    			img7 = element("img");
-    			t45 = text(" UI ");
-    			t46 = text(/*audioUiVolume*/ ctx[8]);
-    			t47 = space();
-    			input9 = element("input");
-    			t48 = space();
     			div12 = element("div");
-    			img8 = element("img");
-    			t49 = text(" Enable music ");
+    			img4 = element("img");
+    			t41 = text(" Music ");
+    			t42 = text(/*audioMusicVolume*/ ctx[9]);
+    			t43 = space();
     			input10 = element("input");
-    			t50 = space();
+    			t44 = space();
     			div13 = element("div");
-    			t51 = text("Disable place and remove sounds ");
+    			img5 = element("img");
+    			t45 = text(" SFX ");
+    			t46 = text(/*audioSfxVolume*/ ctx[10]);
+    			t47 = space();
     			input11 = element("input");
-    			t52 = space();
+    			t48 = space();
     			div14 = element("div");
-    			t53 = text("Disable UI sounds ");
+    			img6 = element("img");
+    			t49 = text(" UI ");
+    			t50 = text(/*audioUiVolume*/ ctx[11]);
+    			t51 = space();
     			input12 = element("input");
+    			t52 = space();
+    			div15 = element("div");
+    			img7 = element("img");
+    			t53 = text(" Enable music ");
+    			input13 = element("input");
     			t54 = space();
+    			div16 = element("div");
+    			t55 = text("Disable place and remove sounds ");
+    			input14 = element("input");
+    			t56 = space();
+    			div17 = element("div");
+    			t57 = text("Disable UI sounds ");
+    			input15 = element("input");
+    			t58 = space();
     			h24 = element("h2");
     			h24.textContent = "Performance";
-    			t56 = space();
-    			div15 = element("div");
-    			img9 = element("img");
-    			t57 = text(" Enable clouds ");
-    			input13 = element("input");
-    			t58 = space();
+    			t60 = space();
+    			div18 = element("div");
+    			img8 = element("img");
+    			t61 = text(" Enable clouds ");
+    			input16 = element("input");
+    			t62 = space();
     			h25 = element("h2");
     			h25.textContent = "Miscellaneous";
-    			t60 = space();
-    			div16 = element("div");
-    			img10 = element("img");
-    			t61 = text(" Enable random logos in welcome ");
-    			input14 = element("input");
-    			t62 = space();
+    			t64 = space();
+    			div19 = element("div");
+    			img9 = element("img");
+    			t65 = text(" Enable random logos in welcome ");
+    			input17 = element("input");
+    			t66 = space();
     			h26 = element("h2");
     			h26.textContent = "Theme";
-    			t64 = space();
-    			div17 = element("div");
+    			t68 = space();
+    			div20 = element("div");
     			strong = element("strong");
     			strong.textContent = "NOTE:";
-    			t66 = text(" Blur does not properly work in Firefox");
-    			t67 = space();
-    			div18 = element("div");
-    			t68 = space();
-    			input15 = element("input");
-    			t69 = space();
-    			div19 = element("div");
-    			t70 = text("Disable text shadows ");
-    			input16 = element("input");
+    			t70 = text(" Blur does not properly work in Firefox");
     			t71 = space();
-    			button = element("button");
-    			button.textContent = "Apply";
+    			div21 = element("div");
+    			img10 = element("img");
+    			t72 = text(" Disable background blur ");
+    			input18 = element("input");
+    			t73 = space();
+    			div22 = element("div");
+    			img11 = element("img");
+    			t74 = text(" Disable text shadows ");
+    			input19 = element("input");
+    			t75 = space();
+    			button0 = element("button");
+    			button0.textContent = "Button";
+    			t77 = space();
+    			button1 = element("button");
+    			button1.textContent = "Apply";
+    			t79 = space();
+    			button2 = element("button");
+    			button2.textContent = "Refresh";
+    			t81 = space();
+    			button3 = element("button");
+    			button3.textContent = "Button";
     			set_style(h20, "margin", "0");
-    			add_location(h20, file$2, 79, 2, 2278);
-    			if (!src_url_equal(img0.src, img0_src_value = "./images/icons/not functional.svg")) attr_dev(img0, "src", img0_src_value);
-    			add_location(img0, file$2, 80, 2, 2313);
-    			add_location(br, file$2, 80, 64, 2375);
-    			if (!src_url_equal(img1.src, img1_src_value = "./images/icons/requires refresh.svg")) attr_dev(img1, "src", img1_src_value);
-    			add_location(img1, file$2, 81, 2, 2382);
-    			add_location(h21, file$2, 83, 2, 2452);
+    			add_location(h20, file$2, 91, 2, 2968);
+    			if (!src_url_equal(img0.src, img0_src_value = /*notfunctional*/ ctx[12])) attr_dev(img0, "src", img0_src_value);
+    			add_location(img0, file$2, 92, 2, 3003);
+    			add_location(br, file$2, 92, 44, 3045);
+    			if (!src_url_equal(img1.src, img1_src_value = /*requiresrefresh*/ ctx[13])) attr_dev(img1, "src", img1_src_value);
+    			add_location(img1, file$2, 93, 2, 3052);
+    			add_location(h21, file$2, 95, 2, 3102);
     			if (!src_url_equal(img2.src, img2_src_value = "./images/icons/not functional.svg")) attr_dev(img2, "src", img2_src_value);
-    			add_location(img2, file$2, 84, 7, 2476);
+    			add_location(img2, file$2, 96, 7, 3126);
     			option0.__value = "english";
     			option0.value = option0.__value;
-    			add_location(option0, file$2, 86, 4, 2568);
+    			add_location(option0, file$2, 98, 4, 3218);
     			option1.__value = "onlyEnglish";
     			option1.value = option1.__value;
-    			add_location(option1, file$2, 87, 4, 2613);
+    			add_location(option1, file$2, 99, 4, 3263);
     			attr_dev(select0, "id", "generalLanguage");
-    			add_location(select0, file$2, 85, 3, 2534);
-    			add_location(div0, file$2, 84, 2, 2471);
-    			add_location(h22, file$2, 91, 2, 2689);
-    			if (!src_url_equal(img3.src, img3_src_value = "./images/icons/not functional.svg")) attr_dev(img3, "src", img3_src_value);
-    			add_location(img3, file$2, 92, 7, 2711);
+    			add_location(select0, file$2, 97, 3, 3184);
+    			add_location(div0, file$2, 96, 2, 3121);
+    			add_location(h22, file$2, 103, 2, 3339);
+    			if (!src_url_equal(img3.src, img3_src_value = /*notfunctional*/ ctx[12])) attr_dev(img3, "src", img3_src_value);
+    			add_location(img3, file$2, 104, 7, 3361);
     			option2.__value = "wasd";
     			option2.value = option2.__value;
-    			add_location(option2, file$2, 94, 4, 2814);
+    			add_location(option2, file$2, 106, 4, 3444);
     			option3.__value = "arrow";
     			option3.value = option3.__value;
-    			add_location(option3, file$2, 95, 4, 2853);
+    			add_location(option3, file$2, 107, 4, 3483);
     			option4.__value = "custom";
     			option4.value = option4.__value;
-    			add_location(option4, file$2, 96, 4, 2899);
+    			add_location(option4, file$2, 108, 4, 3529);
     			attr_dev(select1, "id", "inputMovement");
-    			add_location(select1, file$2, 93, 3, 2769);
-    			add_location(div1, file$2, 92, 2, 2706);
+    			add_location(select1, file$2, 105, 3, 3399);
+    			add_location(div1, file$2, 104, 2, 3356);
     			attr_dev(input0, "id", "inputPlaceCubes");
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file$2, 105, 19, 3175);
-    			add_location(div2, file$2, 105, 2, 3158);
+    			add_location(input0, file$2, 117, 19, 3805);
+    			add_location(div2, file$2, 117, 2, 3788);
     			attr_dev(input1, "id", "inputRemoveCubes");
     			attr_dev(input1, "type", "text");
-    			add_location(input1, file$2, 106, 20, 3271);
-    			add_location(div3, file$2, 106, 2, 3253);
+    			add_location(input1, file$2, 118, 20, 3901);
+    			add_location(div3, file$2, 118, 2, 3883);
     			attr_dev(input2, "id", "inputToggleGrid");
     			attr_dev(input2, "type", "text");
-    			add_location(input2, file$2, 107, 19, 3368);
-    			add_location(div4, file$2, 107, 2, 3351);
+    			add_location(input2, file$2, 119, 19, 3998);
+    			add_location(div4, file$2, 119, 2, 3981);
     			attr_dev(input3, "id", "inputPaletteRowScroll");
     			attr_dev(input3, "type", "text");
-    			add_location(input3, file$2, 108, 26, 3470);
-    			add_location(div5, file$2, 108, 2, 3446);
-    			attr_dev(input4, "id", "inputSettingsShortcut");
+    			add_location(input3, file$2, 120, 26, 4100);
+    			add_location(div5, file$2, 120, 2, 4076);
+    			attr_dev(input4, "id", "inputIncreaseCameraSpeed");
     			attr_dev(input4, "type", "text");
-    			add_location(input4, file$2, 109, 25, 3583);
-    			add_location(div6, file$2, 109, 2, 3560);
-    			attr_dev(input5, "id", "inputDisablePR");
-    			attr_dev(input5, "type", "checkbox");
-    			add_location(input5, file$2, 110, 38, 3709);
-    			add_location(div7, file$2, 110, 2, 3673);
-    			add_location(h23, file$2, 112, 2, 3762);
-    			if (!src_url_equal(img4.src, img4_src_value = "./images/icons/not functional.svg")) attr_dev(img4, "src", img4_src_value);
-    			add_location(img4, file$2, 113, 7, 3784);
-    			attr_dev(input6, "id", "masterVolume");
-    			attr_dev(input6, "class", "slider");
-    			attr_dev(input6, "type", "range");
-    			add_location(input6, file$2, 113, 80, 3857);
-    			add_location(div8, file$2, 113, 2, 3779);
-    			if (!src_url_equal(img5.src, img5_src_value = "./images/icons/not functional.svg")) attr_dev(img5, "src", img5_src_value);
-    			add_location(img5, file$2, 114, 7, 3955);
-    			attr_dev(input7, "id", "musicVolume");
-    			attr_dev(input7, "class", "slider");
-    			attr_dev(input7, "type", "range");
-    			add_location(input7, file$2, 114, 78, 4026);
-    			add_location(div9, file$2, 114, 2, 3950);
-    			if (!src_url_equal(img6.src, img6_src_value = "./images/icons/not functional.svg")) attr_dev(img6, "src", img6_src_value);
-    			add_location(img6, file$2, 115, 7, 4122);
-    			attr_dev(input8, "id", "sfxVolume");
-    			attr_dev(input8, "class", "slider");
-    			attr_dev(input8, "type", "range");
-    			add_location(input8, file$2, 115, 74, 4189);
-    			add_location(div10, file$2, 115, 2, 4117);
-    			if (!src_url_equal(img7.src, img7_src_value = "./images/icons/not functional.svg")) attr_dev(img7, "src", img7_src_value);
-    			add_location(img7, file$2, 116, 7, 4281);
-    			attr_dev(input9, "id", "uiVolume");
-    			attr_dev(input9, "class", "slider");
-    			attr_dev(input9, "type", "range");
-    			add_location(input9, file$2, 116, 72, 4346);
-    			add_location(div11, file$2, 116, 2, 4276);
-    			if (!src_url_equal(img8.src, img8_src_value = "./images/icons/requires refresh.svg")) attr_dev(img8, "src", img8_src_value);
-    			add_location(img8, file$2, 118, 7, 4437);
-    			attr_dev(input10, "id", "audioEnableMusic");
-    			attr_dev(input10, "type", "checkbox");
-    			add_location(input10, file$2, 118, 68, 4498);
-    			add_location(div12, file$2, 118, 2, 4432);
-    			attr_dev(input11, "id", "audioDisablePR");
-    			attr_dev(input11, "type", "checkbox");
-    			add_location(input11, file$2, 119, 39, 4589);
-    			add_location(div13, file$2, 119, 2, 4552);
-    			attr_dev(input12, "id", "audioDisableUI");
-    			attr_dev(input12, "type", "checkbox");
-    			add_location(input12, file$2, 120, 25, 4664);
-    			add_location(div14, file$2, 120, 2, 4641);
-    			add_location(h24, file$2, 122, 2, 4717);
-    			if (!src_url_equal(img9.src, img9_src_value = "./images/icons/not functional.svg")) attr_dev(img9, "src", img9_src_value);
-    			add_location(img9, file$2, 123, 7, 4745);
-    			attr_dev(input13, "id", "prfmEnableClouds");
+    			add_location(input4, file$2, 121, 29, 4217);
+    			add_location(div6, file$2, 121, 2, 4190);
+    			attr_dev(input5, "id", "inputDecreaseCameraSpeed");
+    			attr_dev(input5, "type", "text");
+    			add_location(input5, file$2, 122, 29, 4340);
+    			add_location(div7, file$2, 122, 2, 4313);
+    			attr_dev(input6, "id", "inputIncreaseCameraZoom");
+    			attr_dev(input6, "type", "text");
+    			add_location(input6, file$2, 123, 28, 4462);
+    			add_location(div8, file$2, 123, 2, 4436);
+    			attr_dev(input7, "id", "inputDncreaseCameraZoom");
+    			attr_dev(input7, "type", "text");
+    			add_location(input7, file$2, 124, 28, 4582);
+    			add_location(div9, file$2, 124, 2, 4556);
+    			attr_dev(input8, "id", "inputSettingsShortcut");
+    			attr_dev(input8, "type", "text");
+    			add_location(input8, file$2, 125, 25, 4699);
+    			add_location(div10, file$2, 125, 2, 4676);
+    			attr_dev(input9, "id", "inputDisablePR");
+    			attr_dev(input9, "type", "checkbox");
+    			add_location(input9, file$2, 126, 38, 4825);
+    			add_location(div11, file$2, 126, 2, 4789);
+    			add_location(h23, file$2, 128, 2, 4878);
+    			if (!src_url_equal(img4.src, img4_src_value = /*notfunctional*/ ctx[12])) attr_dev(img4, "src", img4_src_value);
+    			add_location(img4, file$2, 129, 7, 4900);
+    			attr_dev(input10, "id", "musicVolume");
+    			attr_dev(input10, "class", "slider");
+    			attr_dev(input10, "type", "range");
+    			add_location(input10, file$2, 129, 58, 4951);
+    			add_location(div12, file$2, 129, 2, 4895);
+    			if (!src_url_equal(img5.src, img5_src_value = /*notfunctional*/ ctx[12])) attr_dev(img5, "src", img5_src_value);
+    			add_location(img5, file$2, 130, 7, 5047);
+    			attr_dev(input11, "id", "sfxVolume");
+    			attr_dev(input11, "class", "slider");
+    			attr_dev(input11, "type", "range");
+    			add_location(input11, file$2, 130, 54, 5094);
+    			add_location(div13, file$2, 130, 2, 5042);
+    			if (!src_url_equal(img6.src, img6_src_value = /*notfunctional*/ ctx[12])) attr_dev(img6, "src", img6_src_value);
+    			add_location(img6, file$2, 131, 7, 5186);
+    			attr_dev(input12, "id", "uiVolume");
+    			attr_dev(input12, "class", "slider");
+    			attr_dev(input12, "type", "range");
+    			add_location(input12, file$2, 131, 52, 5231);
+    			add_location(div14, file$2, 131, 2, 5181);
+    			if (!src_url_equal(img7.src, img7_src_value = /*requiresrefresh*/ ctx[13])) attr_dev(img7, "src", img7_src_value);
+    			add_location(img7, file$2, 133, 7, 5322);
+    			attr_dev(input13, "id", "audioEnableMusic");
     			attr_dev(input13, "type", "checkbox");
-    			add_location(input13, file$2, 123, 67, 4805);
-    			add_location(div15, file$2, 123, 2, 4740);
-    			add_location(h25, file$2, 125, 2, 4860);
-    			if (!src_url_equal(img10.src, img10_src_value = "./images/icons/requires refresh.svg")) attr_dev(img10, "src", img10_src_value);
-    			add_location(img10, file$2, 126, 7, 4890);
-    			attr_dev(input14, "id", "miscEnableRandomLogos");
+    			add_location(input13, file$2, 133, 48, 5363);
+    			add_location(div15, file$2, 133, 2, 5317);
+    			attr_dev(input14, "id", "audioDisablePR");
     			attr_dev(input14, "type", "checkbox");
-    			add_location(input14, file$2, 126, 86, 4969);
-    			add_location(div16, file$2, 126, 2, 4885);
-    			add_location(h26, file$2, 128, 2, 5029);
-    			add_location(strong, file$2, 129, 7, 5051);
-    			add_location(div17, file$2, 129, 2, 5046);
-    			set_style(div18, "background", "#000");
-    			set_style(div18, "height", "130px");
-    			set_style(div18, "width", "-moz-available");
-    			set_style(div18, "width", "-webkit-fill-available");
-    			add_location(div18, file$2, 130, 2, 5121);
-    			attr_dev(input15, "type", "file");
-    			add_location(input15, file$2, 131, 2, 5222);
-    			attr_dev(input16, "id", "themeDisableTextShadows");
+    			add_location(input14, file$2, 134, 39, 5454);
+    			add_location(div16, file$2, 134, 2, 5417);
+    			attr_dev(input15, "id", "audioDisableUI");
+    			attr_dev(input15, "type", "checkbox");
+    			add_location(input15, file$2, 135, 25, 5529);
+    			add_location(div17, file$2, 135, 2, 5506);
+    			add_location(h24, file$2, 137, 2, 5582);
+    			if (!src_url_equal(img8.src, img8_src_value = /*notfunctional*/ ctx[12])) attr_dev(img8, "src", img8_src_value);
+    			add_location(img8, file$2, 138, 7, 5610);
+    			attr_dev(input16, "id", "prfmEnableClouds");
     			attr_dev(input16, "type", "checkbox");
-    			add_location(input16, file$2, 132, 28, 5270);
-    			add_location(div19, file$2, 132, 2, 5244);
-    			set_style(div20, "overflow-y", "scroll");
-    			set_style(div20, "height", "80%");
-    			add_location(div20, file$2, 78, 1, 2232);
-    			attr_dev(button, "id", "applySettings");
-    			add_location(button, file$2, 134, 1, 5338);
-    			attr_dev(div21, "id", "winSettings");
-    			attr_dev(div21, "class", "box win center");
-    			add_location(div21, file$2, 76, 0, 2176);
+    			add_location(input16, file$2, 138, 47, 5650);
+    			add_location(div18, file$2, 138, 2, 5605);
+    			add_location(h25, file$2, 140, 2, 5705);
+    			if (!src_url_equal(img9.src, img9_src_value = /*requiresrefresh*/ ctx[13])) attr_dev(img9, "src", img9_src_value);
+    			add_location(img9, file$2, 141, 7, 5735);
+    			attr_dev(input17, "id", "miscEnableRandomLogos");
+    			attr_dev(input17, "type", "checkbox");
+    			add_location(input17, file$2, 141, 66, 5794);
+    			add_location(div19, file$2, 141, 2, 5730);
+    			add_location(h26, file$2, 143, 2, 5854);
+    			add_location(strong, file$2, 144, 7, 5876);
+    			add_location(div20, file$2, 144, 2, 5871);
+    			if (!src_url_equal(img10.src, img10_src_value = /*notfunctional*/ ctx[12])) attr_dev(img10, "src", img10_src_value);
+    			add_location(img10, file$2, 145, 7, 5951);
+    			attr_dev(input18, "id", "themeDisableBgBlur");
+    			attr_dev(input18, "type", "checkbox");
+    			add_location(input18, file$2, 145, 57, 6001);
+    			add_location(div21, file$2, 145, 2, 5946);
+    			if (!src_url_equal(img11.src, img11_src_value = /*notfunctional*/ ctx[12])) attr_dev(img11, "src", img11_src_value);
+    			add_location(img11, file$2, 146, 7, 6062);
+    			attr_dev(input19, "id", "themeDisableTextShadows");
+    			attr_dev(input19, "type", "checkbox");
+    			add_location(input19, file$2, 146, 54, 6109);
+    			add_location(div22, file$2, 146, 2, 6057);
+    			set_style(div23, "overflow-y", "scroll");
+    			set_style(div23, "height", "80%");
+    			add_location(div23, file$2, 90, 1, 2923);
+    			add_location(button0, file$2, 148, 1, 6177);
+    			attr_dev(button1, "id", "applySettings");
+    			add_location(button1, file$2, 148, 25, 6201);
+    			attr_dev(button2, "onclick", "history.go(0)");
+    			add_location(button2, file$2, 148, 92, 6268);
+    			add_location(button3, file$2, 148, 141, 6317);
+    			attr_dev(div24, "id", "winSettings");
+    			attr_dev(div24, "class", "box win center");
+    			add_location(div24, file$2, 88, 0, 2867);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div21, anchor);
+    			insert_dev(target, div24, anchor);
 
     			if (default_slot) {
-    				default_slot.m(div21, null);
+    				default_slot.m(div24, null);
     			}
 
-    			append_dev(div21, t0);
-    			append_dev(div21, div20);
-    			append_dev(div20, h20);
-    			append_dev(div20, t2);
-    			append_dev(div20, img0);
-    			append_dev(div20, t3);
-    			append_dev(div20, br);
-    			append_dev(div20, t4);
-    			append_dev(div20, img1);
-    			append_dev(div20, t5);
-    			append_dev(div20, h21);
-    			append_dev(div20, t7);
-    			append_dev(div20, div0);
+    			append_dev(div24, t0);
+    			append_dev(div24, div23);
+    			append_dev(div23, h20);
+    			append_dev(div23, t2);
+    			append_dev(div23, img0);
+    			append_dev(div23, t3);
+    			append_dev(div23, br);
+    			append_dev(div23, t4);
+    			append_dev(div23, img1);
+    			append_dev(div23, t5);
+    			append_dev(div23, h21);
+    			append_dev(div23, t7);
+    			append_dev(div23, div0);
     			append_dev(div0, img2);
     			append_dev(div0, t8);
     			append_dev(div0, select0);
     			append_dev(select0, option0);
     			append_dev(select0, option1);
-    			append_dev(div20, t11);
-    			append_dev(div20, h22);
-    			append_dev(div20, t13);
-    			append_dev(div20, div1);
+    			append_dev(div23, t11);
+    			append_dev(div23, h22);
+    			append_dev(div23, t13);
+    			append_dev(div23, div1);
     			append_dev(div1, img3);
     			append_dev(div1, t14);
     			append_dev(div1, select1);
@@ -2307,130 +2379,152 @@ var app = (function () {
     			append_dev(select1, option3);
     			append_dev(select1, option4);
     			select_option(select1, "wasd");
-    			append_dev(div20, t18);
-    			append_dev(div20, div2);
+    			append_dev(div23, t18);
+    			append_dev(div23, div2);
     			append_dev(div2, t19);
     			append_dev(div2, input0);
     			set_input_value(input0, /*inputPlaceCubes*/ ctx[0]);
-    			append_dev(div20, t20);
-    			append_dev(div20, div3);
+    			append_dev(div23, t20);
+    			append_dev(div23, div3);
     			append_dev(div3, t21);
     			append_dev(div3, input1);
     			set_input_value(input1, /*inputRemoveCubes*/ ctx[1]);
-    			append_dev(div20, t22);
-    			append_dev(div20, div4);
+    			append_dev(div23, t22);
+    			append_dev(div23, div4);
     			append_dev(div4, t23);
     			append_dev(div4, input2);
     			set_input_value(input2, /*inputToggleGrid*/ ctx[2]);
-    			append_dev(div20, t24);
-    			append_dev(div20, div5);
+    			append_dev(div23, t24);
+    			append_dev(div23, div5);
     			append_dev(div5, t25);
     			append_dev(div5, input3);
     			set_input_value(input3, /*inputPaletteRowScroll*/ ctx[3]);
-    			append_dev(div20, t26);
-    			append_dev(div20, div6);
+    			append_dev(div23, t26);
+    			append_dev(div23, div6);
     			append_dev(div6, t27);
     			append_dev(div6, input4);
-    			set_input_value(input4, /*inputSettingsShortcut*/ ctx[4]);
-    			append_dev(div20, t28);
-    			append_dev(div20, div7);
+    			set_input_value(input4, /*inputIncreaseCameraSpeed*/ ctx[4]);
+    			append_dev(div23, t28);
+    			append_dev(div23, div7);
     			append_dev(div7, t29);
     			append_dev(div7, input5);
-    			append_dev(div20, t30);
-    			append_dev(div20, h23);
-    			append_dev(div20, t32);
-    			append_dev(div20, div8);
-    			append_dev(div8, img4);
-    			append_dev(div8, t33);
-    			append_dev(div8, t34);
-    			append_dev(div8, t35);
+    			set_input_value(input5, /*inputDecreaseCameraSpeed*/ ctx[5]);
+    			append_dev(div23, t30);
+    			append_dev(div23, div8);
+    			append_dev(div8, t31);
     			append_dev(div8, input6);
-    			set_input_value(input6, /*audioMasterVolume*/ ctx[5]);
-    			append_dev(div20, t36);
-    			append_dev(div20, div9);
-    			append_dev(div9, img5);
-    			append_dev(div9, t37);
-    			append_dev(div9, t38);
-    			append_dev(div9, t39);
+    			set_input_value(input6, /*inputIncreaseCameraZoom*/ ctx[6]);
+    			append_dev(div23, t32);
+    			append_dev(div23, div9);
+    			append_dev(div9, t33);
     			append_dev(div9, input7);
-    			set_input_value(input7, /*audioMusicVolume*/ ctx[6]);
-    			append_dev(div20, t40);
-    			append_dev(div20, div10);
-    			append_dev(div10, img6);
-    			append_dev(div10, t41);
-    			append_dev(div10, t42);
-    			append_dev(div10, t43);
+    			set_input_value(input7, /*inputDecreaseCameraZoom*/ ctx[7]);
+    			append_dev(div23, t34);
+    			append_dev(div23, div10);
+    			append_dev(div10, t35);
     			append_dev(div10, input8);
-    			set_input_value(input8, /*audioSfxVolume*/ ctx[7]);
-    			append_dev(div20, t44);
-    			append_dev(div20, div11);
-    			append_dev(div11, img7);
-    			append_dev(div11, t45);
-    			append_dev(div11, t46);
-    			append_dev(div11, t47);
+    			set_input_value(input8, /*inputSettingsShortcut*/ ctx[8]);
+    			append_dev(div23, t36);
+    			append_dev(div23, div11);
+    			append_dev(div11, t37);
     			append_dev(div11, input9);
-    			set_input_value(input9, /*audioUiVolume*/ ctx[8]);
-    			append_dev(div20, t48);
-    			append_dev(div20, div12);
-    			append_dev(div12, img8);
-    			append_dev(div12, t49);
+    			append_dev(div23, t38);
+    			append_dev(div23, h23);
+    			append_dev(div23, t40);
+    			append_dev(div23, div12);
+    			append_dev(div12, img4);
+    			append_dev(div12, t41);
+    			append_dev(div12, t42);
+    			append_dev(div12, t43);
     			append_dev(div12, input10);
-    			append_dev(div20, t50);
-    			append_dev(div20, div13);
-    			append_dev(div13, t51);
+    			set_input_value(input10, /*audioMusicVolume*/ ctx[9]);
+    			append_dev(div23, t44);
+    			append_dev(div23, div13);
+    			append_dev(div13, img5);
+    			append_dev(div13, t45);
+    			append_dev(div13, t46);
+    			append_dev(div13, t47);
     			append_dev(div13, input11);
-    			append_dev(div20, t52);
-    			append_dev(div20, div14);
-    			append_dev(div14, t53);
+    			set_input_value(input11, /*audioSfxVolume*/ ctx[10]);
+    			append_dev(div23, t48);
+    			append_dev(div23, div14);
+    			append_dev(div14, img6);
+    			append_dev(div14, t49);
+    			append_dev(div14, t50);
+    			append_dev(div14, t51);
     			append_dev(div14, input12);
-    			append_dev(div20, t54);
-    			append_dev(div20, h24);
-    			append_dev(div20, t56);
-    			append_dev(div20, div15);
-    			append_dev(div15, img9);
-    			append_dev(div15, t57);
+    			set_input_value(input12, /*audioUiVolume*/ ctx[11]);
+    			append_dev(div23, t52);
+    			append_dev(div23, div15);
+    			append_dev(div15, img7);
+    			append_dev(div15, t53);
     			append_dev(div15, input13);
-    			append_dev(div20, t58);
-    			append_dev(div20, h25);
-    			append_dev(div20, t60);
-    			append_dev(div20, div16);
-    			append_dev(div16, img10);
-    			append_dev(div16, t61);
+    			append_dev(div23, t54);
+    			append_dev(div23, div16);
+    			append_dev(div16, t55);
     			append_dev(div16, input14);
-    			append_dev(div20, t62);
-    			append_dev(div20, h26);
-    			append_dev(div20, t64);
-    			append_dev(div20, div17);
-    			append_dev(div17, strong);
-    			append_dev(div17, t66);
-    			append_dev(div20, t67);
-    			append_dev(div20, div18);
-    			append_dev(div20, t68);
-    			append_dev(div20, input15);
-    			append_dev(div20, t69);
-    			append_dev(div20, div19);
-    			append_dev(div19, t70);
-    			append_dev(div19, input16);
-    			append_dev(div21, t71);
-    			append_dev(div21, button);
+    			append_dev(div23, t56);
+    			append_dev(div23, div17);
+    			append_dev(div17, t57);
+    			append_dev(div17, input15);
+    			append_dev(div23, t58);
+    			append_dev(div23, h24);
+    			append_dev(div23, t60);
+    			append_dev(div23, div18);
+    			append_dev(div18, img8);
+    			append_dev(div18, t61);
+    			append_dev(div18, input16);
+    			append_dev(div23, t62);
+    			append_dev(div23, h25);
+    			append_dev(div23, t64);
+    			append_dev(div23, div19);
+    			append_dev(div19, img9);
+    			append_dev(div19, t65);
+    			append_dev(div19, input17);
+    			append_dev(div23, t66);
+    			append_dev(div23, h26);
+    			append_dev(div23, t68);
+    			append_dev(div23, div20);
+    			append_dev(div20, strong);
+    			append_dev(div20, t70);
+    			append_dev(div23, t71);
+    			append_dev(div23, div21);
+    			append_dev(div21, img10);
+    			append_dev(div21, t72);
+    			append_dev(div21, input18);
+    			append_dev(div23, t73);
+    			append_dev(div23, div22);
+    			append_dev(div22, img11);
+    			append_dev(div22, t74);
+    			append_dev(div22, input19);
+    			append_dev(div24, t75);
+    			append_dev(div24, button0);
+    			append_dev(div24, t77);
+    			append_dev(div24, button1);
+    			append_dev(div24, t79);
+    			append_dev(div24, button2);
+    			append_dev(div24, t81);
+    			append_dev(div24, button3);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[12]),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[13]),
-    					listen_dev(input2, "input", /*input2_input_handler*/ ctx[14]),
-    					listen_dev(input3, "input", /*input3_input_handler*/ ctx[15]),
-    					listen_dev(input4, "input", /*input4_input_handler*/ ctx[16]),
-    					listen_dev(input6, "change", /*input6_change_input_handler*/ ctx[17]),
-    					listen_dev(input6, "input", /*input6_change_input_handler*/ ctx[17]),
-    					listen_dev(input7, "change", /*input7_change_input_handler*/ ctx[18]),
-    					listen_dev(input7, "input", /*input7_change_input_handler*/ ctx[18]),
-    					listen_dev(input8, "change", /*input8_change_input_handler*/ ctx[19]),
-    					listen_dev(input8, "input", /*input8_change_input_handler*/ ctx[19]),
-    					listen_dev(input9, "change", /*input9_change_input_handler*/ ctx[20]),
-    					listen_dev(input9, "input", /*input9_change_input_handler*/ ctx[20]),
-    					listen_dev(button, "click", /*applySettings*/ ctx[9], false, false, false)
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[17]),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[18]),
+    					listen_dev(input2, "input", /*input2_input_handler*/ ctx[19]),
+    					listen_dev(input3, "input", /*input3_input_handler*/ ctx[20]),
+    					listen_dev(input4, "input", /*input4_input_handler*/ ctx[21]),
+    					listen_dev(input5, "input", /*input5_input_handler*/ ctx[22]),
+    					listen_dev(input6, "input", /*input6_input_handler*/ ctx[23]),
+    					listen_dev(input7, "input", /*input7_input_handler*/ ctx[24]),
+    					listen_dev(input8, "input", /*input8_input_handler*/ ctx[25]),
+    					listen_dev(input10, "change", /*input10_change_input_handler*/ ctx[26]),
+    					listen_dev(input10, "input", /*input10_change_input_handler*/ ctx[26]),
+    					listen_dev(input11, "change", /*input11_change_input_handler*/ ctx[27]),
+    					listen_dev(input11, "input", /*input11_change_input_handler*/ ctx[27]),
+    					listen_dev(input12, "change", /*input12_change_input_handler*/ ctx[28]),
+    					listen_dev(input12, "input", /*input12_change_input_handler*/ ctx[28]),
+    					listen_dev(button1, "click", /*applySettings*/ ctx[14], false, false, false)
     				];
 
     				mounted = true;
@@ -2438,15 +2532,15 @@ var app = (function () {
     		},
     		p: function update(ctx, [dirty]) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 32768)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[10],
+    						/*$$scope*/ ctx[15],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[10], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[15])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[15], dirty, null),
     						null
     					);
     				}
@@ -2468,32 +2562,42 @@ var app = (function () {
     				set_input_value(input3, /*inputPaletteRowScroll*/ ctx[3]);
     			}
 
-    			if (dirty & /*inputSettingsShortcut*/ 16 && input4.value !== /*inputSettingsShortcut*/ ctx[4]) {
-    				set_input_value(input4, /*inputSettingsShortcut*/ ctx[4]);
+    			if (dirty & /*inputIncreaseCameraSpeed*/ 16 && input4.value !== /*inputIncreaseCameraSpeed*/ ctx[4]) {
+    				set_input_value(input4, /*inputIncreaseCameraSpeed*/ ctx[4]);
     			}
 
-    			if (!current || dirty & /*audioMasterVolume*/ 32) set_data_dev(t34, /*audioMasterVolume*/ ctx[5]);
-
-    			if (dirty & /*audioMasterVolume*/ 32) {
-    				set_input_value(input6, /*audioMasterVolume*/ ctx[5]);
+    			if (dirty & /*inputDecreaseCameraSpeed*/ 32 && input5.value !== /*inputDecreaseCameraSpeed*/ ctx[5]) {
+    				set_input_value(input5, /*inputDecreaseCameraSpeed*/ ctx[5]);
     			}
 
-    			if (!current || dirty & /*audioMusicVolume*/ 64) set_data_dev(t38, /*audioMusicVolume*/ ctx[6]);
-
-    			if (dirty & /*audioMusicVolume*/ 64) {
-    				set_input_value(input7, /*audioMusicVolume*/ ctx[6]);
+    			if (dirty & /*inputIncreaseCameraZoom*/ 64 && input6.value !== /*inputIncreaseCameraZoom*/ ctx[6]) {
+    				set_input_value(input6, /*inputIncreaseCameraZoom*/ ctx[6]);
     			}
 
-    			if (!current || dirty & /*audioSfxVolume*/ 128) set_data_dev(t42, /*audioSfxVolume*/ ctx[7]);
-
-    			if (dirty & /*audioSfxVolume*/ 128) {
-    				set_input_value(input8, /*audioSfxVolume*/ ctx[7]);
+    			if (dirty & /*inputDecreaseCameraZoom*/ 128 && input7.value !== /*inputDecreaseCameraZoom*/ ctx[7]) {
+    				set_input_value(input7, /*inputDecreaseCameraZoom*/ ctx[7]);
     			}
 
-    			if (!current || dirty & /*audioUiVolume*/ 256) set_data_dev(t46, /*audioUiVolume*/ ctx[8]);
+    			if (dirty & /*inputSettingsShortcut*/ 256 && input8.value !== /*inputSettingsShortcut*/ ctx[8]) {
+    				set_input_value(input8, /*inputSettingsShortcut*/ ctx[8]);
+    			}
 
-    			if (dirty & /*audioUiVolume*/ 256) {
-    				set_input_value(input9, /*audioUiVolume*/ ctx[8]);
+    			if (!current || dirty & /*audioMusicVolume*/ 512) set_data_dev(t42, /*audioMusicVolume*/ ctx[9]);
+
+    			if (dirty & /*audioMusicVolume*/ 512) {
+    				set_input_value(input10, /*audioMusicVolume*/ ctx[9]);
+    			}
+
+    			if (!current || dirty & /*audioSfxVolume*/ 1024) set_data_dev(t46, /*audioSfxVolume*/ ctx[10]);
+
+    			if (dirty & /*audioSfxVolume*/ 1024) {
+    				set_input_value(input11, /*audioSfxVolume*/ ctx[10]);
+    			}
+
+    			if (!current || dirty & /*audioUiVolume*/ 2048) set_data_dev(t50, /*audioUiVolume*/ ctx[11]);
+
+    			if (dirty & /*audioUiVolume*/ 2048) {
+    				set_input_value(input12, /*audioUiVolume*/ ctx[11]);
     			}
     		},
     		i: function intro(local) {
@@ -2506,7 +2610,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div21);
+    			if (detaching) detach_dev(div24);
     			if (default_slot) default_slot.d(detaching);
     			mounted = false;
     			run_all(dispose);
@@ -2534,7 +2638,10 @@ var app = (function () {
     function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Settings', slots, ['default']);
+    	let notfunctional = "./images/icons/not functional.svg";
+    	let requiresrefresh = "./images/icons/requires refresh.svg";
 
+    	// haha i suck at this.
     	onMount(async () => {
     		function loadSettings() {
     			let pref = JSON.parse(localStorage.getItem('settings'));
@@ -2542,15 +2649,19 @@ var app = (function () {
     			$$invalidate(1, inputRemoveCubes = pref.inputRemoveCubes);
     			$$invalidate(2, inputToggleGrid = pref.inputToggleGrid);
     			$$invalidate(3, inputPaletteRowScroll = pref.inputPaletteRowScroll);
-    			$$invalidate(4, inputSettingsShortcut = pref.inputSettingsShortcut);
+    			$$invalidate(8, inputSettingsShortcut = pref.inputSettingsShortcut);
+    			$$invalidate(4, inputIncreaseCameraSpeed = pref.inputIncreaseCameraSpeed);
+    			$$invalidate(5, inputDecreaseCameraSpeed = pref.inputDecreaseCameraSpeed);
+    			$$invalidate(6, inputIncreaseCameraZoom = pref.inputIncreaseCameraZoom);
+    			$$invalidate(7, inputDecreaseCameraZoom = pref.inputDecreaseCameraZoom);
     			inputDisablePR.checked = pref.inputDisablePR;
-    			$$invalidate(5, audioMasterVolume = pref.audioMasterVolume);
-    			$$invalidate(6, audioMusicVolume = pref.audioMusicVolume);
-    			$$invalidate(7, audioSfxVolume = pref.audioSfxVolume);
-    			$$invalidate(8, audioUiVolume = pref.audioUiVolume);
+    			$$invalidate(9, audioMusicVolume = pref.audioMusicVolume);
+    			$$invalidate(10, audioSfxVolume = pref.audioSfxVolume);
+    			$$invalidate(11, audioUiVolume = pref.audioUiVolume);
     			audioEnableMusic.checked = pref.audioEnableMusic;
     			audioDisablePR.checked = pref.audioDisablePR;
     			miscEnableRandomLogos.checked = pref.miscEnableRandomLogos;
+    			themeDisableBgBlur = pref.themeDisableBgBlur;
     			themeDisableTextShadows.checked = pref.themeDisableTextShadows;
     		}
     		loadSettings();
@@ -2560,8 +2671,11 @@ var app = (function () {
     	let inputRemoveCubes = "KeyC";
     	let inputToggleGrid = "KeyG";
     	let inputPaletteRowScroll = "AltLeft";
+    	let inputIncreaseCameraSpeed = "BracketRight";
+    	let inputDecreaseCameraSpeed = "BracketLeft";
+    	let inputIncreaseCameraZoom = "Equal";
+    	let inputDecreaseCameraZoom = "Minus";
     	let inputSettingsShortcut = "KeyL";
-    	let audioMasterVolume = 100;
     	let audioMusicVolume = 100;
     	let audioSfxVolume = 100;
     	let audioUiVolume = 100;
@@ -2572,15 +2686,18 @@ var app = (function () {
     			inputRemoveCubes,
     			inputToggleGrid,
     			inputPaletteRowScroll,
+    			inputIncreaseCameraSpeed,
+    			inputDecreaseCameraSpeed,
+    			inputIncreaseCameraZoom,
+    			inputDecreaseCameraZoom,
     			inputSettingsShortcut,
     			inputDisablePR: inputDisablePR.checked,
-    			audioMasterVolume,
-    			audioMusicVolume,
     			audioSfxVolume,
     			audioUiVolume,
     			audioEnableMusic: audioEnableMusic.checked,
     			audioDisablePR: audioDisablePR.checked,
     			miscEnableRandomLogos: miscEnableRandomLogos.checked,
+    			themeDisableBgBlur: themeDisableBgBlur.checked,
     			themeDisableTextShadows: themeDisableTextShadows.checked
     		};
 
@@ -2618,43 +2735,63 @@ var app = (function () {
     	}
 
     	function input4_input_handler() {
+    		inputIncreaseCameraSpeed = this.value;
+    		$$invalidate(4, inputIncreaseCameraSpeed);
+    	}
+
+    	function input5_input_handler() {
+    		inputDecreaseCameraSpeed = this.value;
+    		$$invalidate(5, inputDecreaseCameraSpeed);
+    	}
+
+    	function input6_input_handler() {
+    		inputIncreaseCameraZoom = this.value;
+    		$$invalidate(6, inputIncreaseCameraZoom);
+    	}
+
+    	function input7_input_handler() {
+    		inputDecreaseCameraZoom = this.value;
+    		$$invalidate(7, inputDecreaseCameraZoom);
+    	}
+
+    	function input8_input_handler() {
     		inputSettingsShortcut = this.value;
-    		$$invalidate(4, inputSettingsShortcut);
+    		$$invalidate(8, inputSettingsShortcut);
     	}
 
-    	function input6_change_input_handler() {
-    		audioMasterVolume = to_number(this.value);
-    		$$invalidate(5, audioMasterVolume);
-    	}
-
-    	function input7_change_input_handler() {
+    	function input10_change_input_handler() {
     		audioMusicVolume = to_number(this.value);
-    		$$invalidate(6, audioMusicVolume);
+    		$$invalidate(9, audioMusicVolume);
     	}
 
-    	function input8_change_input_handler() {
+    	function input11_change_input_handler() {
     		audioSfxVolume = to_number(this.value);
-    		$$invalidate(7, audioSfxVolume);
+    		$$invalidate(10, audioSfxVolume);
     	}
 
-    	function input9_change_input_handler() {
+    	function input12_change_input_handler() {
     		audioUiVolume = to_number(this.value);
-    		$$invalidate(8, audioUiVolume);
+    		$$invalidate(11, audioUiVolume);
     	}
 
     	$$self.$$set = $$props => {
-    		if ('$$scope' in $$props) $$invalidate(10, $$scope = $$props.$$scope);
+    		if ('$$scope' in $$props) $$invalidate(15, $$scope = $$props.$$scope);
     	};
 
     	$$self.$capture_state = () => ({
     		onMount,
     		HexToRGB,
+    		notfunctional,
+    		requiresrefresh,
     		inputPlaceCubes,
     		inputRemoveCubes,
     		inputToggleGrid,
     		inputPaletteRowScroll,
+    		inputIncreaseCameraSpeed,
+    		inputDecreaseCameraSpeed,
+    		inputIncreaseCameraZoom,
+    		inputDecreaseCameraZoom,
     		inputSettingsShortcut,
-    		audioMasterVolume,
     		audioMusicVolume,
     		audioSfxVolume,
     		audioUiVolume,
@@ -2662,15 +2799,20 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
+    		if ('notfunctional' in $$props) $$invalidate(12, notfunctional = $$props.notfunctional);
+    		if ('requiresrefresh' in $$props) $$invalidate(13, requiresrefresh = $$props.requiresrefresh);
     		if ('inputPlaceCubes' in $$props) $$invalidate(0, inputPlaceCubes = $$props.inputPlaceCubes);
     		if ('inputRemoveCubes' in $$props) $$invalidate(1, inputRemoveCubes = $$props.inputRemoveCubes);
     		if ('inputToggleGrid' in $$props) $$invalidate(2, inputToggleGrid = $$props.inputToggleGrid);
     		if ('inputPaletteRowScroll' in $$props) $$invalidate(3, inputPaletteRowScroll = $$props.inputPaletteRowScroll);
-    		if ('inputSettingsShortcut' in $$props) $$invalidate(4, inputSettingsShortcut = $$props.inputSettingsShortcut);
-    		if ('audioMasterVolume' in $$props) $$invalidate(5, audioMasterVolume = $$props.audioMasterVolume);
-    		if ('audioMusicVolume' in $$props) $$invalidate(6, audioMusicVolume = $$props.audioMusicVolume);
-    		if ('audioSfxVolume' in $$props) $$invalidate(7, audioSfxVolume = $$props.audioSfxVolume);
-    		if ('audioUiVolume' in $$props) $$invalidate(8, audioUiVolume = $$props.audioUiVolume);
+    		if ('inputIncreaseCameraSpeed' in $$props) $$invalidate(4, inputIncreaseCameraSpeed = $$props.inputIncreaseCameraSpeed);
+    		if ('inputDecreaseCameraSpeed' in $$props) $$invalidate(5, inputDecreaseCameraSpeed = $$props.inputDecreaseCameraSpeed);
+    		if ('inputIncreaseCameraZoom' in $$props) $$invalidate(6, inputIncreaseCameraZoom = $$props.inputIncreaseCameraZoom);
+    		if ('inputDecreaseCameraZoom' in $$props) $$invalidate(7, inputDecreaseCameraZoom = $$props.inputDecreaseCameraZoom);
+    		if ('inputSettingsShortcut' in $$props) $$invalidate(8, inputSettingsShortcut = $$props.inputSettingsShortcut);
+    		if ('audioMusicVolume' in $$props) $$invalidate(9, audioMusicVolume = $$props.audioMusicVolume);
+    		if ('audioSfxVolume' in $$props) $$invalidate(10, audioSfxVolume = $$props.audioSfxVolume);
+    		if ('audioUiVolume' in $$props) $$invalidate(11, audioUiVolume = $$props.audioUiVolume);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -2682,11 +2824,16 @@ var app = (function () {
     		inputRemoveCubes,
     		inputToggleGrid,
     		inputPaletteRowScroll,
+    		inputIncreaseCameraSpeed,
+    		inputDecreaseCameraSpeed,
+    		inputIncreaseCameraZoom,
+    		inputDecreaseCameraZoom,
     		inputSettingsShortcut,
-    		audioMasterVolume,
     		audioMusicVolume,
     		audioSfxVolume,
     		audioUiVolume,
+    		notfunctional,
+    		requiresrefresh,
     		applySettings,
     		$$scope,
     		slots,
@@ -2695,10 +2842,13 @@ var app = (function () {
     		input2_input_handler,
     		input3_input_handler,
     		input4_input_handler,
-    		input6_change_input_handler,
-    		input7_change_input_handler,
-    		input8_change_input_handler,
-    		input9_change_input_handler
+    		input5_input_handler,
+    		input6_input_handler,
+    		input7_input_handler,
+    		input8_input_handler,
+    		input10_change_input_handler,
+    		input11_change_input_handler,
+    		input12_change_input_handler
     	];
     }
 
@@ -2721,148 +2871,219 @@ var app = (function () {
     const file$1 = "src/ui/misc/Credits.svelte";
 
     function create_fragment$1(ctx) {
-    	let div;
+    	let div1;
     	let t0;
+    	let div0;
     	let img;
     	let img_src_value;
-    	let br0;
     	let t1;
+    	let br0;
+    	let t2;
     	let a0;
+    	let t4;
     	let br1;
-    	let t3;
-    	let a1;
     	let br2;
     	let t5;
-    	let a2;
-    	let br3;
-    	let br4;
+    	let strong;
     	let t7;
-    	let a3;
-    	let br5;
+    	let table;
+    	let tr0;
+    	let td0;
+    	let a1;
     	let t9;
-    	let a4;
+    	let td1;
     	let t11;
-    	let a5;
+    	let tr1;
+    	let td2;
+    	let a2;
     	let t13;
+    	let td3;
+    	let t15;
+    	let tr2;
+    	let td4;
+    	let a3;
+    	let t17;
+    	let td5;
+    	let t19;
+    	let br3;
+    	let t20;
+    	let a4;
+    	let t22;
+    	let a5;
+    	let t24;
     	let a6;
-    	let br6;
-    	let br7;
+    	let br4;
+    	let t26;
+    	let a7;
     	let current;
     	const default_slot_template = /*#slots*/ ctx[1].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[0], null);
 
     	const block = {
     		c: function create() {
-    			div = element("div");
+    			div1 = element("div");
     			if (default_slot) default_slot.c();
     			t0 = space();
+    			div0 = element("div");
     			img = element("img");
+    			t1 = space();
     			br0 = element("br");
-    			t1 = text("\n\n\tadocubes by ");
+    			t2 = text("\n\n\t\tcreated by ");
     			a0 = element("a");
     			a0.textContent = "Ado1928";
+    			t4 = space();
     			br1 = element("br");
-    			t3 = text("\n\tBack-End developer - ");
+    			br2 = element("br");
+    			t5 = space();
+    			strong = element("strong");
+    			strong.textContent = "Contributors";
+    			t7 = space();
+    			table = element("table");
+    			tr0 = element("tr");
+    			td0 = element("td");
     			a1 = element("a");
     			a1.textContent = "ifritdiezel";
-    			br2 = element("br");
-    			t5 = text("\n\tFront-End developer - ");
+    			t9 = space();
+    			td1 = element("td");
+    			td1.textContent = "Back-End";
+    			t11 = space();
+    			tr1 = element("tr");
+    			td2 = element("td");
     			a2 = element("a");
     			a2.textContent = "macimas";
-    			br3 = element("br");
-    			br4 = element("br");
-    			t7 = text("\n\n\tSounds generated with ");
+    			t13 = space();
+    			td3 = element("td");
+    			td3.textContent = "Front-End";
+    			t15 = space();
+    			tr2 = element("tr");
+    			td4 = element("td");
     			a3 = element("a");
-    			a3.textContent = "jsfxr";
-    			br5 = element("br");
-    			t9 = text("\n\n\tMade with ");
+    			a3.textContent = "hyxud";
+    			t17 = space();
+    			td5 = element("td");
+    			td5.textContent = "Mouse placing";
+    			t19 = space();
+    			br3 = element("br");
+    			t20 = text("\n\n\t\tMade with ");
     			a4 = element("a");
     			a4.textContent = "Node.js";
-    			t11 = text(", ");
+    			t22 = text(", ");
     			a5 = element("a");
     			a5.textContent = "Three.js";
-    			t13 = text(", and ");
+    			t24 = text(", and ");
     			a6 = element("a");
     			a6.textContent = "Svelte";
-    			br6 = element("br");
-    			br7 = element("br");
+    			br4 = element("br");
+    			t26 = text("\n\t\tSounds generated with ");
+    			a7 = element("a");
+    			a7.textContent = "jsfxr";
     			if (!src_url_equal(img.src, img_src_value = "./images/logo/adocubes.svg")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "adocubes");
     			attr_dev(img, "target", "_blank");
     			attr_dev(img, "rel", "noopener noreferrer");
-    			add_location(img, file$1, 3, 1, 56);
-    			add_location(br0, file$1, 3, 96, 151);
+    			add_location(img, file$1, 3, 2, 89);
+    			add_location(br0, file$1, 5, 2, 188);
     			attr_dev(a0, "href", "https://github.com/ado1928");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noopener noreferrer");
-    			add_location(a0, file$1, 5, 13, 170);
-    			add_location(br1, file$1, 5, 103, 260);
+    			add_location(a0, file$1, 7, 13, 207);
+    			add_location(br1, file$1, 9, 2, 301);
+    			add_location(br2, file$1, 9, 6, 305);
+    			add_location(strong, file$1, 11, 2, 313);
     			attr_dev(a1, "href", "https://github.com/ifritdiezel");
-    			attr_dev(a1, "target", "_blank");
-    			attr_dev(a1, "rel", "noopener noreferrer");
-    			add_location(a1, file$1, 6, 22, 287);
-    			add_location(br2, file$1, 6, 120, 385);
+    			add_location(a1, file$1, 14, 8, 462);
+    			add_location(td0, file$1, 14, 4, 458);
+    			add_location(td1, file$1, 15, 4, 528);
+    			add_location(tr0, file$1, 13, 3, 449);
     			attr_dev(a2, "href", "https://github.com/macimas");
-    			attr_dev(a2, "target", "_blank");
-    			attr_dev(a2, "rel", "noopener noreferrer");
-    			add_location(a2, file$1, 7, 23, 413);
-    			add_location(br3, file$1, 7, 113, 503);
-    			add_location(br4, file$1, 7, 117, 507);
-    			attr_dev(a3, "href", "https://sfxr.me");
-    			add_location(a3, file$1, 9, 23, 536);
-    			add_location(br5, file$1, 9, 58, 571);
+    			add_location(a2, file$1, 18, 8, 571);
+    			add_location(td2, file$1, 18, 4, 567);
+    			add_location(td3, file$1, 19, 4, 629);
+    			add_location(tr1, file$1, 17, 3, 558);
+    			attr_dev(a3, "href", "https://github.com/hyxud");
+    			add_location(a3, file$1, 22, 8, 673);
+    			add_location(td4, file$1, 22, 4, 669);
+    			add_location(td5, file$1, 23, 4, 727);
+    			add_location(tr2, file$1, 21, 3, 660);
+    			attr_dev(table, "class", "credits");
+    			set_style(table, "text-align", "initial");
+    			set_style(table, "width", "-moz-available");
+    			set_style(table, "width", "-webkit-fill-available");
+    			add_location(table, file$1, 12, 2, 345);
+    			add_location(br3, file$1, 27, 2, 773);
     			attr_dev(a4, "href", "https://nodejs.org");
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "rel", "noopener noreferrer");
-    			add_location(a4, file$1, 11, 11, 588);
+    			add_location(a4, file$1, 29, 12, 791);
     			attr_dev(a5, "href", "https://threejs.org");
     			attr_dev(a5, "target", "_blank");
     			attr_dev(a5, "rel", "noopener noreferrer");
-    			add_location(a5, file$1, 11, 95, 672);
+    			add_location(a5, file$1, 29, 96, 875);
     			attr_dev(a6, "href", "https://svelte.dev");
     			attr_dev(a6, "target", "_blank");
     			attr_dev(a6, "rel", "noopener noreferrer");
-    			add_location(a6, file$1, 11, 185, 762);
-    			add_location(br6, file$1, 11, 266, 843);
-    			add_location(br7, file$1, 11, 270, 847);
-    			attr_dev(div, "id", "winCredits");
-    			attr_dev(div, "class", "box win center");
-    			add_location(div, file$1, 0, 0, 0);
+    			add_location(a6, file$1, 29, 186, 965);
+    			add_location(br4, file$1, 29, 267, 1046);
+    			attr_dev(a7, "href", "https://sfxr.me");
+    			add_location(a7, file$1, 30, 24, 1075);
+    			set_style(div0, "text-align", "center");
+    			add_location(div0, file$1, 2, 1, 55);
+    			attr_dev(div1, "id", "winCredits");
+    			attr_dev(div1, "class", "box win center");
+    			add_location(div1, file$1, 0, 0, 0);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
+    			insert_dev(target, div1, anchor);
 
     			if (default_slot) {
-    				default_slot.m(div, null);
+    				default_slot.m(div1, null);
     			}
 
-    			append_dev(div, t0);
-    			append_dev(div, img);
-    			append_dev(div, br0);
-    			append_dev(div, t1);
-    			append_dev(div, a0);
-    			append_dev(div, br1);
-    			append_dev(div, t3);
-    			append_dev(div, a1);
-    			append_dev(div, br2);
-    			append_dev(div, t5);
-    			append_dev(div, a2);
-    			append_dev(div, br3);
-    			append_dev(div, br4);
-    			append_dev(div, t7);
-    			append_dev(div, a3);
-    			append_dev(div, br5);
-    			append_dev(div, t9);
-    			append_dev(div, a4);
-    			append_dev(div, t11);
-    			append_dev(div, a5);
-    			append_dev(div, t13);
-    			append_dev(div, a6);
-    			append_dev(div, br6);
-    			append_dev(div, br7);
+    			append_dev(div1, t0);
+    			append_dev(div1, div0);
+    			append_dev(div0, img);
+    			append_dev(div0, t1);
+    			append_dev(div0, br0);
+    			append_dev(div0, t2);
+    			append_dev(div0, a0);
+    			append_dev(div0, t4);
+    			append_dev(div0, br1);
+    			append_dev(div0, br2);
+    			append_dev(div0, t5);
+    			append_dev(div0, strong);
+    			append_dev(div0, t7);
+    			append_dev(div0, table);
+    			append_dev(table, tr0);
+    			append_dev(tr0, td0);
+    			append_dev(td0, a1);
+    			append_dev(tr0, t9);
+    			append_dev(tr0, td1);
+    			append_dev(table, t11);
+    			append_dev(table, tr1);
+    			append_dev(tr1, td2);
+    			append_dev(td2, a2);
+    			append_dev(tr1, t13);
+    			append_dev(tr1, td3);
+    			append_dev(table, t15);
+    			append_dev(table, tr2);
+    			append_dev(tr2, td4);
+    			append_dev(td4, a3);
+    			append_dev(tr2, t17);
+    			append_dev(tr2, td5);
+    			append_dev(div0, t19);
+    			append_dev(div0, br3);
+    			append_dev(div0, t20);
+    			append_dev(div0, a4);
+    			append_dev(div0, t22);
+    			append_dev(div0, a5);
+    			append_dev(div0, t24);
+    			append_dev(div0, a6);
+    			append_dev(div0, br4);
+    			append_dev(div0, t26);
+    			append_dev(div0, a7);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -2891,7 +3112,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(div1);
     			if (default_slot) default_slot.d(detaching);
     		}
     	};
@@ -3173,15 +3394,15 @@ var app = (function () {
     			t7 = space();
     			create_component(credits.$$.fragment);
     			attr_dev(div0, "id", "itsEditTime");
-    			add_location(div0, file, 19, 2, 545);
+    			add_location(div0, file, 19, 2, 544);
     			attr_dev(img, "id", "crosshair");
     			attr_dev(img, "class", "center");
     			if (!src_url_equal(img.src, img_src_value = "./images/svgs/crosshair.svg")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "+");
-    			add_location(img, file, 25, 2, 642);
+    			add_location(img, file, 25, 2, 641);
     			attr_dev(div1, "id", "uiCanvas");
-    			add_location(div1, file, 17, 1, 506);
-    			add_location(main, file, 16, 0, 498);
+    			add_location(div1, file, 17, 1, 505);
+    			add_location(main, file, 16, 0, 497);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");

@@ -9,7 +9,7 @@
 
 	import Welcome from './ui/misc/Welcome.svelte';
 	import Settings from './ui/misc/Settings.svelte';
-	import Credits from './ui/misc/Credits.svelte';
+	import Credits from './ui/misc/Credits.svelte'
 </script>
 
 <Welcome/>
