@@ -1,15 +1,27 @@
 <script>
 	let src = "./images/logo/adocubes-full.svg";
-	let style = "position:absolute;transform:translate(-50%, -174px);left:50%;";
+	let style = "position:absolute;transform:translate(-50%, -174px);left:50%;pointer-events:none";
 
-	if (Math.floor(Math.random() * 70) == 1) {
-		src = "./images/logo/odacebus.svg";
-	} else if (Math.floor(Math.random() * 9) == 1) {
-		src = "./images/logo/aaaaaaaa.svg"
-	} else if (Math.floor(Math.random() * 727) == 1) {
-		src = "./images/logo/ado!.svg";
-		style = "position:absolute;transform:translate(-50%, -164px);left:50%;";
-	} 
+	window.onload = function() {
+		// this is most likely some shitty code!
+		if (miscEnableRandomLogos.checked) {
+			if (Math.floor(Math.random() * 70) == 1) {
+				src = "./images/logo/odacebus.svg";
+			} else if (Math.floor(Math.random() * 900) == 1) {
+				src = "./images/logo/aaaaaaaa.svg"
+				let aaaaaaaa = new Audio('./audio/screaming.ogg')
+				aaaaaaaa.play();
+			} else if (Math.floor(Math.random() * 727) == 1) {
+				src = "./images/logo/ado!.svg";
+				style = "position:absolute;transform:translate(-50%, -164px);left:50%;pointer-events:none";
+				let ado = new Audio('./audio/welcome to ado.ogg')
+				ado.play();
+			} else {
+				let music = new Audio('./audio/music/The Moon.ogg');
+				music.play();
+			}
+		}
+	}
 </script>
 
 <div id="winWelcome" class="box win center" style="top:62%">

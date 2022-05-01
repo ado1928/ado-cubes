@@ -119,12 +119,12 @@ function onWindowResize() {
 
 const loader = new THREE.CubeTextureLoader();
 const texture = loader.load([
-	'/game/sky/Daylight Box_Right.bmp',
-	'/game/sky/Daylight Box_Left.bmp',
-	'/game/sky/Daylight Box_Top.bmp',
-	'/game/sky/Daylight Box_Bottom.bmp',
-	'/game/sky/Daylight Box_Front.bmp',
-	'/game/sky/Daylight Box_Back.bmp',
+	'/game/sky/Daylight Box_Right.png',
+	'/game/sky/Daylight Box_Left.png',
+	'/game/sky/Daylight Box_Top.png',
+	'/game/sky/Daylight Box_Bottom.png',
+	'/game/sky/Daylight Box_Front.png',
+	'/game/sky/Daylight Box_Back.png',
 ]);
 scene.background = texture;
 
@@ -170,12 +170,11 @@ placeInCamera.onclick = function () {
 	crosshair.style.display = "none"
 };
 
-let place = new Audio('./audio/place.ogg');
-let remove = new Audio('./audio/remove.ogg');
+let place = new Audio('./audio/sfx/place.ogg');
+let remove = new Audio('./audio/sfx/remove.ogg');
 
 
 function placeCube(pos) {
-
 	if (raycastPlacement) {
 		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 		const intersects = raycaster.intersectObjects(scene.children);
@@ -195,9 +194,11 @@ function placeCube(pos) {
 		}
 	} else {
 		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
+	};
+	if (!audioDisablePR.checked) {
+		place.currentTime = 0;
+		place.play()
 	}
-	place.currentTime = 0;
-	place.play()
 }
 
 function breakCube(pos) {
@@ -218,8 +219,10 @@ function breakCube(pos) {
 	} else {
 		socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
 	};
-	remove.currentTime = 0;
-	remove.play()
+	if (!audioDisablePR.checked) {
+		remove.currentTime = 0;
+		remove.play()
+	}
 };
 
 let cubes = [];
@@ -235,7 +238,7 @@ function updateColor() {
 updateColor();
 
 for (let i = 0; i < colors.length; i++) {
-	console.log(colors[i]);
+	// console.log(colors[i]);
 	colors[i].onclick = function () {
 		color = i;
 		updateColor();
@@ -442,20 +445,20 @@ const onKeyDown = function (event) {
 			case 'ShiftLeft':
 				moveDown = true;
 				break;
-			case "KeyX":
+			case inputPlaceCubes.value:
 				placeCube(controls.getObject().position);
 				break;
-			case "KeyC":
+			case inputRemoveCubes.value:
 				breakCube(controls.getObject().position);
 				break;
-			case "KeyG":
+			case inputToggleGrid.value:
 				grid.visible = !grid.visible;
 				break;
 			case "Enter":
 				controls.unlock();
 				inputChat.focus();
 				break;
-			case "KeyL":
+			case inputSettingsShortcut.value:
 				winSettings.style.display = (winSettings.style.display=="block") ? "none":"block";
 				break;
 			case "BracketLeft":
@@ -471,7 +474,8 @@ const onKeyDown = function (event) {
 				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block";
 				break;
 			case "AltLeft":
-				colorSkip = 2;
+				colorSkip = 5;
+				// colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
 				break;
 		}
 	}
@@ -510,7 +514,7 @@ const onKeyUp = function (event) {
 const canvas = document.getElementsByTagName("canvas")[0];
 
 const onMouseDown = (event) => {
-	if (nick !== "") {
+	if (nick !== "" && !inputDisablePR.checked && controls.isLocked) {
 	   	switch (event.which) {
 			case 1:
 				breakCube(controls.getObject().position);

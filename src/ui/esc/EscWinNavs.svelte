@@ -12,6 +12,6 @@
 
 <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 4px;margin-bottom:12px;">
 	<button class="iconav" on:click={escBack}><img src="./images/icons/left arrow.svg" alt="<="></button>
-	<strong><slot/></strong>
+	<h2 style="margin:0;"><slot/></h2>
 	<button class="iconav" on:click={escExit}><img src="./images/icons/exit.svg" alt="X"></button>
 </div>

@@ -1,4 +1,4 @@
-<script>
+<script>	
 	import Palette from './ui/canvas/Palette.svelte'
 	import Coordinates from './ui/canvas/Coordinates.svelte';
 	import SwitchPlacement from './ui/canvas/SwitchPlacement.svelte'
@@ -8,7 +8,6 @@
 	import EscWinNavs from './ui/esc/EscWinNavs.svelte';
 
 	import Welcome from './ui/misc/Welcome.svelte';
-	import Controls from './ui/misc/Controls.svelte';
 	import Settings from './ui/misc/Settings.svelte';
 	import Credits from './ui/misc/Credits.svelte';
 </script>
@@ -28,7 +27,6 @@
 	</div>
 
 	<Esc/>
-	<Controls><EscWinNavs>Controls</EscWinNavs></Controls>
 	<Settings><EscWinNavs>Settings</EscWinNavs></Settings>
 	<Credits><EscWinNavs>Credits</EscWinNavs></Credits>
 </main>

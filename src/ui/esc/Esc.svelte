@@ -2,7 +2,6 @@
 	document.onkeydown = function(e) {
 		if(e.key === "Escape" && document.activeElement.tagName !== "INPUT") {
 			esc.style.display = (esc.style.display=="block") ? "none":"block";
-			winControls.style.display = "none";
 			winCredits.style.display = "none";
 			winSettings.style.display = "none";
 		}
@@ -11,10 +10,6 @@
 	// will be a nice idea to switch case this
 	function escReturn() {
 		esc.style.display = "none";
-	}
-	function escControls() {
-		esc.style.display = "none";
-		winControls.style.display = "block";
 	}
 	function escCredits() {
 		esc.style.display = "none";
@@ -30,7 +25,6 @@
 <div id="esc">
 	<div id="escMenu" class="box center">
 		<button id="escReturn" on:click={escReturn}>Return</button>
-		<button id="escControls" on:click={escControls}>Controls</button>
 		<button id="escCredits" on:click={escCredits}>Credits</button>
 		<button id="escSettings" on:click={escSettings}>Settings</button>
 
