@@ -132,7 +132,7 @@ select {
 
 .io-captcha			 { padding-top: 16px }
 
-.selectedbox 		 { outline: 2px solid #fff; z-index: 1 }
+.selectedbox {outline: 2px solid #fff; z-index: 1 }
 
 #uiCanvas, #esc, .win { display: none }
 
@@ -142,10 +142,10 @@ select {
 	#palette *:hover { transform: scale(1.15); box-shadow: 0 0 4px 2px #000 }
 	#switchPlacement { position: relative; font-size: 0 }
 	#switchPlacement *:not(:last-child) { margin-right: var(--box-padding) }
-#coordinates		 { top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0) }
-#chat				 { bottom: 6px; left: 6px; width: var(--chat-width); max-height: var(--chat-maxheight) }
-#messages			 { max-height: calc(var(--chat-maxheight) - (var(--box-padding)*4)); overflow-y: scroll }
-#inputChat			 { width: -moz-available; width: -webkit-fill-available; margin-top: 4px }
+#coordinates		 { top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0); }
+#chat				 { bottom: 6px; left: 6px; width: var(--chat-width); max-height: var(--chat-maxheight); }
+#messages			 { max-height: calc(var(--chat-maxheight) - (var(--box-padding)*4)); overflow-y: scroll; overflow-wrap: break-word }
+#inputChat			 { width: -moz-available; width: -webkit-fill-available; margin-top: 4px; }
 
 #winWelcome			 { display: block; padding: 16px; width: 620px; height: auto;}
 #inputUsername, #inputPassword { width: -moz-available ;width: -webkit-fill-available; margin: 6px 0 }

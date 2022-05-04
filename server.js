@@ -4,6 +4,9 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const fs = require('fs');
 const path = require('path');
+const textencoder = new TextEncoder();
+const textdecoder = new TextDecoder();
+
 
 const { Webhook } = require('discord-webhook-node');
 const dsbridgeconfig = require('./dsbridgeconfig');
@@ -12,19 +15,24 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES + Intents.FLA
 
 const port = 1928;
 
-var world = require('./world.json');
-//var world = Array(64).fill(null).map(()=>Array(64).fill(null).map(()=>Array(64).fill(1)))
 var lastsaved = Date.now();
 
 const hook = new Webhook(dsbridgeconfig.webhooktoken);
+
+var world;
+fs.readFile('./world.caw', 'utf8' , (err, data) => {
+	if (err) throw err;
+	world = textencoder.encode(data);
+})
+//world = new Uint8Array(262144).fill(0);
 
 io.on('connection', (socket) => {
 	socket.emit('connected', world);
 
 	socket.on('place', (data) => {
 		pos = data.pos;
-		if (posvalid(pos) && !world[pos[0]][pos[1]][pos[2]] ){
-			world[pos[0]][pos[1]][pos[2]] = data.color + 1;
+		if (posvalid(pos)) {
+			world[pos[0]*4096+pos[1]*64+pos[2]] = data.color + 1;
 			io.emit('place', data);
 			if (Date.now() - lastsaved > 60000) worldsave()
 		}
@@ -32,9 +40,9 @@ io.on('connection', (socket) => {
 
 	socket.on('break', (data) => {
 		pos = data.pos;
-		if (posvalid(pos)){
-			world[pos[0]][pos[1]][pos[2]] = 0;
-			io.emit('break', data)
+		if (posvalid(pos)) {
+			world[pos[0]*4096+pos[1]*64+pos[2]] = 0;
+			io.emit('break', data);
 		}
 	});
 
@@ -72,20 +80,20 @@ function posvalid(pos) {
 }
 
 function worldsave() {
-	console.log('Saved world.');
+	console.log("Saved world.");
 	lastsaved = Date.now();
-	fs.writeFile('./world.json', JSON.stringify(world), err => { if(err) throw err; });
+	fs.writeFile('./world.caw', textdecoder.decode(world), err => {if(err) throw err;});
 }
 
 // Discord bot bridging
-client.on("messageCreate", async message => {
+client.on('messageCreate', async message => {
   if (message.author.bot) return;
   if (message.webhookID) return;
 	if (message.channel != dsbridgeconfig.channelid) return;
 	io.emit('message', { "sender": "[" + message.author.username + "]", "message": message.content });
 });
 
-client.once('ready', () => { console.log('Bridge is ready!') });
+client.once('ready', () => { console.log("Bridge is ready!") });
 
 if (dsbridgeconfig.bottoken) client.login(dsbridgeconfig.bottoken);
 

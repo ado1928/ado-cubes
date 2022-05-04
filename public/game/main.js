@@ -339,13 +339,16 @@ function scrollToBottom(element) {
 function updateWorld(col) {
 	//console.log(col)
 	scene.remove(worlds[col])
-	const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
-	//console.log(mergedGeometry)
-	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
-	worlds[col].castShadow = true;
-	worlds[col].receiveShadow = true;
-	scene.add(worlds[col]);
-	sun.shadow.needsUpdate = true
+	if(geometries[col].length > 0) {
+		const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+		//console.log(mergedGeometry)
+		worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
+		worlds[col].castShadow = true;
+		worlds[col].receiveShadow = true;
+		scene.add(worlds[col]);
+		sun.shadow.needsUpdate = true;
+	}
+	sun.shadow.needsUpdate = true;
 }
 
 window.updateWorld = updateWorld;
@@ -364,14 +367,15 @@ export function verify(uuid) {
 	});
 
 	socket.on('connected', function (arr) {
-		console.log(arr);
-		window.arr = arr;
+		const view = new Uint8Array(arr);
+		console.log(view);
+		window.arr = view;
 		cubes.forEach(e => { scene.remove(e) });
 		for (let x = 0; x < 64; x++) {
 			for (let y = 0; y < 64; y++) {
 				for (let z = 0; z < 64; z++) {
-					if (arr[x][y][z] > 0) {
-						addCube({ "x": x, "y": y, "z": z }, arr[x][y][z] - 1)
+					if (view[x*4096+y*64+z] > 0) {
+						addCube({ "x": x, "y": y, "z": z }, view[x*4096+y*64+z] - 1);
 					}
 				}
 			}
@@ -380,7 +384,7 @@ export function verify(uuid) {
 		for(var i = 0; i < colors.length; i++) {
 			updateWorld(i)
 		}
-		
+
 	});
 
 	socket.on('place', function (data) {
@@ -563,10 +567,6 @@ function render() {
 
 	const delta = clock.getDelta();
 
-	velocity.x *= 0.9;
-	velocity.z *= 0.9;
-	velocity.y *= 0.9;
-
 	if (verified) {
 		if (moveForward) velocity.z += cameraSpeed * delta;
 		if (moveBackward) velocity.z -= cameraSpeed * delta;
@@ -585,6 +585,8 @@ function render() {
 		moveUp = false;
 		moveDown = false
 	};
+
+	velocity.multiplyScalar(Math.pow(0.02, delta));
 
 	controls.moveRight(velocity.x * delta);
 	controls.moveForward(velocity.z * delta);
