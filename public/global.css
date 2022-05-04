@@ -34,9 +34,11 @@ iframe { position: absolute !important; overflow: visible !important }
 
 *		{ text-shadow: 1px 1px #000 }
 p		{ margin: 0 }
-h2		{ margin-bottom: 0 }
+h2, h3	{ margin-bottom: 0 }
 a		{ color: #acccff }
 a:hover	{ font-weight: bold }
+
+img { image-rendering: pixelated; image-rendering: -webkit-optimize-contrast;}
 
 button {
 	color: var(--fg1);
@@ -88,12 +90,10 @@ select {
 	padding: 2px 6px
 }
 
-.credits tr td {
-	padding: 0 6px;
-}
-.credits tr td:first-child {
-	text-align: right;
-}
+.credits tr td						{ padding: 0 6px }
+.credits tr td:first-child			{ text-align: right }
+.credits tr td:nth-of-type(2)		{ width: 0 }
+.credits tr td:nth-of-type(2):hover { transform: scale(2) }
 
 .slider {
 	-webkit-appearance: none;
@@ -106,16 +106,8 @@ select {
 	margin: 0
 }
 
-::-webkit-scrollbar {
-	background: 0;
-	width: 6px;
-	border-radius: 6px;
-	margin: 6px
-}
-::-webkit-scrollbar-thumb {
-	background: #aaa;
-	border-radius: 6px
-}
+::-webkit-scrollbar		  { background: 0; width: 6px; border-radius: 6px; margin: 6px }
+::-webkit-scrollbar-thumb { background: #aaa; border-radius: 6px }
 
 .box {
 	position: absolute;
@@ -128,8 +120,7 @@ select {
 	width: fit-content;
 	padding: var(--box-padding)
 }
-
-.win		{ width: 600px; height: 80%; padding: var(--win-padding) }
+.win		{ width: -webkit-fill-available; height: -webkit-fill-available; padding: var(--win-padding) }
 
 .center		{ position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) }
 
@@ -145,7 +136,7 @@ select {
 
 #uiCanvas, #esc, .win { display: none }
 
-#itsEditTime		 {position: absolute; display: flex; flex-direction: column; align-items: flex-end; bottom: 6px; right: 6px }
+#itsEditTime		 { position: absolute; display: flex; flex-direction: column; align-items: flex-end; bottom: 6px; right: 6px }
 	#palette		 { position: relative; display: flex; flex-wrap: wrap; width: calc(var(--palette-colors-size) * var(--palette-colors-in-row)); margin-top: 6px }
 	#palette *		 { width: var(--palette-colors-size); height: var(--palette-colors-size) }
 	#palette *:hover { transform: scale(1.15); box-shadow: 0 0 4px 2px #000 }
@@ -159,6 +150,6 @@ select {
 #winWelcome			 { display: block; padding: 16px; width: 620px; height: auto;}
 #inputUsername, #inputPassword { width: -moz-available ;width: -webkit-fill-available; margin: 6px 0 }
 
-#customMovement *	 { width: 72px }
+#customMovement *, #customSecondaryMovement * { width: 72px }
 
 #esc div			 { display: flex; flex-direction: column; width: 320px }

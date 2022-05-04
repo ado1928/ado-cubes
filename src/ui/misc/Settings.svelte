@@ -17,30 +17,14 @@
 	onMount(async () => {
 		function loadSettings() {
 			let pref = JSON.parse(localStorage.getItem('settings'));
-
-			inputPlaceCubes = pref.inputPlaceCubes;
-			inputRemoveCubes = pref.inputRemoveCubes;
-			inputToggleGrid = pref.inputToggleGrid;
-			inputPaletteRowScroll = pref.inputPaletteRowScroll;
-			inputSettingsShortcut = pref.inputSettingsShortcut;
-			inputIncreaseCameraSpeed = pref.inputIncreaseCameraSpeed;
-			inputDecreaseCameraSpeed = pref.inputDecreaseCameraSpeed;
-			inputIncreaseCameraZoom = pref.inputIncreaseCameraZoom;
-			inputDecreaseCameraZoom = pref.inputDecreaseCameraZoom;
-			inputDisablePR.checked = pref.inputDisablePR;
-
-			audioMusicVolume = pref.audioMusicVolume;
-			audioSfxVolume = pref.audioSfxVolume;
-			audioUiVolume = pref.audioUiVolume;
-			audioEnableMusic.checked = pref.audioEnableMusic;
-			audioDisablePR.checked = pref.audioDisablePR;
-
-			miscEnableRandomLogos.checked = pref.miscEnableRandomLogos;
-
-			themeDisableBgBlur = pref.themeDisableBgBlur;
-			themeDisableTextShadows.checked = pref.themeDisableTextShadows
-		};
+			let foo = ""
+			for (let i = 0; i < Object.keys(pref).length; i++) {
+				if (Object.values(pref)[i] == true || Object.values(pref)[i] == false) { foo = ".checked" } else { foo = "" }
+				// Object.keys(pref)[i] + foo = ".pref" + Object.keys(pref)[i];
+			}
+		}
 		loadSettings()
+
 	})
 
 	let inputPlaceCubes = "KeyX";
@@ -49,8 +33,10 @@
 	let inputPaletteRowScroll = "AltLeft";
 	let inputIncreaseCameraSpeed = "BracketRight";
 	let inputDecreaseCameraSpeed = "BracketLeft";
+	let inputResetCameraSpeed = "Backslash";
 	let inputIncreaseCameraZoom = "Equal";
 	let inputDecreaseCameraZoom = "Minus";
+	let inputResetCameraZoom = "Quote";
 	let inputSettingsShortcut = "KeyL";
 
 	let audioMusicVolume = 100;
@@ -102,27 +88,43 @@
 		</div>
 
 		<h2>Input</h2>
-		<div><img src={notfunctional}> Movement
+		<h3>Movement</h3>
+		<div><img src={notfunctional}> Movement method
 			<select id="inputMovement" value="wasd">
 				<option value="wasd">WASD</option>
-				<option value="arrow">Arrow keys</option>
+				<option value="arrow">Arrows</option>
+				<option value="both">Both</option>
 				<option value="custom">Custom</option>
+				<option value="customsecondary">Custom with secondary</option>
 			</select>
-			<!-- <div id="customMovement">
-				<input type="text" value="KeyW">
-				<input type="text" value="KeyA">
-				<input type="text" value="KeyS">
-				<input type="text" value="KeyD">
-			</div> -->
+			<div id="customMovement">
+				<input id="inputMoveForward" type="text" value="KeyW">
+				<input id="inputMoveLeft" type="text" value="KeyA">
+				<input id="inputMoveDown" type="text" value="KeyS">
+				<input id="inputMoveBackward" type="text" value="KeyD">
+			</div>
+			<div id="customSecondaryMovement">
+				<input id="inputSecondaryMove" type="text" value="ArrowUp">
+				<input id="inputSecondaryMove" type="text" value="ArrowLeft">
+				<input id="inputSecondaryMove" type="text" value="ArrowDown">
+				<input id="inputSecondaryMove" type="text" value="ArrowRight">
+			</div>
 		</div>
+		<div>Move up <input id="inputMoveUp" type="text"></div>
+		<div>Move down <input id="inputMoveDown" type="text"></div>
+		<h3>Cube Placing</h3>
 		<div>Place cubes <input id="inputPlaceCubes" type="text" bind:value={inputPlaceCubes}></div>
 		<div>Remove cubes <input id="inputRemoveCubes" type="text" bind:value={inputRemoveCubes}></div>
-		<div>Toggle grid <input id="inputToggleGrid" type="text" bind:value={inputToggleGrid}></div>
-		<div>Palette row scroll <input id="inputPaletteRowScroll" type="text" bind:value={inputPaletteRowScroll}></div>
+		<h3>Camera</h3>
 		<div>Increase camera speed <input id="inputIncreaseCameraSpeed" type="text" bind:value={inputIncreaseCameraSpeed}></div>
 		<div>decrease camera speed <input id="inputDecreaseCameraSpeed" type="text" bind:value={inputDecreaseCameraSpeed}></div>
+		<div>Reset camera speed <input id="inputResetCameraSpeed" type="text" bind:value={inputResetCameraSpeed}></div>
 		<div>Increase camera zoom <input id="inputIncreaseCameraZoom" type="text" bind:value={inputIncreaseCameraZoom}></div>
-		<div>decrease camera zoom <input id="inputDncreaseCameraZoom" type="text" bind:value={inputDecreaseCameraZoom}></div>
+		<div>Decrease camera zoom <input id="inputDecreaseCameraZoom" type="text" bind:value={inputDecreaseCameraZoom}></div>
+		<div>Reset camera zoom <input id="inputResetCameraZoom" type="text" bind:value={inputResetCameraZoom}></div>
+		<h3>Other</h3>
+		<div>Toggle grid <input id="inputToggleGrid" type="text" bind:value={inputToggleGrid}></div>
+		<div>Palette row scroll <input id="inputPaletteRowScroll" type="text" bind:value={inputPaletteRowScroll}></div>
 		<div>Settings shortcut <input id="inputSettingsShortcut" type="text" bind:value={inputSettingsShortcut}></div>
 		<div>Disable mouse place and remove <input id="inputDisablePR" type="checkbox"></div>
 

@@ -101,7 +101,6 @@ renderer.domElement.addEventListener('click', function () {
 		controls.lock();
 		esc.style.display = "none";
 		winSettings.style.display = "none";
-		winControls.style.display = "none";
 		winCredits.style.display = "none"
 	}
 })
@@ -247,9 +246,11 @@ for (let i = 0; i < colors.length; i++) {
 let colorSkip = 1;
 
 window.onwheel = function (event) {
-	if (event.deltaY > 0) { color -= colorSkip }
-	else if (event.deltaY < 0) { color += colorSkip };
-	updateColor()
+	if (controls.isLocked) {
+		if (event.deltaY > 0) { color -= colorSkip }
+		else if (event.deltaY < 0) { color += colorSkip };
+		updateColor()
+	}
 }
 
 let materials = []
@@ -419,17 +420,14 @@ let moveUp = false;
 let moveDown = false;
 
 function updateCameraZoom() {
-	if (cameraZoom < 10) {
-		cameraZoom = 10
-	} else if (cameraZoom > 70) {
-		cameraZoom = 70
-	}
+	if (cameraZoom < 10) { cameraZoom = 10 }
+	else if (cameraZoom > 70) { cameraZoom = 70 };
 	camera.fov = cameraZoom;
 	camera.updateProjectionMatrix()
-}
+};
 
 const onKeyDown = function (event) {
-	if (document.activeElement.tagName !== "INPUT" && nick !== "") {
+	if (document.activeElement.tagName !== "INPUT" && nick !== "" && controls.isLocked) {
 		switch (event.code) {
 			case 'ArrowUp':
 			case 'KeyW':
@@ -469,37 +467,37 @@ const onKeyDown = function (event) {
 			case inputSettingsShortcut.value:
 				winSettings.style.display = (winSettings.style.display=="block") ? "none":"block";
 				break
-			case 'BracketLeft':
+			case inputDecreaseCameraSpeed.value:
 				cameraSpeed = cameraSpeed - 8;
 				break
-			case 'BracketRight':
+			case inputIncreaseCameraSpeed.value:
 				cameraSpeed = cameraSpeed + 8;
 				break
-			case 'Backslash':
+			case inputResetCameraSpeed.value:
 				cameraSpeed = 64.0;
 				break
-			case 'Minus':
+			case inputDecreaseCameraZoom.value:
 				cameraZoom = cameraZoom + 1;
 				updateCameraZoom()
 				break
-			case 'Equal':
+			case inputIncreaseCameraZoom.value:
 				cameraZoom = cameraZoom - 1;
 				updateCameraZoom();
 				break
-			case 'Quote':
+			case inputResetCameraZoom.value:
 				cameraZoom = 70;
 				updateCameraZoom();
 				break
 			case 'KeyO':
 				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block";
 				break
-			case 'AltLeft':
+			case inputPaletteRowScroll.value:
 				colorSkip = 5;
 				// colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
 				break
 		}
 	}
-}
+};
 
 const onKeyUp = function (event) {
 	switch (event.code) {
@@ -529,7 +527,7 @@ const onKeyUp = function (event) {
 			colorSkip = 1;
 			break;
 	}
-}
+};
 
 const canvas = document.getElementsByTagName("canvas")[0];
 
@@ -544,7 +542,7 @@ const onMouseDown = (event) => {
 				break
 		}
 	}
-}
+};
 
 canvas.addEventListener('mousedown', onMouseDown);
 document.addEventListener('keydown', onKeyDown);
@@ -556,15 +554,9 @@ let hover = new Audio('./audio/ui/hover.ogg');
 const buttons = document.getElementsByTagName('button');
 
 for (var i = 0; i < buttons.length; i++) {
-	buttons[i].onmouseover = function() {
-		hover.currentTime = 0;
-		hover.play()
-	}
-	buttons[i].onmousedown = function() {
-		click.currentTime = 0;
-		click.play()
-	}
-}
+	buttons[i].onmouseover = function() { if (!audioDisableUI.checked) { hover.currentTime = 0; hover.play() } };
+	buttons[i].onmousedown = function() { if (!audioDisableUI.checked) { click.currentTime = 0; click.play() } };
+};
 
 function render() {
 	requestAnimationFrame(render);
@@ -583,6 +575,16 @@ function render() {
 		if (moveUp) velocity.y += cameraSpeed * delta;
 		if (moveDown) velocity.y -= cameraSpeed * delta
 	};
+	
+	// this is probably not a good way to do it
+	if (verified && !controls.isLocked) {
+		moveForward = false;
+		moveLeft = false;
+		moveBackward = false
+		moveRight = false;
+		moveUp = false;
+		moveDown = false
+	};
 
 	controls.moveRight(velocity.x * delta);
 	controls.moveForward(velocity.z * delta);
@@ -594,5 +596,6 @@ function render() {
 	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
 
 	renderer.render(scene, camera)
-}
+};
+
 render()
