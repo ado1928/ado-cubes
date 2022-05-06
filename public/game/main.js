@@ -283,7 +283,6 @@ function removeCube(pos) {
 		let e = cubes[i]
 		if (~~e.position.x == ~~(pos.x + 0.5) && ~~e.position.y == ~~(pos.y + 0.5) && ~~e.position.z == ~~(pos.z + 0.5)) {
 			let c = cubes.splice(i, 1)[0];
-			
 			for(var j = 0; j < geometries[e.col].length; j++) {
 				if(c.igeometry.id == geometries[e.col][j].id) {
 					geometries[e.col].splice(j, 1);
@@ -335,7 +334,7 @@ function scrollToBottom(element) {
 	element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
 }
 
-function updateWorld(col) {
+function initWorld(col) {
 	//console.log(col)
 	if(worlds[col] instanceof THREE.Mesh) {
 		scene.remove(worlds[col])
@@ -344,20 +343,29 @@ function updateWorld(col) {
 		worlds[col] = undefined;
 	}
 
-	if(geometries[col].length > 0) {
-		const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
-		//console.log(mergedGeometry)
-		worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
-		worlds[col].castShadow = true;
-		worlds[col].receiveShadow = true;
-		scene.add(worlds[col]);
-		sun.shadow.needsUpdate = true;
-	}
-	sun.shadow.needsUpdate = true;
-		//console.log(JSON.stringify(scene).length)
-}
-window.updateWorld = updateWorld;
+	let mergedGeometry;
 
+	if(geometries[col].length > 0) {
+		mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+	}
+		
+	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
+	worlds[col].castShadow = true;
+	worlds[col].receiveShadow = true;
+	scene.add(worlds[col]);
+	
+	sun.shadow.needsUpdate = true;
+		//console.log(JSON.stringify
+}
+
+function updateWorld(col) {
+	if(geometries[col].length > 0) {
+		worlds[col].geometry.dispose();
+		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+	} else {
+		worlds[col].geometry = new THREE.BufferGeometry();
+	}
+}
 
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
@@ -383,7 +391,7 @@ export function verify(uuid) {
 		};
 
 		for(var i = 0; i < colors.length; i++) {
-			updateWorld(i);
+			initWorld(i)
 		}
 		
 	});
@@ -392,7 +400,9 @@ export function verify(uuid) {
 		let pos = data.pos;
 		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
 		updateWorld(data.color)
+
 		//fancy block illumination, do not uncomment unless you want framerate to die
+
 		/*const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
 		bl.position.set(pos[0], pos[1], pos[2]);
 		bl.castShadow = false;
