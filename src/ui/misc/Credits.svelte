@@ -10,7 +10,7 @@
 
 		<br>
 
-		<h2>Contributors</h2>
+		<h2>contributors</h2>
 
 		<table class="credits" style="text-align:initial;width:-moz-available;width:-webkit-fill-available">
 			<tr>

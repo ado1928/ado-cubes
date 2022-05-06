@@ -24,9 +24,9 @@
 
 <div id="esc">
 	<div id="escMenu" class="box center">
-		<button id="escReturn" on:click={escReturn}>Return</button>
-		<button id="escCredits" on:click={escCredits}>Credits</button>
-		<button id="escSettings" on:click={escSettings}>Settings</button>
+		<button id="escReturn" class="escButton" on:click={escReturn}>Return</button>
+		<button id="escCredits" class="escButton" on:click={escCredits}>Credits</button>
+		<button id="escSettings" class="escButton" on:click={escSettings}>Settings</button>
 
 		<br>
 

@@ -8,6 +8,8 @@
 
 	--br1: 1px solid #555;
 
+	--highlight: 0 0 4px #fff, 1px 0 0px #fff, 1px 1px 1px #000, 2px 1px 1px #000;
+
 	--bg-blur: 6px;
 
 	--box-padding: 6px;
@@ -18,82 +20,73 @@
 
 	--chat-width: 440px;
 	--chat-maxheight: 480px;
-	--font-size: 14px
+	--font-size: 16px
 }
 
 @font-face {
 	font-family: 'Cousine';
-	font-style: normal;
 	font-weight: 400;
+	font-style: normal;
 	src: url(https://fonts.gstatic.com/s/cousine/v23/d6lIkaiiRdih4SpP_SQvzA.woff2) format('woff2');
 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD
 }
-@font-face {
-	font-family: 'Unifont';
-	word-spacing: 4px;
-	src: url('Unifont.ttf');
-}
+@font-face { font-family: 'Unifont';src: url('Unifont.ttf') }
+@font-face { font-family: 'Silkscreen'; src: url("Mac's Silkscreen.ttf") }
 
 html body { background: #000; margin: 0; font-family: 'Unifont'; font-size: var(--font-size) }
-iframe { position: absolute !important; overflow: visible !important }
+iframe	{ overflow: visible !important; position: absolute !important }
+
 
 *		{ text-shadow: 1px 1px #000 }
 p		{ margin: 0 }
-h2, h3	{ margin-bottom: 0 }
-a		{ color: #acccff }
-a:hover	{ font-weight: bold }
+h2, h3, strong { margin-bottom: 0; font-family: 'Silkscreen'; font-weight: normal }
+h2		{ font-size: 24px }
+h3		{ font-size: 16px }
+a		{ color: #acccff; text-decoration: none }
+a:hover	{ color: #fff; text-shadow: var(--highlight); text-decoration: underline }
 
-img { image-rendering: pixelated; image-rendering: -webkit-optimize-contrast }
+img		{ image-rendering: pixelated; image-rendering: -webkit-optimize-contrast }
 
-button {
+button	{ background: 0; border: 0; border-radius: 4px; }
+
+.escButton {
 	color: var(--fg1);
-	background: 0;
-	border: 0;
-	border-radius: 4px;
-	padding: 6px;
 	height: fit-content;
-	font-family: 'Cousine';
-	font-size: var(--font-size);
+	padding: 6px;
+	font-family: 'Unifont';
+	font-size: var(--font-size)
 }
-
-@keyframes buttonhover {
-	from { letter-spacing: 0px }
-	to	 { letter-spacing: 2px }
-}
-
-button:hover {
-	cursor: pointer;
+.escButton:hover {
 	background: #fff3;
 	outline: 1px solid #fff6;
-	font-weight: bold;
-	letter-spacing: 0px;
+	text-shadow: var(--highlight);
+	cursor: pointer;
 	animation-name: buttonhover;
-	animation-duration: 0.1s;
+	animation-duration: .1s;
+	animation-timing-function: ease-out;
 	animation-fill-mode: both;
-	animation-timing-function: ease-out
+	letter-spacing: 0
 }
+@keyframes buttonhover { from { letter-spacing: 0px } to { letter-spacing: 2px } }
+
+.icoButton { opacity: 50%; padding: 0; font-size: 0 }
+.icoButton:hover { opacity: 100%; background: #fff3; outline: 1px solid #fff6; text-shadow: var(--highlight); cursor: pointer }
 
 *:focus	{ filter: drop-shadow(0 0 6px #000) }
 
-input[type="text"] {
+input[type='text'] {
 	color: #fff;
 	background: var(--bg1);
 	border: 1px solid #505050aa;
 	border-radius: 6px;
 	height: 18px;
 	margin: 2px 0;
-	padding: 2px 6px
+	padding: 2px 6px;
 }
 input[type="text"]:hover { background: var(--bg2) }
 input[type="text"]:focus { background: #000; border-color: #fff }
 
-select {
-	color: #fff;
-	background: var(--bg1);
-	border: var(--br1);
-	border-radius: 6px;
-	padding: 2px 6px
-}
+select { color: #fff; background: var(--bg1); border: var(--br1); border-radius: 6px; padding: 2px 6px }
 
 .credits tr td						{ padding: 0 6px }
 .credits tr td:first-child			{ text-align: right }
@@ -101,60 +94,61 @@ select {
 .credits tr td:nth-of-type(2):hover { transform: scale(2) }
 
 .slider {
-	-webkit-appearance: none;
 	background: var(--bg1);
+	border: var(--br1);
+	border-radius: 8px;
 	width: -moz-available;
 	width: -webkit-fill-available;
 	height: 8px;
-	border: var(--br1);
-	border-radius: 8px;
-	margin: 0
+	margin: 0;
+	-webkit-appearance: none
 }
 
-::-webkit-scrollbar		  { background: 0; width: 6px; border-radius: 6px; margin: 6px }
-::-webkit-scrollbar-thumb { background: #aaa; border-radius: 6px }
+::-webkit-scrollbar			{ background: 0; border-radius: 6px; width: 6px; margin: 6px }
+::-webkit-scrollbar-thumb	{ background: #aaa; border-radius: 6px }
 
 .box {
 	position: absolute;
 	color: var(--fg1);
 	background: var(--bg1);
-	backdrop-filter: blur(var(--bg-blur));
-	outline: 1px solid #000;
 	border: 1px solid #555;
 	border-radius: 6px;
+	outline: 1px solid #000;
 	width: fit-content;
-	padding: var(--box-padding)
+	padding: var(--box-padding);
+	backdrop-filter: blur(var(--bg-blur))
 }
 .win		{ width: -webkit-fill-available; height: -webkit-fill-available; padding: var(--win-padding) }
 
+.io-captcha { padding-top: 16px }
+
 .center		{ position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) }
 
-.icon		{ padding: 0; font-size: 0 }
-.iconav 	{ padding: 4px; font-size: 0 }
+.ico		{ opacity: 100% }
+.icoNav		{ padding: 4px; font-size: 0 }
 
-.dropdown			 { background: var(--bg1); border-radius: 6px; width: fit-content; padding: 4px 6px }
-.dropdown-content	 { position: absolute; display: none }
+#uiCanvas, #esc, .win	{ display: none }
 
-.io-captcha			 { padding-top: 16px }
+#itsEditTime			{ display: flex; lex-direction: column; position: absolute; right: 6px; bottom: 6px; align-items: flex-end }
+	#palette			{ display: flex; position: relative; width: calc(var(--palette-colors-size) * var(--palette-colors-in-row)); margin-top: 6px; flex-wrap: wrap }
+	#palette *			{ width: var(--palette-colors-size); height: var(--palette-colors-size) }
+	#palette *:hover	{ box-shadow: 0 0 4px 2px #000; transform: scale(1.15) }
+	.selectedbox		{ z-index: 1; outline: 2px solid #fff }
+	#switchPlacement	{ position: relative; font-size: 0 }
+	#switchPlacement *:not(:last-child) { margin-right: var(--box-padding)}
 
-.selectedbox {outline: 2px solid #fff; z-index: 1 }
+#coordinates	{ top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0) }
+#chat			{ bottom: 6px; left: 6px; width: var(--chat-width); max-height: var(--chat-maxheight); }
+#messages		{ overflow-y: scroll; max-height: calc(var(--chat-maxheight) - (var(--box-padding)*4)); overflow-wrap: break-word }
+#inputChat		{ width: -moz-available; width: -webkit-fill-available; margin-top: 4px }
 
-#uiCanvas, #esc, .win { display: none }
+#esc div		{ display: flex; flex-direction: column; width: 320px }
 
-#itsEditTime		 { position: absolute; display: flex; flex-direction: column; align-items: flex-end; bottom: 6px; right: 6px }
-	#palette		 { position: relative; display: flex; flex-wrap: wrap; width: calc(var(--palette-colors-size) * var(--palette-colors-in-row)); margin-top: 6px }
-	#palette *		 { width: var(--palette-colors-size); height: var(--palette-colors-size) }
-	#palette *:hover { transform: scale(1.15); box-shadow: 0 0 4px 2px #000 }
-	#switchPlacement { position: relative; font-size: 0 }
-	#switchPlacement *:not(:last-child) { margin-right: var(--box-padding) }
-#coordinates		 { top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0); }
-#chat				 { bottom: 6px; left: 6px; width: var(--chat-width); max-height: var(--chat-maxheight); }
-#messages			 { max-height: calc(var(--chat-maxheight) - (var(--box-padding)*4)); overflow-y: scroll; overflow-wrap: break-word }
-#inputChat			 { width: -moz-available; width: -webkit-fill-available; margin-top: 4px; }
+#winWelcome		{ display: block; width: 620px; height: auto; padding: 16px }
+#inputUsername, #inputPassword { width: -moz-available; width: -webkit-fill-available; margin: 6px 0 }
 
-#winWelcome			 { display: block; padding: 16px; width: 620px; height: auto;}
-#inputUsername, #inputPassword { width: -moz-available ;width: -webkit-fill-available; margin: 6px 0 }
+.settingsSection { margin-left: 24px }
+	#customMovement *, #customSecondaryMovement * { width: 72px }
 
-#customMovement *, #customSecondaryMovement * { width: 72px }
 
-#esc div			 { display: flex; flex-direction: column; width: 320px }
+

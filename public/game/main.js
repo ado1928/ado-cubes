@@ -244,11 +244,14 @@ for (let i = 0; i < colors.length; i++) {
 }
 
 let colorSkip = 1;
+let palettescroll = new Audio('./audio/ui/palette scroll.ogg')
 
 window.onwheel = function (event) {
 	if (controls.isLocked) {
 		if (event.deltaY > 0) { color -= colorSkip }
 		else if (event.deltaY < 0) { color += colorSkip };
+		palettescroll.currentTime = 0;
+		palettescroll.play()
 		updateColor()
 	}
 }
@@ -503,7 +506,7 @@ const onKeyDown = function (event) {
 				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block";
 				break
 			case inputPaletteRowScroll.value:
-				colorSkip = 5;
+				colorSkip = -5;
 				// colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
 				break
 		}

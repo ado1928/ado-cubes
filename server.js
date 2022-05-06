@@ -24,7 +24,7 @@ fs.readFile('./world.caw', 'utf8' , (err, data) => {
 	if (err) throw err;
 	world = textencoder.encode(data);
 })
-//world = new Uint8Array(262144).fill(0);
+// world = new Uint8Array(262144).fill(0);
 
 io.on('connection', (socket) => {
 	socket.emit('connected', world);

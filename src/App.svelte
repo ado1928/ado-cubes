@@ -27,6 +27,6 @@
 	</div>
 
 	<Esc/>
-	<Settings><EscWinNavs>Settings</EscWinNavs></Settings>
-	<Credits><EscWinNavs>Credits</EscWinNavs></Credits>
+	<Settings><EscWinNavs>settings</EscWinNavs></Settings>
+	<Credits><EscWinNavs>credits</EscWinNavs></Credits>
 </main>
