@@ -189,7 +189,7 @@ function placeCube(pos) {
 
 			pos.multiplyScalar(0.5);
 			pos.add(intersect.point)
-			console.log(pos)
+			//console.log(pos)
 			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
 		}
 	} else {
@@ -209,7 +209,7 @@ function breakCube(pos) {
 			pos.sub(intersect.face.normal);
 			pos.multiplyScalar(0.5);
 			pos.add(intersect.point)
-			console.log(pos)
+			//console.log(pos)
 			socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
 		}
 	} else {
@@ -233,7 +233,7 @@ function updateColor() {
 updateColor();
 
 for (let i = 0; i < colors.length; i++) {
-	console.log(colors[i]);
+	//console.log(colors[i]);
 	colors[i].onclick = function () {
 		color = i;
 		updateColor();
@@ -278,7 +278,7 @@ function addCube(pos, col) {
 }
 
 function removeCube(pos) {
-	console.log(pos)
+	//console.log(pos)
 	for(var i = 0; i < cubes.length; i++) {
 		let e = cubes[i]
 		if (~~e.position.x == ~~(pos.x + 0.5) && ~~e.position.y == ~~(pos.y + 0.5) && ~~e.position.z == ~~(pos.z + 0.5)) {
@@ -337,7 +337,13 @@ function scrollToBottom(element) {
 
 function updateWorld(col) {
 	//console.log(col)
-	scene.remove(worlds[col])
+	if(worlds[col] instanceof THREE.Mesh) {
+		scene.remove(worlds[col])
+		worlds[col].geometry.dispose()
+		worlds[col].material.dispose()
+		worlds[col] = undefined;
+	}
+
 	if(geometries[col].length > 0) {
 		const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
 		//console.log(mergedGeometry)
@@ -348,9 +354,10 @@ function updateWorld(col) {
 		sun.shadow.needsUpdate = true;
 	}
 	sun.shadow.needsUpdate = true;
+		//console.log(JSON.stringify(scene).length)
 }
-
 window.updateWorld = updateWorld;
+
 
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
@@ -361,7 +368,7 @@ export function verify(uuid) {
 	});
 
 	socket.on('connected', function (arr) {
-		console.log(arr);
+		//console.log(arr);
 		window.arr = arr;
 		cubes.forEach(e => { scene.remove(e) });
 
