@@ -186,9 +186,9 @@ function placeCube(pos) {
 				pos.add(intersect.face.normal)
 			};
 			pos.multiplyScalar(0.5);
-			pos.add(intersect.point);
-			console.log(pos);
-			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
+			pos.add(intersect.point)
+			//console.log(pos)
+			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
 		}
 	} else {
 		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
@@ -337,9 +337,16 @@ function scrollToBottom(element) {
 }
 
 function updateWorld(col) {
-	scene.remove(worlds[col]);
-	if (geometries[col].length > 0) {
-		let mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+	// console.log(col)
+	if(worlds[col] instanceof THREE.Mesh) {
+		scene.remove(worlds[col])
+		worlds[col].geometry.dispose()
+		worlds[col].material.dispose()
+		worlds[col] = undefined;
+	}
+
+	if(geometries[col].length > 0) {
+		const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
 		// console.log(mergedGeometry)
 		worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
 		worlds[col].castShadow = true;
@@ -348,9 +355,10 @@ function updateWorld(col) {
 		sun.shadow.needsUpdate = true
 	}
 	sun.shadow.needsUpdate = true;
+		// console.log(JSON.stringify(scene).length)
 }
-
 window.updateWorld = updateWorld;
+
 
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
@@ -367,7 +375,7 @@ export function verify(uuid) {
 
 	socket.on('connected', function (arr) {
 		const view = new Uint8Array(arr);
-		console.log(view);
+		// console.log(view);
 		window.arr = view;
 		cubes.forEach(e => { scene.remove(e) });
 		for (let x = 0; x < 64; x++) {
