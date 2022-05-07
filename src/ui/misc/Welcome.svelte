@@ -3,31 +3,11 @@
 	let style = "position:absolute;transform:translate(-50%, -174px);left:50%;pointer-events:none";
 
 	window.onload = function() {
-
-		// this is terrible.
-
 		if (miscEnableRandomLogos.checked) {
-			if (Math.floor(Math.random() * 70) == 1) {
-				odacebus()
-			} else if (Math.floor(Math.random() * 900) == 1) {
-				aaaaaaaa()
-			} else if (Math.floor(Math.random() * 727) == 1) {
-				ado()
-			} else if (audioEnableMusic.checked) {
-				let music = new Audio('./audio/music/The Moon.ogg');
-				music.play()
-			}
-		} else if (audioEnableMusic.checked) { let music = new Audio('./audio/music/The Moon.ogg'); music.play() }
-
-		function odacebus() { src = "./images/logo/odacebus.svg"; }
-		function aaaaaaaa() {
-			src = "./images/logo/aaaaaaaa.svg"
-			if (audioEnableMusic.checked) { let aaaaaaaa = new Audio('./audio/screaming.ogg'); aaaaaaaa.play() }
-		}
-		function ado() {
-			src = "./images/logo/ado!.svg";
-			style = "position:absolute;transform:translate(-50%, -164px);left:50%;pointer-events:none";
-			if (audioEnableMusic.checked) { let ado = new Audio('./audio/welcome to ado.ogg'); ado.play() }
+			if (Math.floor(Math.random() * 70) == 1) { src = "./images/logo/odacebus.svg" }
+			else if (Math.floor(Math.random() * 900) == 1) { src = "./images/logo/aaaaaaaa.svg" }
+			else if (Math.floor(Math.random() * 727) == 1) { src = "./images/logo/ado!.svg";
+			style = "position:absolute;transform:translate(-50%, -164px);left:50%;pointer-events:none"
 		}
 	}
 </script>

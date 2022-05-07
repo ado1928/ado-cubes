@@ -15,12 +15,16 @@
 	onMount(async () => {
 		function loadSettings() {
 			let pref = JSON.parse(localStorage.getItem('settings'));
-			let foo;
 			for (let i = 0; i < Object.keys(pref).length; i++) {
-				if (Object.values(pref)[i] == true || Object.values(pref)[i] == false) { foo = ".checked" } else { foo = ".value" };
-				let input = Object.keys(pref)[i] + foo;
-				let value = "pref." + Object.keys(pref)[i];
-				eval(input = value)
+				console.log(Object.keys(pref)[i] + " = " + Object.values(pref)[i]);
+				if (Object.values(pref)[i] == true || Object.values(pref)[i] == false) {
+					document.getElementById(Object.keys(pref)[i]).checked = Object.values(pref)[i]
+					// document.getElementById(Object.keys(pref)[i]).checked = true
+				} else {
+					document.getElementById(Object.keys(pref)[i]).value = Object.values(pref)[i]
+					// document.getElementById(Object.keys(pref)[i]).value = "adobecubes"
+				}
+				
 			}
 		}
 		loadSettings()
@@ -32,14 +36,31 @@
 
 	function applySettings() {
 		const storeSettings = {
+			generalLanguage: generalLanguage.value,
+
+			inputMoveUp: inputMoveUp.value,
+			inputMoveDown: inputMoveDown.value,
+			inputMoveForward: inputMoveForward.value,
+			inputMoveLeft: inputMoveLeft.value,
+			inputMoveBackward: inputMoveBackward.value,
+			inputMoveRight: inputMoveRight.value,
+			inputSecondaryMoveForward: inputSecondaryMoveForward.value,
+			inputSecondaryMoveLeft: inputSecondaryMoveLeft.value,
+			inputSecondaryMoveBackward: inputSecondaryMoveBackward.value,
+			inputSecondaryMoveRight: inputSecondaryMoveRight.value,
+
 			inputPlaceCubes: inputPlaceCubes.value,
 			inputRemoveCubes: inputRemoveCubes.value,
-			inputToggleGrid: inputToggleGrid.value,
-			inputPaletteRowScroll: inputPaletteRowScroll.value,
+
 			inputIncreaseCameraSpeed: inputIncreaseCameraSpeed.value,
 			inputDecreaseCameraSpeed: inputDecreaseCameraSpeed.value,
+			inputResetCameraSpeed: inputResetCameraSpeed.value,
 			inputIncreaseCameraZoom: inputIncreaseCameraZoom.value,
 			inputDecreaseCameraZoom: inputDecreaseCameraZoom.value,
+			inputResetCameraZoom: inputResetCameraZoom.value,
+			
+			inputToggleGrid: inputToggleGrid.value,
+			inputPaletteRowScroll: inputPaletteRowScroll.value,
 			inputSettingsShortcut: inputSettingsShortcut.value,
 			inputDisablePR: inputDisablePR.checked,
 
@@ -48,6 +69,9 @@
 			audioUiVolume: audioUiVolume,
 			audioEnableMusic: audioEnableMusic.checked,
 			audioDisablePR: audioDisablePR.checked,
+			audioDisableUI: audioDisableUI.checked,
+
+			performanceEnableClouds: performanceEnableClouds.checked,
 
 			miscEnableRandomLogos: miscEnableRandomLogos.checked,
 
@@ -57,6 +81,11 @@
 		localStorage.setItem('settings', JSON.stringify(storeSettings));
 		window.onload = function() { loadSettings() }
 	};
+
+	function defaultSettings() {
+		localStorage.clear();
+		history.go(0)
+	}
 
 	const onKeyDown = function(event) {
 		surenot.value = event.code
@@ -90,7 +119,7 @@
 		<div class="settingsSection">	
 			<h3>movement</h3>
 				<div><img src={notfunctional}> Movement method
-					<select id="inputMovement" value="wasd">
+					<select id="inputMovement" value="both">
 						<option value="wasd">WASD</option>
 						<option value="arrow">Arrows</option>
 						<option value="both">Both</option>
@@ -100,14 +129,14 @@
 					<div id="customMovement">
 						<input id="inputMoveForward" type="text" value="KeyW">
 						<input id="inputMoveLeft" type="text" value="KeyA">
-						<input id="inputMoveDown" type="text" value="KeyS">
-						<input id="inputMoveBackward" type="text" value="KeyD">
+						<input id="inputMoveBackward" type="text" value="KeyS">
+						<input id="inputMoveRight" type="text" value="KeyD">
 					</div>
 					<div id="customSecondaryMovement">
-						<input id="inputSecondaryMove" type="text" value="ArrowUp">
-						<input id="inputSecondaryMove" type="text" value="ArrowLeft">
-						<input id="inputSecondaryMove" type="text" value="ArrowDown">
-						<input id="inputSecondaryMove" type="text" value="ArrowRight">
+						<input id="inputSecondaryMoveForward" type="text" value="ArrowUp">
+						<input id="inputSecondaryMoveLeft" type="text" value="ArrowLeft">
+						<input id="inputSecondaryMoveBackward" type="text" value="ArrowDown">
+						<input id="inputSecondaryMoveRight" type="text" value="ArrowRight">
 					</div>
 				</div>
 				<div>Move up <input id="inputMoveUp" type="text" value="Space"></div>
@@ -131,9 +160,9 @@
 
 		<h2>audio</h2>
 		<div class="settingsSection">
-			<div><img src={notfunctional}> Music {audioMusicVolume} <input id="musicVolume" class="slider" type="range" bind:value={audioMusicVolume}></div>
-			<div><img src={notfunctional}> SFX {audioSfxVolume} <input id="sfxVolume" class="slider" type="range" bind:value={audioSfxVolume}></div>
-			<div><img src={notfunctional}> UI {audioUiVolume} <input id="uiVolume" class="slider" type="range" bind:value={audioUiVolume}></div>
+			<div><img src={notfunctional}> Music {audioMusicVolume} <input id="audioMusicVolume" class="slider" type="range" bind:value={audioMusicVolume}></div>
+			<div><img src={notfunctional}> SFX {audioSfxVolume} <input id="audioSfxVolume" class="slider" type="range" bind:value={audioSfxVolume}></div>
+			<div><img src={notfunctional}> UI {audioUiVolume} <input id="audioUiVolume" class="slider" type="range" bind:value={audioUiVolume}></div>
 
 			<div><img src={requiresrefresh}> Enable music <input id="audioEnableMusic" type="checkbox"></div>
 			<div>Disable place and remove sounds <input id="audioDisablePR" type="checkbox"></div>
@@ -142,7 +171,7 @@
 
 		<h2>performance</h2>
 		<div class="settingsSection">
-			<div><img src={notfunctional}> Enable clouds <input id="prfmEnableClouds" type="checkbox"></div>
+			<div><img src={notfunctional}> Enable clouds <input id="performanceEnableClouds" type="checkbox"></div>
 		</div>
 
 		<h2>miscellaneous</h2>
@@ -157,5 +186,5 @@
 			<div><img src={notfunctional}> Disable text shadows <input id="themeDisableTextShadows" type="checkbox"></div>
 		</div>
 	</div>
-	<button>Button</button> <button id="applySettings" on:click={applySettings}>Apply</button> <button onclick="history.go(0)">Refresh</button> <button>Button</button>
+	<button id="applySettings" on:click={applySettings}>Apply</button> <button on:click={defaultSettings}>Default settings</button>
 </div>

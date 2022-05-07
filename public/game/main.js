@@ -24,7 +24,7 @@ varying vec2 vUv;
 
 void main() {
 	vUv = uv;
-	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+	vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 	gl_Position = projectionMatrix * mvPosition;
 }`
 
@@ -36,29 +36,12 @@ varying vec2 vUv;
 void main(void) {
 	vec4 color = vec4(0.0, 0.0, 0.0, 0.1);
 
-	if(mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
-		color = vec4(0.1, 0.25, 1.0, 0.5);
-	}
-
-	else if(mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) {
-		color = vec4(0.1, 0.25, 1.0, 0.5);
-	}
-
-	else if(mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
-		color = vec4(0.1, 0.25, 1.0, 0.5);
-	}
-
-	else if(mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) {
-		color = vec4(0.1, 0.25, 1.0, 0.5);
-	}
-
-	else if(mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
-		color = vec4(0.1, 0.25, 1.0, 0.5);
-	}
-
-	else if(mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) {
-		color = vec4(0.1, 0.25, 1.0, 0.5);
-	}
+	if (mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) { color = vec4(0.1, 0.25, 1.0, 0.5); }
+	else if (mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) { color = vec4(0.1, 0.25, 1.0, 0.5); }
+	else if (mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) { color = vec4(0.1, 0.25, 1.0, 0.5); }
+	else if (mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) { color = vec4(0.1, 0.25, 1.0, 0.5); }
+	else if (mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); }
+	else if (mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); }
 
 	gl_FragColor = vec4(color);
 
@@ -70,7 +53,6 @@ material = new THREE.ShaderMaterial({
 	uniforms: { time: { value: 1.0 }, resolution: { value: new THREE.Vector2() } },
 	vertexShader: vert,
 	fragmentShader: frag,
-
 	side: THREE.BackSide
 });
 
@@ -101,10 +83,9 @@ renderer.domElement.addEventListener('click', function () {
 		controls.lock();
 		esc.style.display = "none";
 		winSettings.style.display = "none";
-		winCredits.style.display = "none";
-
+		winCredits.style.display = "none"
 	}
-})
+});
 
 scene.add(controls.getObject());
 
@@ -118,7 +99,7 @@ function onWindowResize() {
 	camera.updateProjectionMatrix();
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.documentElement.style.setProperty("--innerHeight", window.innerHeight + "px")
-}
+};
 document.documentElement.style.setProperty("--innerHeight", window.innerHeight + "px")
 
 const loader = new THREE.CubeTextureLoader();
@@ -129,7 +110,7 @@ const texture = loader.load([
 	'/game/sky/Daylight Box_Bottom.png',
 	'/game/sky/Daylight Box_Front.png',
 	'/game/sky/Daylight Box_Back.png'
-])
+]);
 scene.background = texture;
 
 const sun = new THREE.DirectionalLight(0xffffff, 0.35);
@@ -162,20 +143,11 @@ scene.add(dlight2);
 const light = new THREE.AmbientLight(0x606070);
 scene.add(light);
 
-function playAudio(url) {
-	let playit = new Audio(url);
-	playit.play();
-}
+function playAudio(url) { let playit = new Audio(url); playit.play() };
 
-let raycastPlacement = true
-placeAtRaycast.onclick = function () {
-	raycastPlacement = true;
-	crosshair.style.display = "block"
-}
-placeInCamera.onclick = function () {
-	raycastPlacement = false;
-	crosshair.style.display = "none"
-}
+let raycastPlacement = true;
+placeAtRaycast.onclick = function () { raycastPlacement = true; crosshair.style.display = "block" };
+placeInCamera.onclick = function () { raycastPlacement = false; crosshair.style.display = "none" };
 
 function placeCube(pos) {
 	if (raycastPlacement) {
@@ -184,28 +156,20 @@ function placeCube(pos) {
 		if (intersects.length > 0) {
 			const intersect = intersects[0];
 			let pos = new THREE.Vector3();
-			if (intersect.object == grid) {
-				pos.sub(intersect.face.normal);
-			} else {
-				pos.add(intersect.face.normal)
-			};
+			if (intersect.object == grid) { pos.sub(intersect.face.normal) } else { pos.add(intersect.face.normal) };
 			pos.multiplyScalar(0.5);
-			pos.add(intersect.point)
-			//console.log(pos)
-			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
+			pos.add(intersect.point);
+			//console.log(pos);
+			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
 		}
-	} else {
-		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
-	}
-	if (!audioDisablePR.checked) { playAudio('./audio/sfx/place.ogg'); }
+	} else { socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color }) }
+	if (!audioDisablePR.checked) { playAudio('./audio/sfx/place.ogg') }
 }
 
 function breakCube(pos) {
 	if (raycastPlacement) {
 		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
-
 		const intersects = raycaster.intersectObjects(scene.children);
-
 		if (intersects.length > 0) {
 			const intersect = intersects[0];
 			let pos = new THREE.Vector3();
@@ -215,9 +179,7 @@ function breakCube(pos) {
 			// console.log(pos);
 			socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
 		}
-	} else {
-		socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
-	};
+	} else { socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] }) };
 	if (!audioDisablePR.checked) { playAudio('./audio/sfx/remove.ogg') }
 }
 
@@ -235,11 +197,8 @@ updateColor();
 
 for (let i = 0; i < colors.length; i++) {
 	// console.log(colors[i]);
-	colors[i].onclick = function () {
-		color = i;
-		updateColor()
-	}
-}
+	colors[i].onclick = function () { color = i; updateColor() }
+};
 
 let colorSkip = 1;
 
@@ -247,22 +206,18 @@ window.onwheel = function (event) {
 	if (controls.isLocked) {
 		if (event.deltaY > 0) { color -= colorSkip }
 		else if (event.deltaY < 0) { color += colorSkip };
-		playAudio('./audio/ui/palette scroll.ogg');
+		if (!audioDisableUI.checked) { playAudio('./audio/ui/palette scroll.ogg') };
 		updateColor()
 	}
-}
+};
 
 let materials = []
-for (var i = 0; i < colors.length; i++) {
-	materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor })
-}
+for (var i = 0; i < colors.length; i++) { materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor }) };
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 
 let geometries = []
-for(var i = 0; i < colors.length; i++) {
-	geometries[i] = [];
-}
+for(var i = 0; i < colors.length; i++) { geometries[i] = [] };
 
 function addCube(pos, col) {
 	let cube = new THREE.Mesh(geometry, materials[col], 100);
@@ -278,7 +233,7 @@ function addCube(pos, col) {
 	instanceGeometry.applyMatrix4(matrix);
 	cube.igeometry = instanceGeometry;
 	geometries[col].push(instanceGeometry)
-}
+};
 
 function removeCube(pos) {
 	// console.log(pos);
@@ -313,57 +268,50 @@ let verified = false;
 
 inputUsername.onkeydown = function (input) {
 	if (input.key == "Enter" && inputUsername.value !== "") {
-		if (!verified) {
-			captchaPlease.style.display = "block"
-		} else {
+		if (!verified) { captchaPlease.style.display = "block" }
+		else {
 			nick = inputUsername.value;
 			winWelcome.style.display = "none";
 			uiCanvas.style.display = "block";
 			socket.emit("serverMessage", { "message":  nick + " has joined the server!" })
-		}
-	}
-}
+		};
+	};
+};
 
 inputChat.onkeydown = function (chanter) {
 	if (chanter.key == "Enter" && nick !== "" && inputChat.value !== "") {
 		socket.emit("message", { "message": inputChat.value, "sender": nick });
 		inputChat.value = ""
 	}
-}
+};
 
-function scrollToBottom(element) {
-	element.scroll({ top: element.scrollHeight, behavior: 'smooth' })
-}
+function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
 
 function initWorld(col) {
 	if (worlds[col] instanceof THREE.Mesh) {
 		scene.remove(worlds[col])
 		worlds[col].geometry.dispose()
 		worlds[col].material.dispose()
-		worlds[col] = undefined;
-	}
+		worlds[col] = undefined
+	};
 
 	let mergedGeometry;
 
-	if (geometries[col].length > 0) {
-		mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
-	}
+	if (geometries[col].length > 0) { mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]) }
 		
 	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
 	worlds[col].castShadow = true;
 	worlds[col].receiveShadow = true;
 	scene.add(worlds[col]);
-	sun.shadow.needsUpdate = true;
-}
+	sun.shadow.needsUpdate = true
+};
 
 function updateWorld(col) {
 	if(geometries[col].length > 0) {
 		worlds[col].geometry.dispose();
 		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
-	} else {
-		worlds[col].geometry = new THREE.BufferGeometry();
-	}
-}
+	} else { worlds[col].geometry = new THREE.BufferGeometry(); }
+};
 
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
@@ -419,12 +367,12 @@ export function verify(uuid) {
 		let pos = data.pos;
 		removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
 	})
-}
+};
 
 window.verify = verify;
 
 // bypass captcha in debug
-verify()
+verify();
 
 let cameraSpeed = 64.0;
 let cameraZoom = 70;
