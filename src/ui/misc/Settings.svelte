@@ -12,7 +12,7 @@
 		return `${r} ${g} ${b}`
 	};
 
-	onMount(async () => {
+	onMount(() => {
 		function loadSettings() {
 			let pref = JSON.parse(localStorage.getItem('settings'));
 			for (let i = 0; i < Object.keys(pref).length; i++) {
@@ -26,6 +26,8 @@
 				}
 				
 			}
+			document.querySelector(":root").style.setProperty("--chat-width", themeChatWidth.value)
+			document.querySelector(":root").style.setProperty("--chat-maxheight", themeChatMaxHeight.value)
 		}
 		loadSettings()
 	});
@@ -58,7 +60,7 @@
 			inputIncreaseCameraZoom: inputIncreaseCameraZoom.value,
 			inputDecreaseCameraZoom: inputDecreaseCameraZoom.value,
 			inputResetCameraZoom: inputResetCameraZoom.value,
-			
+
 			inputToggleGrid: inputToggleGrid.value,
 			inputPaletteRowScroll: inputPaletteRowScroll.value,
 			inputSettingsShortcut: inputSettingsShortcut.value,
@@ -75,25 +77,20 @@
 
 			miscEnableRandomLogos: miscEnableRandomLogos.checked,
 
+			themeChatWidth: themeChatWidth.value,
+			themeChatMaxHeight: themeChatMaxHeight.value,
 			themeDisableBgBlur: themeDisableBgBlur.checked,
 			themeDisableTextShadows: themeDisableTextShadows.checked
 		};
 		localStorage.setItem('settings', JSON.stringify(storeSettings));
-		window.onload = function() { loadSettings() }
+		loadSettings()
 	};
 
-	function defaultSettings() {
-		localStorage.clear();
-		history.go(0)
-	}
+	function defaultSettings() { localStorage.clear(); history.go(0) }
 
-	const onKeyDown = function(event) {
-		surenot.value = event.code
-	};
+	const onKeyDown = function(event) { surenot.value = event.code };
 
-	window.onload = function() {
-		notsure.addEventListener('keydown', onKeyDown);
-	}
+	window.onload = function() { notsure.addEventListener('keydown', onKeyDown); }
 </script>
 
 <div id="winSettings" class="box win">
@@ -182,6 +179,8 @@
 		<h2>appearance</h2>
 		<div class="settingsSection">
 			<div><strong>note: </strong>Blur does not properly work in Firefox</div>
+			<div>Chat width <input id="themeChatWidth" type="text" value="440px"></div>
+			<div>Chat max height <input id="themeChatMaxHeight" type="text" value="480px"></div>
 			<div><img src={notfunctional}> Disable background blur <input id="themeDisableBgBlur" type="checkbox"></div>
 			<div><img src={notfunctional}> Disable text shadows <input id="themeDisableTextShadows" type="checkbox"></div>
 		</div>

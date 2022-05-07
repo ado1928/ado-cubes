@@ -66,7 +66,6 @@ grid.visible = true;
 geometry = new THREE.PlaneBufferGeometry(2000, 2000);
 material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
-// should be togglable in settings
 let ground = new THREE.Mesh(geometry, material);
 ground.position.set(0, -0.51, 0)
 ground.rotateX(- Math.PI / 2);
@@ -215,9 +214,8 @@ let materials = []
 for (var i = 0; i < colors.length; i++) { materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor }) };
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
-
 let geometries = []
-for(var i = 0; i < colors.length; i++) { geometries[i] = [] };
+for (var i = 0; i < colors.length; i++) { geometries[i] = [] };
 
 function addCube(pos, col) {
 	let cube = new THREE.Mesh(geometry, materials[col], 100);
@@ -228,8 +226,8 @@ function addCube(pos, col) {
 	cubes.push(cube);
 
 	const matrix = new THREE.Matrix4();
-	matrix.compose(pos, new THREE.Quaternion(1, 0, 0, 0), new THREE.Vector3(1, 1, 1));
 	const instanceGeometry = geometry.clone();
+	matrix.compose(pos, new THREE.Quaternion(1, 0, 0, 0), new THREE.Vector3(1, 1, 1));
 	instanceGeometry.applyMatrix4(matrix);
 	cube.igeometry = instanceGeometry;
 	geometries[col].push(instanceGeometry)
@@ -266,27 +264,6 @@ function escapeHTML(unsafe) {
 let nick = "";
 let verified = false;
 
-inputUsername.onkeydown = function (input) {
-	if (input.key == "Enter" && inputUsername.value !== "") {
-		if (!verified) { captchaPlease.style.display = "block" }
-		else {
-			nick = inputUsername.value;
-			winWelcome.style.display = "none";
-			uiCanvas.style.display = "block";
-			socket.emit("serverMessage", { "message":  nick + " has joined the server!" })
-		};
-	};
-};
-
-inputChat.onkeydown = function (chanter) {
-	if (chanter.key == "Enter" && nick !== "" && inputChat.value !== "") {
-		socket.emit("message", { "message": inputChat.value, "sender": nick });
-		inputChat.value = ""
-	}
-};
-
-function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
-
 function initWorld(col) {
 	if (worlds[col] instanceof THREE.Mesh) {
 		scene.remove(worlds[col])
@@ -296,7 +273,6 @@ function initWorld(col) {
 	};
 
 	let mergedGeometry;
-
 	if (geometries[col].length > 0) { mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]) }
 		
 	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
@@ -342,25 +318,18 @@ export function verify(uuid) {
 				}
 			}
 		};
-		for (var i = 0; i < colors.length; i++) {
-			initWorld(i)
-		}
+		for (var i = 0; i < colors.length; i++) { initWorld(i) }
 	});
 
 	socket.on('place', function (data) {
 		let pos = data.pos;
-
 		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
-
 		updateWorld(data.color)
 		// fancy block illumination, do not uncomment unless you want framerate to die
-		/*
-		const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
+		/* const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
 		bl.position.set(pos[0], pos[1], pos[2]);
 		bl.castShadow = false;
-		scene.add(bl);
-		*/
-		
+		scene.add(bl) */
 	});
 
 	socket.on('break', function (data) {
@@ -374,6 +343,13 @@ window.verify = verify;
 // bypass captcha in debug
 verify();
 
+function updateCameraZoom() {
+	if (cameraZoom < 10) { cameraZoom = 10 } else
+	if (cameraZoom > 70) { cameraZoom = 70 };
+	camera.fov = cameraZoom;
+	camera.updateProjectionMatrix()
+};
+
 let cameraSpeed = 64.0;
 let cameraZoom = 70;
 
@@ -384,14 +360,7 @@ let moveRight = false;
 let moveUp = false;
 let moveDown = false;
 
-function updateCameraZoom() {
-	if (cameraZoom < 10) { cameraZoom = 10 }
-	else if (cameraZoom > 70) { cameraZoom = 70 };
-	camera.fov = cameraZoom;
-	camera.updateProjectionMatrix()
-};
-
-const onKeyDown = function (event) {
+const onKeyDown = function(event) {
 	if (document.activeElement.tagName !== "INPUT" && nick !== "" && controls.isLocked) {
 		switch (event.code) {
 			case 'ArrowUp':
@@ -464,7 +433,7 @@ const onKeyDown = function (event) {
 	}
 };
 
-const onKeyUp = function (event) {
+const onKeyUp = function(event) {
 	switch (event.code) {
 		case 'ArrowUp':
 		case 'KeyW':
@@ -507,12 +476,32 @@ const onMouseDown = (event) => {
 	}
 };
 
-
 const canvas = document.getElementsByTagName("canvas")[0];
 
 canvas.addEventListener('mousedown', onMouseDown);
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
+
+inputUsername.onkeydown = function (input) {
+	if (input.key == "Enter" && inputUsername.value !== "") {
+		if (!verified) { captchaPlease.style.display = "block" }
+		else {
+			nick = inputUsername.value;
+			winWelcome.style.display = "none";
+			uiCanvas.style.display = "block";
+			socket.emit("serverMessage", { "message":  nick + " has joined the server!" })
+		};
+	};
+};
+
+inputChat.onkeydown = function(event) {
+	if (event.key == "Enter" && nick !== "" && inputChat.value !== "") {
+		socket.emit("message", { "message": inputChat.value, "sender": nick });
+		inputChat.value = ""
+	}
+};
+
+function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
 
 const buttons = document.getElementsByTagName('button');
 
