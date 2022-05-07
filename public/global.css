@@ -1,5 +1,4 @@
 :root {
-	/* i am awful at organizing! :D */
 	--fg1: #fff;
 
 	--bg1: rgb(0 0 0 / 72%);
@@ -8,12 +7,12 @@
 
 	--br1: 1px solid #555;
 
-	--highlight: 0 0 4px #fff, 1px 0 0px #fff, 1px 1px 1px #000, 2px 1px 1px #000;
+	--highlight: 0 0 4px #fff, 1px 0 0px #fff6, -1px 0 0px #fff6, 1px 1px 1px #000;
 
 	--bg-blur: 6px;
 
 	--box-padding: 6px;
-	--win-padding: 12px;
+	--win-padding: 16px;
 
 	--palette-colors-size: 16px;
 	--palette-colors-in-row:5;
@@ -42,24 +41,30 @@ p		{ margin: 0 }
 h2, h3, strong { margin-bottom: 0; font-family: 'Silkscreen'; font-weight: normal }
 h2		{ font-size: 24px }
 h3		{ font-size: 16px }
+b		{ font-weight: normal; letter-spacing: 1px; text-shadow: 1px 0 0px #fff, 1px 1px 1px #000, 2px 1px 1px #000 }
 a		{ color: #acccff; text-decoration: none }
 a:hover	{ color: #fff; text-shadow: var(--highlight); text-decoration: underline }
 
-img		{ image-rendering: pixelated; image-rendering: -webkit-optimize-contrast }
+img		{ image-rendering: auto; image-rendering: -webkit-optimize-contrast }
 
-button	{ background: 0; border: 0; border-radius: 4px; }
+button {
+	color: var(--fg1);
+	background: 0;
+	border: 0;
+	border-radius: 4px;
+	padding: 6px;
+	font-family: 'Unifont';
+	font-size: var(--font-size);
+}
+button:hover { background: #fff3; outline: 1px solid #fff6; letter-spacing: 1px; text-shadow: var(--highlight) }
 
 .escButton {
 	color: var(--fg1);
 	height: fit-content;
-	padding: 6px;
 	font-family: 'Unifont';
 	font-size: var(--font-size)
 }
 .escButton:hover {
-	background: #fff3;
-	outline: 1px solid #fff6;
-	text-shadow: var(--highlight);
 	cursor: pointer;
 	animation-name: buttonhover;
 	animation-duration: .1s;
@@ -82,6 +87,8 @@ input[type='text'] {
 	height: 18px;
 	margin: 2px 0;
 	padding: 2px 6px;
+	font-family: 'Unifont';
+	font-size: var(--font-size)
 }
 input[type="text"]:hover { background: var(--bg2) }
 input[type="text"]:focus { background: #000; border-color: #fff }
@@ -89,7 +96,7 @@ input[type="text"]:focus { background: #000; border-color: #fff }
 select { color: #fff; background: var(--bg1); border: var(--br1); border-radius: 6px; padding: 2px 6px }
 
 .credits tr td						{ padding: 0 6px }
-.credits tr td:first-child			{ text-align: right }
+.credits tr td:first-child			{ width: -moz-available; width: -webkit-fill-available; text-align: right }
 .credits tr td:nth-of-type(2)		{ width: 0 }
 .credits tr td:nth-of-type(2):hover { transform: scale(2) }
 
@@ -118,19 +125,20 @@ select { color: #fff; background: var(--bg1); border: var(--br1); border-radius:
 	padding: var(--box-padding);
 	backdrop-filter: blur(var(--bg-blur))
 }
-.win		{ width: -webkit-fill-available; height: -webkit-fill-available; padding: var(--win-padding) }
+.win		{ border: 0; border-radius: 0; outline: 0; width: -moz-available; width: -webkit-fill-available; height: calc(var(--innerHeight) - (var(--win-padding)*2)); padding: var(--win-padding) }
 
 .io-captcha { padding-top: 16px }
 
 .center		{ position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) }
 
 .ico		{ opacity: 100% }
-.icoNav		{ padding: 4px; font-size: 0 }
+.icoNav		{ padding: 8px; font-size: 0 }
+.icoNav *	{ pointer-events: none; }
 
 #uiCanvas, #esc, .win	{ display: none }
 
-#itsEditTime			{ display: flex; lex-direction: column; position: absolute; right: 6px; bottom: 6px; align-items: flex-end }
-	#palette			{ display: flex; position: relative; width: calc(var(--palette-colors-size) * var(--palette-colors-in-row)); margin-top: 6px; flex-wrap: wrap }
+#itsEditTime			{ display: flex; flex-direction: column; position: absolute; right: 6px; bottom: 6px; align-items: flex-end }
+	#palette			{ display: flex; position: relative; width: calc(var(--palette-colors-size) * var(--palette-colors-in-row)); margin-bottom: 6px; flex-wrap: wrap }
 	#palette *			{ width: var(--palette-colors-size); height: var(--palette-colors-size) }
 	#palette *:hover	{ box-shadow: 0 0 4px 2px #000; transform: scale(1.15) }
 	.selectedbox		{ z-index: 1; outline: 2px solid #fff }
@@ -138,7 +146,7 @@ select { color: #fff; background: var(--bg1); border: var(--br1); border-radius:
 	#switchPlacement *:not(:last-child) { margin-right: var(--box-padding)}
 
 #coordinates	{ top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0) }
-#chat			{ bottom: 6px; left: 6px; width: var(--chat-width); max-height: var(--chat-maxheight); }
+#chat			{ bottom: 6px; left: 6px; width: var(--chat-width); max-height: var(--chat-maxheight) 0; }
 #messages		{ overflow-y: scroll; max-height: calc(var(--chat-maxheight) - (var(--box-padding)*4)); overflow-wrap: break-word }
 #inputChat		{ width: -moz-available; width: -webkit-fill-available; margin-top: 4px }
 
@@ -148,7 +156,7 @@ select { color: #fff; background: var(--bg1); border: var(--br1); border-radius:
 #inputUsername, #inputPassword { width: -moz-available; width: -webkit-fill-available; margin: 6px 0 }
 
 .settingsSection { margin-left: 24px }
-	#customMovement *, #customSecondaryMovement * { width: 72px }
+	#customMovement *, #customSecondaryMovement * { width: 80px }
 
 
 

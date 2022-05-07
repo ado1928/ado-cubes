@@ -115,8 +115,14 @@ var app = (function () {
         else if (node.getAttribute(attribute) !== value)
             node.setAttribute(attribute, value);
     }
+    function to_number(value) {
+        return value === '' ? null : +value;
+    }
     function children(element) {
         return Array.from(element.childNodes);
+    }
+    function set_input_value(input, value) {
+        input.value = value == null ? '' : value;
     }
     function set_style(node, key, value, important) {
         if (value === null) {
@@ -429,6 +435,13 @@ var app = (function () {
             dispatch_dev('SvelteDOMRemoveAttribute', { node, attribute });
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
+    }
+    function set_data_dev(text, data) {
+        data = '' + data;
+        if (text.wholeText === data)
+            return;
+        dispatch_dev('SvelteDOMSetData', { node: text, data });
+        text.data = data;
     }
     function validate_slots(name, slot, keys) {
         for (const slot_key of Object.keys(slot)) {
@@ -1586,35 +1599,35 @@ var app = (function () {
     			attr_dev(img, "id", "welcomeLogo");
     			if (!src_url_equal(img.src, img_src_value = /*src*/ ctx[0])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "style", /*style*/ ctx[1]);
-    			add_location(img, file$3, 36, 2, 1240);
-    			add_location(div0, file$3, 35, 1, 1232);
-    			add_location(br0, file$3, 38, 1, 1286);
-    			add_location(br1, file$3, 38, 5, 1290);
+    			add_location(img, file$3, 36, 2, 1236);
+    			add_location(div0, file$3, 35, 1, 1228);
+    			add_location(br0, file$3, 38, 1, 1282);
+    			add_location(br1, file$3, 38, 5, 1286);
     			attr_dev(input0, "id", "inputUsername");
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file$3, 39, 11, 1306);
-    			add_location(br2, file$3, 39, 49, 1344);
+    			add_location(input0, file$3, 39, 11, 1302);
+    			add_location(br2, file$3, 39, 49, 1340);
     			attr_dev(input1, "id", "inputPassword");
     			attr_dev(input1, "type", "text");
     			input1.value = "this input does nothing for now. pls ignore";
-    			add_location(input1, file$3, 40, 11, 1360);
-    			add_location(br3, file$3, 40, 101, 1450);
-    			add_location(br4, file$3, 41, 88, 1543);
-    			add_location(br5, file$3, 41, 152, 1607);
+    			add_location(input1, file$3, 40, 11, 1356);
+    			add_location(br3, file$3, 40, 101, 1446);
+    			add_location(br4, file$3, 41, 88, 1539);
+    			add_location(br5, file$3, 41, 152, 1603);
     			attr_dev(p0, "id", "noNeedToVerify");
     			set_style(p0, "display", "none");
-    			add_location(p0, file$3, 41, 1, 1456);
-    			add_location(br6, file$3, 41, 160, 1615);
-    			add_location(strong0, file$3, 43, 1, 1622);
-    			add_location(br7, file$3, 43, 110, 1731);
-    			add_location(br8, file$3, 43, 114, 1735);
-    			add_location(strong1, file$3, 45, 1, 1742);
-    			add_location(br9, file$3, 45, 61, 1802);
-    			add_location(br10, file$3, 45, 134, 1875);
-    			add_location(br11, file$3, 47, 45, 1968);
+    			add_location(p0, file$3, 41, 1, 1452);
+    			add_location(br6, file$3, 41, 160, 1611);
+    			add_location(strong0, file$3, 43, 1, 1618);
+    			add_location(br7, file$3, 43, 110, 1727);
+    			add_location(br8, file$3, 43, 114, 1731);
+    			add_location(strong1, file$3, 45, 1, 1738);
+    			add_location(br9, file$3, 45, 61, 1798);
+    			add_location(br10, file$3, 45, 134, 1871);
+    			add_location(br11, file$3, 47, 45, 1964);
     			attr_dev(p1, "id", "captchaPlease");
     			set_style(p1, "display", "none");
-    			add_location(p1, file$3, 47, 1, 1924);
+    			add_location(p1, file$3, 47, 1, 1920);
     			attr_dev(div1, "class", "io-captcha");
     			attr_dev(div1, "data-pubkey", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADO");
     			attr_dev(div1, "data-theme", "dark");
@@ -1622,9 +1635,9 @@ var app = (function () {
     			attr_dev(div1, "data-font", "mono");
     			attr_dev(div1, "data-callback-solve", "solve");
     			attr_dev(div1, "data-widgetid", "iocaptcha");
-    			add_location(div1, file$3, 48, 1, 2044);
+    			add_location(div1, file$3, 48, 1, 2040);
     			attr_dev(div2, "id", "winWelcome");
-    			attr_dev(div2, "class", "box win center");
+    			attr_dev(div2, "class", "box center");
     			set_style(div2, "top", "62%");
     			add_location(div2, file$3, 34, 0, 1170);
     		},
@@ -2148,21 +2161,21 @@ var app = (function () {
     			div20 = element("div");
     			img4 = element("img");
     			t71 = text(" Music ");
-    			t72 = text(/*audioMusicVolume*/ ctx[2]);
+    			t72 = text(/*audioMusicVolume*/ ctx[0]);
     			t73 = space();
     			input23 = element("input");
     			t74 = space();
     			div21 = element("div");
     			img5 = element("img");
     			t75 = text(" SFX ");
-    			t76 = text(/*audioSfxVolume*/ ctx[3]);
+    			t76 = text(/*audioSfxVolume*/ ctx[1]);
     			t77 = space();
     			input24 = element("input");
     			t78 = space();
     			div22 = element("div");
     			img6 = element("img");
     			t79 = text(" UI ");
-    			t80 = text(/*audioUiVolume*/ ctx[4]);
+    			t80 = text(/*audioUiVolume*/ ctx[2]);
     			t81 = space();
     			input25 = element("input");
     			t82 = space();
@@ -2228,253 +2241,250 @@ var app = (function () {
     			button4 = element("button");
     			button4.textContent = "Button";
     			set_style(h20, "margin", "0");
-    			add_location(h20, file$2, 69, 2, 2071);
-    			if (!src_url_equal(img0.src, img0_src_value = /*notfunctional*/ ctx[0])) attr_dev(img0, "src", img0_src_value);
-    			add_location(img0, file$2, 71, 3, 2139);
-    			add_location(br0, file$2, 71, 45, 2181);
-    			if (!src_url_equal(img1.src, img1_src_value = /*requiresrefresh*/ ctx[1])) attr_dev(img1, "src", img1_src_value);
-    			add_location(img1, file$2, 72, 3, 2189);
-    			add_location(br1, file$2, 72, 49, 2235);
+    			add_location(h20, file$2, 72, 2, 2243);
+    			if (!src_url_equal(img0.src, img0_src_value = /*notfunctional*/ ctx[3])) attr_dev(img0, "src", img0_src_value);
+    			add_location(img0, file$2, 74, 3, 2311);
+    			add_location(br0, file$2, 74, 45, 2353);
+    			if (!src_url_equal(img1.src, img1_src_value = /*requiresrefresh*/ ctx[4])) attr_dev(img1, "src", img1_src_value);
+    			add_location(img1, file$2, 75, 3, 2361);
+    			add_location(br1, file$2, 75, 49, 2407);
     			attr_dev(button0, "id", "notsure");
-    			add_location(button0, file$2, 73, 3, 2243);
+    			add_location(button0, file$2, 76, 3, 2415);
     			attr_dev(input0, "id", "surenot");
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file$2, 74, 3, 2313);
+    			add_location(input0, file$2, 77, 3, 2485);
     			attr_dev(div0, "class", "settingsSection");
-    			add_location(div0, file$2, 70, 2, 2106);
-    			add_location(h21, file$2, 77, 2, 2358);
-    			if (!src_url_equal(img2.src, img2_src_value = "./images/icons/not functional.svg")) attr_dev(img2, "src", img2_src_value);
-    			add_location(img2, file$2, 78, 31, 2406);
+    			add_location(div0, file$2, 73, 2, 2278);
+    			add_location(h21, file$2, 80, 2, 2530);
+    			if (!src_url_equal(img2.src, img2_src_value = /*notfunctional*/ ctx[3])) attr_dev(img2, "src", img2_src_value);
+    			add_location(img2, file$2, 81, 31, 2578);
     			option0.__value = "english";
     			option0.value = option0.__value;
-    			add_location(option0, file$2, 80, 4, 2498);
+    			add_location(option0, file$2, 83, 4, 2650);
     			option1.__value = "onlyEnglish";
     			option1.value = option1.__value;
-    			add_location(option1, file$2, 81, 4, 2543);
+    			add_location(option1, file$2, 84, 4, 2695);
     			attr_dev(select0, "id", "generalLanguage");
-    			add_location(select0, file$2, 79, 3, 2464);
+    			add_location(select0, file$2, 82, 3, 2616);
     			attr_dev(div1, "class", "settingsSection");
-    			add_location(div1, file$2, 78, 2, 2377);
-    			add_location(h22, file$2, 85, 2, 2619);
-    			add_location(h30, file$2, 87, 3, 2670);
-    			if (!src_url_equal(img3.src, img3_src_value = /*notfunctional*/ ctx[0])) attr_dev(img3, "src", img3_src_value);
-    			add_location(img3, file$2, 88, 9, 2697);
+    			add_location(div1, file$2, 81, 2, 2549);
+    			add_location(h22, file$2, 88, 2, 2771);
+    			add_location(h30, file$2, 90, 3, 2822);
+    			if (!src_url_equal(img3.src, img3_src_value = /*notfunctional*/ ctx[3])) attr_dev(img3, "src", img3_src_value);
+    			add_location(img3, file$2, 91, 9, 2849);
     			option2.__value = "wasd";
     			option2.value = option2.__value;
-    			add_location(option2, file$2, 90, 6, 2791);
+    			add_location(option2, file$2, 93, 6, 2943);
     			option3.__value = "arrow";
     			option3.value = option3.__value;
-    			add_location(option3, file$2, 91, 6, 2832);
+    			add_location(option3, file$2, 94, 6, 2984);
     			option4.__value = "both";
     			option4.value = option4.__value;
-    			add_location(option4, file$2, 92, 6, 2876);
+    			add_location(option4, file$2, 95, 6, 3028);
     			option5.__value = "custom";
     			option5.value = option5.__value;
-    			add_location(option5, file$2, 93, 6, 2917);
+    			add_location(option5, file$2, 96, 6, 3069);
     			option6.__value = "customsecondary";
     			option6.value = option6.__value;
-    			add_location(option6, file$2, 94, 6, 2962);
+    			add_location(option6, file$2, 97, 6, 3114);
     			attr_dev(select1, "id", "inputMovement");
-    			add_location(select1, file$2, 89, 5, 2744);
+    			add_location(select1, file$2, 92, 5, 2896);
     			attr_dev(input1, "id", "inputMoveForward");
     			attr_dev(input1, "type", "text");
     			input1.value = "KeyW";
-    			add_location(input1, file$2, 97, 6, 3077);
+    			add_location(input1, file$2, 100, 6, 3229);
     			attr_dev(input2, "id", "inputMoveLeft");
     			attr_dev(input2, "type", "text");
     			input2.value = "KeyA";
-    			add_location(input2, file$2, 98, 6, 3138);
+    			add_location(input2, file$2, 101, 6, 3290);
     			attr_dev(input3, "id", "inputMoveDown");
     			attr_dev(input3, "type", "text");
     			input3.value = "KeyS";
-    			add_location(input3, file$2, 99, 6, 3196);
+    			add_location(input3, file$2, 102, 6, 3348);
     			attr_dev(input4, "id", "inputMoveBackward");
     			attr_dev(input4, "type", "text");
     			input4.value = "KeyD";
-    			add_location(input4, file$2, 100, 6, 3254);
+    			add_location(input4, file$2, 103, 6, 3406);
     			attr_dev(div2, "id", "customMovement");
-    			add_location(div2, file$2, 96, 5, 3045);
+    			add_location(div2, file$2, 99, 5, 3197);
     			attr_dev(input5, "id", "inputSecondaryMove");
     			attr_dev(input5, "type", "text");
     			input5.value = "ArrowUp";
-    			add_location(input5, file$2, 103, 6, 3368);
+    			add_location(input5, file$2, 106, 6, 3520);
     			attr_dev(input6, "id", "inputSecondaryMove");
     			attr_dev(input6, "type", "text");
     			input6.value = "ArrowLeft";
-    			add_location(input6, file$2, 104, 6, 3434);
+    			add_location(input6, file$2, 107, 6, 3586);
     			attr_dev(input7, "id", "inputSecondaryMove");
     			attr_dev(input7, "type", "text");
     			input7.value = "ArrowDown";
-    			add_location(input7, file$2, 105, 6, 3502);
+    			add_location(input7, file$2, 108, 6, 3654);
     			attr_dev(input8, "id", "inputSecondaryMove");
     			attr_dev(input8, "type", "text");
     			input8.value = "ArrowRight";
-    			add_location(input8, file$2, 106, 6, 3570);
+    			add_location(input8, file$2, 109, 6, 3722);
     			attr_dev(div3, "id", "customSecondaryMovement");
-    			add_location(div3, file$2, 102, 5, 3327);
-    			add_location(div4, file$2, 88, 4, 2692);
+    			add_location(div3, file$2, 105, 5, 3479);
+    			add_location(div4, file$2, 91, 4, 2844);
     			attr_dev(input9, "id", "inputMoveUp");
     			attr_dev(input9, "type", "text");
     			input9.value = "Space";
-    			add_location(input9, file$2, 109, 17, 3673);
-    			add_location(div5, file$2, 109, 4, 3660);
+    			add_location(input9, file$2, 112, 17, 3825);
+    			add_location(div5, file$2, 112, 4, 3812);
     			attr_dev(input10, "id", "inputMoveDown");
     			attr_dev(input10, "type", "text");
     			input10.value = "ShiftLeft";
-    			add_location(input10, file$2, 110, 19, 3749);
-    			add_location(div6, file$2, 110, 4, 3734);
-    			add_location(h31, file$2, 111, 3, 3815);
+    			add_location(input10, file$2, 113, 19, 3901);
+    			add_location(div6, file$2, 113, 4, 3886);
+    			add_location(h31, file$2, 114, 3, 3967);
     			attr_dev(input11, "id", "inputPlaceCubes");
     			attr_dev(input11, "type", "text");
     			input11.value = "KeyX";
-    			add_location(input11, file$2, 112, 21, 3858);
-    			add_location(div7, file$2, 112, 4, 3841);
+    			add_location(input11, file$2, 115, 21, 4010);
+    			add_location(div7, file$2, 115, 4, 3993);
     			attr_dev(input12, "id", "inputRemoveCubes");
     			attr_dev(input12, "type", "text");
     			input12.value = "KeyC";
-    			add_location(input12, file$2, 113, 22, 3940);
-    			add_location(div8, file$2, 113, 4, 3922);
-    			add_location(h32, file$2, 114, 3, 4004);
+    			add_location(input12, file$2, 116, 22, 4092);
+    			add_location(div8, file$2, 116, 4, 4074);
+    			add_location(h32, file$2, 117, 3, 4156);
     			attr_dev(input13, "id", "inputIncreaseCameraSpeed");
     			attr_dev(input13, "type", "text");
     			input13.value = "BracketRight";
-    			add_location(input13, file$2, 115, 31, 4051);
-    			add_location(div9, file$2, 115, 4, 4024);
+    			add_location(input13, file$2, 118, 31, 4203);
+    			add_location(div9, file$2, 118, 4, 4176);
     			attr_dev(input14, "id", "inputDecreaseCameraSpeed");
     			attr_dev(input14, "type", "text");
     			input14.value = "BracketLeft";
-    			add_location(input14, file$2, 116, 31, 4159);
-    			add_location(div10, file$2, 116, 4, 4132);
+    			add_location(input14, file$2, 119, 31, 4311);
+    			add_location(div10, file$2, 119, 4, 4284);
     			attr_dev(input15, "id", "inputResetCameraSpeed");
     			attr_dev(input15, "type", "text");
     			input15.value = "Backslash";
-    			add_location(input15, file$2, 117, 28, 4263);
-    			add_location(div11, file$2, 117, 4, 4239);
+    			add_location(input15, file$2, 120, 28, 4415);
+    			add_location(div11, file$2, 120, 4, 4391);
     			attr_dev(input16, "id", "inputIncreaseCameraZoom");
     			attr_dev(input16, "type", "text");
     			input16.value = "Equal";
-    			add_location(input16, file$2, 118, 30, 4364);
-    			add_location(div12, file$2, 118, 4, 4338);
+    			add_location(input16, file$2, 121, 30, 4516);
+    			add_location(div12, file$2, 121, 4, 4490);
     			attr_dev(input17, "id", "inputDecreaseCameraZoom");
     			attr_dev(input17, "type", "text");
     			input17.value = "Minus";
-    			add_location(input17, file$2, 119, 30, 4463);
-    			add_location(div13, file$2, 119, 4, 4437);
+    			add_location(input17, file$2, 122, 30, 4615);
+    			add_location(div13, file$2, 122, 4, 4589);
     			attr_dev(input18, "id", "inputResetCameraZoom");
     			attr_dev(input18, "type", "text");
     			input18.value = "Quote";
-    			add_location(input18, file$2, 120, 27, 4559);
-    			add_location(div14, file$2, 120, 4, 4536);
-    			add_location(h33, file$2, 121, 3, 4628);
+    			add_location(input18, file$2, 123, 27, 4711);
+    			add_location(div14, file$2, 123, 4, 4688);
+    			add_location(h33, file$2, 124, 3, 4780);
     			attr_dev(input19, "id", "inputToggleGrid");
     			attr_dev(input19, "type", "text");
     			input19.value = "KeyG";
-    			add_location(input19, file$2, 122, 21, 4664);
-    			add_location(div15, file$2, 122, 4, 4647);
+    			add_location(input19, file$2, 125, 21, 4816);
+    			add_location(div15, file$2, 125, 4, 4799);
     			attr_dev(input20, "id", "inputPaletteRowScroll");
     			attr_dev(input20, "type", "text");
     			input20.value = "AltLeft";
-    			add_location(input20, file$2, 123, 28, 4752);
-    			add_location(div16, file$2, 123, 4, 4728);
+    			add_location(input20, file$2, 126, 28, 4904);
+    			add_location(div16, file$2, 126, 4, 4880);
     			attr_dev(input21, "id", "inputSettingsShortcut");
     			attr_dev(input21, "type", "text");
     			input21.value = "KeyL";
-    			add_location(input21, file$2, 124, 27, 4848);
-    			add_location(div17, file$2, 124, 4, 4825);
+    			add_location(input21, file$2, 127, 27, 5000);
+    			add_location(div17, file$2, 127, 4, 4977);
     			attr_dev(input22, "id", "inputDisablePR");
     			attr_dev(input22, "type", "checkbox");
-    			add_location(input22, file$2, 125, 40, 4954);
-    			add_location(div18, file$2, 125, 4, 4918);
+    			add_location(input22, file$2, 128, 40, 5106);
+    			add_location(div18, file$2, 128, 4, 5070);
     			attr_dev(div19, "class", "settingsSection");
-    			add_location(div19, file$2, 86, 2, 2636);
-    			add_location(h23, file$2, 128, 2, 5016);
-    			if (!src_url_equal(img4.src, img4_src_value = /*notfunctional*/ ctx[0])) attr_dev(img4, "src", img4_src_value);
-    			add_location(img4, file$2, 130, 8, 5071);
+    			add_location(div19, file$2, 89, 2, 2788);
+    			add_location(h23, file$2, 131, 2, 5168);
+    			if (!src_url_equal(img4.src, img4_src_value = /*notfunctional*/ ctx[3])) attr_dev(img4, "src", img4_src_value);
+    			add_location(img4, file$2, 133, 8, 5223);
     			attr_dev(input23, "id", "musicVolume");
     			attr_dev(input23, "class", "slider");
     			attr_dev(input23, "type", "range");
-    			input23.value = /*audioMusicVolume*/ ctx[2];
-    			add_location(input23, file$2, 130, 59, 5122);
-    			add_location(div20, file$2, 130, 3, 5066);
-    			if (!src_url_equal(img5.src, img5_src_value = /*notfunctional*/ ctx[0])) attr_dev(img5, "src", img5_src_value);
-    			add_location(img5, file$2, 131, 8, 5214);
+    			add_location(input23, file$2, 133, 59, 5274);
+    			add_location(div20, file$2, 133, 3, 5218);
+    			if (!src_url_equal(img5.src, img5_src_value = /*notfunctional*/ ctx[3])) attr_dev(img5, "src", img5_src_value);
+    			add_location(img5, file$2, 134, 8, 5371);
     			attr_dev(input24, "id", "sfxVolume");
     			attr_dev(input24, "class", "slider");
     			attr_dev(input24, "type", "range");
-    			input24.value = /*audioSfxVolume*/ ctx[3];
-    			add_location(input24, file$2, 131, 55, 5261);
-    			add_location(div21, file$2, 131, 3, 5209);
-    			if (!src_url_equal(img6.src, img6_src_value = /*notfunctional*/ ctx[0])) attr_dev(img6, "src", img6_src_value);
-    			add_location(img6, file$2, 132, 8, 5349);
+    			add_location(input24, file$2, 134, 55, 5418);
+    			add_location(div21, file$2, 134, 3, 5366);
+    			if (!src_url_equal(img6.src, img6_src_value = /*notfunctional*/ ctx[3])) attr_dev(img6, "src", img6_src_value);
+    			add_location(img6, file$2, 135, 8, 5511);
     			attr_dev(input25, "id", "uiVolume");
     			attr_dev(input25, "class", "slider");
     			attr_dev(input25, "type", "range");
-    			input25.value = /*audioUiVolume*/ ctx[4];
-    			add_location(input25, file$2, 132, 53, 5394);
-    			add_location(div22, file$2, 132, 3, 5344);
-    			if (!src_url_equal(img7.src, img7_src_value = /*requiresrefresh*/ ctx[1])) attr_dev(img7, "src", img7_src_value);
-    			add_location(img7, file$2, 134, 8, 5481);
+    			add_location(input25, file$2, 135, 53, 5556);
+    			add_location(div22, file$2, 135, 3, 5506);
+    			if (!src_url_equal(img7.src, img7_src_value = /*requiresrefresh*/ ctx[4])) attr_dev(img7, "src", img7_src_value);
+    			add_location(img7, file$2, 137, 8, 5648);
     			attr_dev(input26, "id", "audioEnableMusic");
     			attr_dev(input26, "type", "checkbox");
-    			add_location(input26, file$2, 134, 49, 5522);
-    			add_location(div23, file$2, 134, 3, 5476);
+    			add_location(input26, file$2, 137, 49, 5689);
+    			add_location(div23, file$2, 137, 3, 5643);
     			attr_dev(input27, "id", "audioDisablePR");
     			attr_dev(input27, "type", "checkbox");
-    			add_location(input27, file$2, 135, 40, 5614);
-    			add_location(div24, file$2, 135, 3, 5577);
+    			add_location(input27, file$2, 138, 40, 5781);
+    			add_location(div24, file$2, 138, 3, 5744);
     			attr_dev(input28, "id", "audioDisableUI");
     			attr_dev(input28, "type", "checkbox");
-    			add_location(input28, file$2, 136, 26, 5690);
-    			add_location(div25, file$2, 136, 3, 5667);
+    			add_location(input28, file$2, 139, 26, 5857);
+    			add_location(div25, file$2, 139, 3, 5834);
     			attr_dev(div26, "class", "settingsSection");
-    			add_location(div26, file$2, 129, 2, 5033);
-    			add_location(h24, file$2, 139, 2, 5752);
-    			if (!src_url_equal(img8.src, img8_src_value = /*notfunctional*/ ctx[0])) attr_dev(img8, "src", img8_src_value);
-    			add_location(img8, file$2, 141, 8, 5813);
+    			add_location(div26, file$2, 132, 2, 5185);
+    			add_location(h24, file$2, 142, 2, 5919);
+    			if (!src_url_equal(img8.src, img8_src_value = /*notfunctional*/ ctx[3])) attr_dev(img8, "src", img8_src_value);
+    			add_location(img8, file$2, 144, 8, 5980);
     			attr_dev(input29, "id", "prfmEnableClouds");
     			attr_dev(input29, "type", "checkbox");
-    			add_location(input29, file$2, 141, 48, 5853);
-    			add_location(div27, file$2, 141, 3, 5808);
+    			add_location(input29, file$2, 144, 48, 6020);
+    			add_location(div27, file$2, 144, 3, 5975);
     			attr_dev(div28, "class", "settingsSection");
-    			add_location(div28, file$2, 140, 2, 5775);
-    			add_location(h25, file$2, 144, 2, 5917);
-    			if (!src_url_equal(img9.src, img9_src_value = /*requiresrefresh*/ ctx[1])) attr_dev(img9, "src", img9_src_value);
-    			add_location(img9, file$2, 146, 8, 5980);
+    			add_location(div28, file$2, 143, 2, 5942);
+    			add_location(h25, file$2, 147, 2, 6084);
+    			if (!src_url_equal(img9.src, img9_src_value = /*requiresrefresh*/ ctx[4])) attr_dev(img9, "src", img9_src_value);
+    			add_location(img9, file$2, 149, 8, 6147);
     			attr_dev(input30, "id", "miscEnableRandomLogos");
     			attr_dev(input30, "type", "checkbox");
-    			add_location(input30, file$2, 146, 67, 6039);
-    			add_location(div29, file$2, 146, 3, 5975);
+    			add_location(input30, file$2, 149, 67, 6206);
+    			add_location(div29, file$2, 149, 3, 6142);
     			attr_dev(div30, "class", "settingsSection");
-    			add_location(div30, file$2, 145, 2, 5942);
-    			add_location(h26, file$2, 149, 2, 6108);
-    			add_location(strong, file$2, 151, 8, 6168);
-    			add_location(div31, file$2, 151, 3, 6163);
-    			if (!src_url_equal(img10.src, img10_src_value = /*notfunctional*/ ctx[0])) attr_dev(img10, "src", img10_src_value);
-    			add_location(img10, file$2, 152, 8, 6244);
+    			add_location(div30, file$2, 148, 2, 6109);
+    			add_location(h26, file$2, 152, 2, 6275);
+    			add_location(strong, file$2, 154, 8, 6335);
+    			add_location(div31, file$2, 154, 3, 6330);
+    			if (!src_url_equal(img10.src, img10_src_value = /*notfunctional*/ ctx[3])) attr_dev(img10, "src", img10_src_value);
+    			add_location(img10, file$2, 155, 8, 6411);
     			attr_dev(input31, "id", "themeDisableBgBlur");
     			attr_dev(input31, "type", "checkbox");
-    			add_location(input31, file$2, 152, 58, 6294);
-    			add_location(div32, file$2, 152, 3, 6239);
-    			if (!src_url_equal(img11.src, img11_src_value = /*notfunctional*/ ctx[0])) attr_dev(img11, "src", img11_src_value);
-    			add_location(img11, file$2, 153, 8, 6356);
+    			add_location(input31, file$2, 155, 58, 6461);
+    			add_location(div32, file$2, 155, 3, 6406);
+    			if (!src_url_equal(img11.src, img11_src_value = /*notfunctional*/ ctx[3])) attr_dev(img11, "src", img11_src_value);
+    			add_location(img11, file$2, 156, 8, 6523);
     			attr_dev(input32, "id", "themeDisableTextShadows");
     			attr_dev(input32, "type", "checkbox");
-    			add_location(input32, file$2, 153, 55, 6403);
-    			add_location(div33, file$2, 153, 3, 6351);
+    			add_location(input32, file$2, 156, 55, 6570);
+    			add_location(div33, file$2, 156, 3, 6518);
     			attr_dev(div34, "class", "settingsSection");
-    			add_location(div34, file$2, 150, 2, 6130);
+    			add_location(div34, file$2, 153, 2, 6297);
     			set_style(div35, "overflow-y", "scroll");
-    			set_style(div35, "height", "80%");
-    			add_location(div35, file$2, 68, 1, 2026);
-    			add_location(button1, file$2, 156, 1, 6480);
+    			set_style(div35, "height", "calc(var(--innerHeight) - 128px)");
+    			add_location(div35, file$2, 71, 1, 2169);
+    			add_location(button1, file$2, 159, 1, 6647);
     			attr_dev(button2, "id", "applySettings");
-    			add_location(button2, file$2, 156, 25, 6504);
+    			add_location(button2, file$2, 159, 25, 6671);
     			attr_dev(button3, "onclick", "history.go(0)");
-    			add_location(button3, file$2, 156, 92, 6571);
-    			add_location(button4, file$2, 156, 141, 6620);
+    			add_location(button3, file$2, 159, 92, 6738);
+    			add_location(button4, file$2, 159, 141, 6787);
     			attr_dev(div36, "id", "winSettings");
-    			attr_dev(div36, "class", "box win center");
-    			add_location(div36, file$2, 66, 0, 1970);
+    			attr_dev(div36, "class", "box win");
+    			add_location(div36, file$2, 69, 0, 2120);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2617,6 +2627,7 @@ var app = (function () {
     			append_dev(div20, t72);
     			append_dev(div20, t73);
     			append_dev(div20, input23);
+    			set_input_value(input23, /*audioMusicVolume*/ ctx[0]);
     			append_dev(div26, t74);
     			append_dev(div26, div21);
     			append_dev(div21, img5);
@@ -2624,6 +2635,7 @@ var app = (function () {
     			append_dev(div21, t76);
     			append_dev(div21, t77);
     			append_dev(div21, input24);
+    			set_input_value(input24, /*audioSfxVolume*/ ctx[1]);
     			append_dev(div26, t78);
     			append_dev(div26, div22);
     			append_dev(div22, img6);
@@ -2631,6 +2643,7 @@ var app = (function () {
     			append_dev(div22, t80);
     			append_dev(div22, t81);
     			append_dev(div22, input25);
+    			set_input_value(input25, /*audioUiVolume*/ ctx[2]);
     			append_dev(div26, t82);
     			append_dev(div26, div23);
     			append_dev(div23, img7);
@@ -2688,7 +2701,16 @@ var app = (function () {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(button2, "click", /*applySettings*/ ctx[5], false, false, false);
+    				dispose = [
+    					listen_dev(input23, "change", /*input23_change_input_handler*/ ctx[8]),
+    					listen_dev(input23, "input", /*input23_change_input_handler*/ ctx[8]),
+    					listen_dev(input24, "change", /*input24_change_input_handler*/ ctx[9]),
+    					listen_dev(input24, "input", /*input24_change_input_handler*/ ctx[9]),
+    					listen_dev(input25, "change", /*input25_change_input_handler*/ ctx[10]),
+    					listen_dev(input25, "input", /*input25_change_input_handler*/ ctx[10]),
+    					listen_dev(button2, "click", /*applySettings*/ ctx[5], false, false, false)
+    				];
+
     				mounted = true;
     			}
     		},
@@ -2707,6 +2729,24 @@ var app = (function () {
     					);
     				}
     			}
+
+    			if (!current || dirty & /*audioMusicVolume*/ 1) set_data_dev(t72, /*audioMusicVolume*/ ctx[0]);
+
+    			if (dirty & /*audioMusicVolume*/ 1) {
+    				set_input_value(input23, /*audioMusicVolume*/ ctx[0]);
+    			}
+
+    			if (!current || dirty & /*audioSfxVolume*/ 2) set_data_dev(t76, /*audioSfxVolume*/ ctx[1]);
+
+    			if (dirty & /*audioSfxVolume*/ 2) {
+    				set_input_value(input24, /*audioSfxVolume*/ ctx[1]);
+    			}
+
+    			if (!current || dirty & /*audioUiVolume*/ 4) set_data_dev(t80, /*audioUiVolume*/ ctx[2]);
+
+    			if (dirty & /*audioUiVolume*/ 4) {
+    				set_input_value(input25, /*audioUiVolume*/ ctx[2]);
+    			}
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -2721,7 +2761,7 @@ var app = (function () {
     			if (detaching) detach_dev(div36);
     			if (default_slot) default_slot.d(detaching);
     			mounted = false;
-    			dispose();
+    			run_all(dispose);
     		}
     	};
 
@@ -2752,31 +2792,40 @@ var app = (function () {
     	onMount(async () => {
     		function loadSettings() {
     			let pref = JSON.parse(localStorage.getItem('settings'));
+    			let foo;
 
     			for (let i = 0; i < Object.keys(pref).length; i++) {
-    				if (Object.values(pref)[i] == true || Object.values(pref)[i] == false) ;
-    			} // Object.keys(pref)[i] + foo = ".pref" + Object.keys(pref)[i];
+    				if (Object.values(pref)[i] == true || Object.values(pref)[i] == false) {
+    					foo = ".checked";
+    				} else {
+    					foo = ".value";
+    				}
+    				Object.keys(pref)[i] + foo;
+    				let value = "pref." + Object.keys(pref)[i];
+    				eval(value);
+    			}
     		}
 
     		loadSettings();
     	});
 
-    	let audioMusicVolume = 100;
-    	let audioSfxVolume = 100;
-    	let audioUiVolume = 100;
+    	let audioMusicVolume = "100";
+    	let audioSfxVolume = "100";
+    	let audioUiVolume = "100";
 
     	function applySettings() {
     		const storeSettings = {
-    			inputPlaceCubes,
-    			inputRemoveCubes,
-    			inputToggleGrid,
-    			inputPaletteRowScroll,
-    			inputIncreaseCameraSpeed,
-    			inputDecreaseCameraSpeed,
-    			inputIncreaseCameraZoom,
-    			inputDecreaseCameraZoom,
-    			inputSettingsShortcut,
+    			inputPlaceCubes: inputPlaceCubes.value,
+    			inputRemoveCubes: inputRemoveCubes.value,
+    			inputToggleGrid: inputToggleGrid.value,
+    			inputPaletteRowScroll: inputPaletteRowScroll.value,
+    			inputIncreaseCameraSpeed: inputIncreaseCameraSpeed.value,
+    			inputDecreaseCameraSpeed: inputDecreaseCameraSpeed.value,
+    			inputIncreaseCameraZoom: inputIncreaseCameraZoom.value,
+    			inputDecreaseCameraZoom: inputDecreaseCameraZoom.value,
+    			inputSettingsShortcut: inputSettingsShortcut.value,
     			inputDisablePR: inputDisablePR.checked,
+    			audioMusicVolume,
     			audioSfxVolume,
     			audioUiVolume,
     			audioEnableMusic: audioEnableMusic.checked,
@@ -2807,6 +2856,21 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Settings> was created with unknown prop '${key}'`);
     	});
 
+    	function input23_change_input_handler() {
+    		audioMusicVolume = to_number(this.value);
+    		$$invalidate(0, audioMusicVolume);
+    	}
+
+    	function input24_change_input_handler() {
+    		audioSfxVolume = to_number(this.value);
+    		$$invalidate(1, audioSfxVolume);
+    	}
+
+    	function input25_change_input_handler() {
+    		audioUiVolume = to_number(this.value);
+    		$$invalidate(2, audioUiVolume);
+    	}
+
     	$$self.$$set = $$props => {
     		if ('$$scope' in $$props) $$invalidate(6, $$scope = $$props.$$scope);
     	};
@@ -2824,11 +2888,11 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('notfunctional' in $$props) $$invalidate(0, notfunctional = $$props.notfunctional);
-    		if ('requiresrefresh' in $$props) $$invalidate(1, requiresrefresh = $$props.requiresrefresh);
-    		if ('audioMusicVolume' in $$props) $$invalidate(2, audioMusicVolume = $$props.audioMusicVolume);
-    		if ('audioSfxVolume' in $$props) $$invalidate(3, audioSfxVolume = $$props.audioSfxVolume);
-    		if ('audioUiVolume' in $$props) $$invalidate(4, audioUiVolume = $$props.audioUiVolume);
+    		if ('notfunctional' in $$props) $$invalidate(3, notfunctional = $$props.notfunctional);
+    		if ('requiresrefresh' in $$props) $$invalidate(4, requiresrefresh = $$props.requiresrefresh);
+    		if ('audioMusicVolume' in $$props) $$invalidate(0, audioMusicVolume = $$props.audioMusicVolume);
+    		if ('audioSfxVolume' in $$props) $$invalidate(1, audioSfxVolume = $$props.audioSfxVolume);
+    		if ('audioUiVolume' in $$props) $$invalidate(2, audioUiVolume = $$props.audioUiVolume);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -2836,14 +2900,17 @@ var app = (function () {
     	}
 
     	return [
-    		notfunctional,
-    		requiresrefresh,
     		audioMusicVolume,
     		audioSfxVolume,
     		audioUiVolume,
+    		notfunctional,
+    		requiresrefresh,
     		applySettings,
     		$$scope,
-    		slots
+    		slots,
+    		input23_change_input_handler,
+    		input24_change_input_handler,
+    		input25_change_input_handler
     	];
     }
 
@@ -3000,75 +3067,75 @@ var app = (function () {
     			t30 = text("\n\n\t\tSounds generated with ");
     			a7 = element("a");
     			a7.textContent = "jsfxr";
-    			add_location(br0, file$1, 4, 2, 90);
+    			add_location(br0, file$1, 4, 2, 83);
     			if (!src_url_equal(img0.src, img0_src_value = "./images/logo/adocubes.svg")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "adocubes");
     			attr_dev(img0, "target", "_blank");
     			attr_dev(img0, "rel", "noopener noreferrer");
-    			add_location(img0, file$1, 4, 6, 94);
-    			add_location(br1, file$1, 6, 2, 193);
-    			add_location(br2, file$1, 6, 6, 197);
+    			add_location(img0, file$1, 4, 6, 87);
+    			add_location(br1, file$1, 6, 2, 186);
+    			add_location(br2, file$1, 6, 6, 190);
     			attr_dev(a0, "href", "https://github.com/ado1928");
     			attr_dev(a0, "target", "_blank");
     			attr_dev(a0, "rel", "noopener noreferrer");
-    			add_location(a0, file$1, 8, 13, 216);
+    			add_location(a0, file$1, 8, 13, 209);
     			if (!src_url_equal(img1.src, img1_src_value = "https://github.com/ado1928.png")) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "height", "20");
-    			add_location(img1, file$1, 8, 104, 307);
-    			add_location(br3, file$1, 10, 2, 365);
-    			add_location(h2, file$1, 12, 2, 373);
+    			add_location(img1, file$1, 8, 104, 300);
+    			add_location(br3, file$1, 10, 2, 358);
+    			add_location(h2, file$1, 12, 2, 366);
     			attr_dev(a1, "href", "https://github.com/ifritdiezel");
-    			add_location(a1, file$1, 16, 8, 515);
-    			add_location(td0, file$1, 16, 4, 511);
+    			add_location(a1, file$1, 16, 8, 508);
+    			add_location(td0, file$1, 16, 4, 504);
     			if (!src_url_equal(img2.src, img2_src_value = "https://github.com/ifritdiezel.png")) attr_dev(img2, "src", img2_src_value);
     			attr_dev(img2, "height", "20");
-    			add_location(img2, file$1, 17, 8, 585);
-    			add_location(td1, file$1, 17, 4, 581);
-    			add_location(td2, file$1, 18, 4, 653);
-    			add_location(tr0, file$1, 15, 3, 502);
+    			add_location(img2, file$1, 17, 8, 578);
+    			add_location(td1, file$1, 17, 4, 574);
+    			add_location(td2, file$1, 18, 4, 646);
+    			add_location(tr0, file$1, 15, 3, 495);
     			attr_dev(a2, "href", "https://github.com/macimas");
-    			add_location(a2, file$1, 21, 8, 696);
-    			add_location(td3, file$1, 21, 4, 692);
+    			add_location(a2, file$1, 21, 8, 689);
+    			add_location(td3, file$1, 21, 4, 685);
     			if (!src_url_equal(img3.src, img3_src_value = "https://github.com/macimas.png")) attr_dev(img3, "src", img3_src_value);
     			attr_dev(img3, "height", "20");
-    			add_location(img3, file$1, 22, 8, 758);
-    			add_location(td4, file$1, 22, 4, 754);
-    			add_location(td5, file$1, 23, 4, 822);
-    			add_location(tr1, file$1, 20, 3, 683);
+    			add_location(img3, file$1, 22, 8, 751);
+    			add_location(td4, file$1, 22, 4, 747);
+    			add_location(td5, file$1, 23, 4, 815);
+    			add_location(tr1, file$1, 20, 3, 676);
     			attr_dev(a3, "href", "https://github.com/hyxud");
-    			add_location(a3, file$1, 26, 8, 866);
-    			add_location(td6, file$1, 26, 4, 862);
+    			add_location(a3, file$1, 26, 8, 859);
+    			add_location(td6, file$1, 26, 4, 855);
     			if (!src_url_equal(img4.src, img4_src_value = "https://github.com/hyxud.png")) attr_dev(img4, "src", img4_src_value);
     			attr_dev(img4, "height", "20");
-    			add_location(img4, file$1, 27, 8, 924);
-    			add_location(td7, file$1, 27, 4, 920);
-    			add_location(td8, file$1, 28, 4, 986);
-    			add_location(tr2, file$1, 25, 3, 853);
+    			add_location(img4, file$1, 27, 8, 917);
+    			add_location(td7, file$1, 27, 4, 913);
+    			add_location(td8, file$1, 28, 4, 979);
+    			add_location(tr2, file$1, 25, 3, 846);
     			attr_dev(table, "class", "credits");
     			set_style(table, "text-align", "initial");
     			set_style(table, "width", "-moz-available");
     			set_style(table, "width", "-webkit-fill-available");
-    			add_location(table, file$1, 14, 2, 398);
-    			add_location(br4, file$1, 30, 10, 1028);
+    			add_location(table, file$1, 14, 2, 391);
+    			add_location(br4, file$1, 30, 10, 1021);
     			attr_dev(a4, "href", "https://nodejs.org");
     			attr_dev(a4, "target", "_blank");
     			attr_dev(a4, "rel", "noopener noreferrer");
-    			add_location(a4, file$1, 32, 12, 1046);
+    			add_location(a4, file$1, 32, 12, 1039);
     			attr_dev(a5, "href", "https://threejs.org");
     			attr_dev(a5, "target", "_blank");
     			attr_dev(a5, "rel", "noopener noreferrer");
-    			add_location(a5, file$1, 32, 96, 1130);
+    			add_location(a5, file$1, 32, 96, 1123);
     			attr_dev(a6, "href", "https://svelte.dev");
     			attr_dev(a6, "target", "_blank");
     			attr_dev(a6, "rel", "noopener noreferrer");
-    			add_location(a6, file$1, 32, 186, 1220);
-    			add_location(br5, file$1, 32, 267, 1301);
+    			add_location(a6, file$1, 32, 186, 1213);
+    			add_location(br5, file$1, 32, 267, 1294);
     			attr_dev(a7, "href", "https://sfxr.me");
-    			add_location(a7, file$1, 34, 24, 1331);
+    			add_location(a7, file$1, 34, 24, 1324);
     			set_style(div0, "text-align", "center");
-    			add_location(div0, file$1, 2, 1, 55);
+    			add_location(div0, file$1, 2, 1, 48);
     			attr_dev(div1, "id", "winCredits");
-    			attr_dev(div1, "class", "box win center");
+    			attr_dev(div1, "class", "box win");
     			add_location(div1, file$1, 0, 0, 0);
     		},
     		l: function claim(nodes) {
@@ -3382,9 +3449,9 @@ var app = (function () {
     	let main;
     	let div1;
     	let div0;
-    	let switchplacement;
-    	let t1;
     	let palette;
+    	let t1;
+    	let switchplacement;
     	let t2;
     	let coordinates;
     	let t3;
@@ -3400,8 +3467,8 @@ var app = (function () {
     	let credits;
     	let current;
     	welcome = new Welcome({ $$inline: true });
-    	switchplacement = new SwitchPlacement({ $$inline: true });
     	palette = new Palette({ $$inline: true });
+    	switchplacement = new SwitchPlacement({ $$inline: true });
     	coordinates = new Coordinates({ $$inline: true });
     	chat = new Chat({ $$inline: true });
     	esc = new Esc({ $$inline: true });
@@ -3429,9 +3496,9 @@ var app = (function () {
     			main = element("main");
     			div1 = element("div");
     			div0 = element("div");
-    			create_component(switchplacement.$$.fragment);
-    			t1 = space();
     			create_component(palette.$$.fragment);
+    			t1 = space();
+    			create_component(switchplacement.$$.fragment);
     			t2 = space();
     			create_component(coordinates.$$.fragment);
     			t3 = space();
@@ -3464,9 +3531,9 @@ var app = (function () {
     			insert_dev(target, main, anchor);
     			append_dev(main, div1);
     			append_dev(div1, div0);
-    			mount_component(switchplacement, div0, null);
-    			append_dev(div0, t1);
     			mount_component(palette, div0, null);
+    			append_dev(div0, t1);
+    			mount_component(switchplacement, div0, null);
     			append_dev(div1, t2);
     			mount_component(coordinates, div1, null);
     			append_dev(div1, t3);
@@ -3500,8 +3567,8 @@ var app = (function () {
     		i: function intro(local) {
     			if (current) return;
     			transition_in(welcome.$$.fragment, local);
-    			transition_in(switchplacement.$$.fragment, local);
     			transition_in(palette.$$.fragment, local);
+    			transition_in(switchplacement.$$.fragment, local);
     			transition_in(coordinates.$$.fragment, local);
     			transition_in(chat.$$.fragment, local);
     			transition_in(esc.$$.fragment, local);
@@ -3511,8 +3578,8 @@ var app = (function () {
     		},
     		o: function outro(local) {
     			transition_out(welcome.$$.fragment, local);
-    			transition_out(switchplacement.$$.fragment, local);
     			transition_out(palette.$$.fragment, local);
+    			transition_out(switchplacement.$$.fragment, local);
     			transition_out(coordinates.$$.fragment, local);
     			transition_out(chat.$$.fragment, local);
     			transition_out(esc.$$.fragment, local);
@@ -3524,8 +3591,8 @@ var app = (function () {
     			destroy_component(welcome, detaching);
     			if (detaching) detach_dev(t0);
     			if (detaching) detach_dev(main);
-    			destroy_component(switchplacement);
     			destroy_component(palette);
+    			destroy_component(switchplacement);
     			destroy_component(coordinates);
     			destroy_component(chat);
     			destroy_component(esc);

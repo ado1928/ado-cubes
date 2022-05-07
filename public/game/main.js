@@ -101,7 +101,8 @@ renderer.domElement.addEventListener('click', function () {
 		controls.lock();
 		esc.style.display = "none";
 		winSettings.style.display = "none";
-		winCredits.style.display = "none"
+		winCredits.style.display = "none";
+
 	}
 })
 
@@ -111,11 +112,14 @@ const direction = new THREE.Vector3();
 const velocity = new THREE.Vector3();
 
 window.addEventListener('resize', onWindowResize);
+
 function onWindowResize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth, window.innerHeight)
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.documentElement.style.setProperty("--innerHeight", window.innerHeight + "px")
 }
+document.documentElement.style.setProperty("--innerHeight", window.innerHeight + "px")
 
 const loader = new THREE.CubeTextureLoader();
 const texture = loader.load([
@@ -158,7 +162,10 @@ scene.add(dlight2);
 const light = new THREE.AmbientLight(0x606070);
 scene.add(light);
 
-
+function playAudio(url) {
+	let playit = new Audio(url);
+	playit.play();
+}
 
 let raycastPlacement = true
 placeAtRaycast.onclick = function () {
@@ -169,9 +176,6 @@ placeInCamera.onclick = function () {
 	raycastPlacement = false;
 	crosshair.style.display = "none"
 }
-
-let place = new Audio('./audio/sfx/place.ogg');
-let remove = new Audio('./audio/sfx/remove.ogg');
 
 function placeCube(pos) {
 	if (raycastPlacement) {
@@ -193,10 +197,7 @@ function placeCube(pos) {
 	} else {
 		socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
 	}
-	if (!audioDisablePR.checked) {
-		place.currentTime = 0;
-		place.play()
-	}
+	if (!audioDisablePR.checked) { playAudio('./audio/sfx/place.ogg'); }
 }
 
 function breakCube(pos) {
@@ -217,10 +218,7 @@ function breakCube(pos) {
 	} else {
 		socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
 	};
-	if (!audioDisablePR.checked) {
-		remove.currentTime = 0;
-		remove.play()
-	}
+	if (!audioDisablePR.checked) { playAudio('./audio/sfx/remove.ogg') }
 }
 
 let cubes = [];
@@ -244,14 +242,12 @@ for (let i = 0; i < colors.length; i++) {
 }
 
 let colorSkip = 1;
-let palettescroll = new Audio('./audio/ui/palette scroll.ogg')
 
 window.onwheel = function (event) {
 	if (controls.isLocked) {
 		if (event.deltaY > 0) { color -= colorSkip }
 		else if (event.deltaY < 0) { color += colorSkip };
-		palettescroll.currentTime = 0;
-		palettescroll.play()
+		playAudio('./audio/ui/palette scroll.ogg');
 		updateColor()
 	}
 }
@@ -339,41 +335,49 @@ function scrollToBottom(element) {
 	element.scroll({ top: element.scrollHeight, behavior: 'smooth' })
 }
 
-function updateWorld(col) {
-	// console.log(col)
-	if(worlds[col] instanceof THREE.Mesh) {
+function initWorld(col) {
+	if (worlds[col] instanceof THREE.Mesh) {
 		scene.remove(worlds[col])
 		worlds[col].geometry.dispose()
 		worlds[col].material.dispose()
 		worlds[col] = undefined;
 	}
 
-	if(geometries[col].length > 0) {
-		const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
-		// console.log(mergedGeometry)
-		worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
-		worlds[col].castShadow = true;
-		worlds[col].receiveShadow = true;
-		scene.add(worlds[col]);
-		sun.shadow.needsUpdate = true
-	}
-	sun.shadow.needsUpdate = true;
-		// console.log(JSON.stringify(scene).length)
-}
-window.updateWorld = updateWorld;
+	let mergedGeometry;
 
+	if (geometries[col].length > 0) {
+		mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+	}
+		
+	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
+	worlds[col].castShadow = true;
+	worlds[col].receiveShadow = true;
+	scene.add(worlds[col]);
+	sun.shadow.needsUpdate = true;
+}
+
+function updateWorld(col) {
+	if(geometries[col].length > 0) {
+		worlds[col].geometry.dispose();
+		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+	} else {
+		worlds[col].geometry = new THREE.BufferGeometry();
+	}
+}
 
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
 	verified = true;
 	socket.on('message', function (data) {
 		messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + ":</b> " + escapeHTML(data["message"]) + "<br>")
-		scrollToBottom(messages)
+		scrollToBottom(messages);
+		playAudio('./audio/ui/message.ogg')
 	});
 
 	socket.on('serverMessage', function (data) {
 		messages.insertAdjacentHTML('beforeend', escapeHTML(data["message"]) + "<br>");
-		scrollToBottom(messages)
+		scrollToBottom(messages);
+		playAudio('./audio/ui/server message.ogg');
 	});
 
 	socket.on('connected', function (arr) {
@@ -390,11 +394,9 @@ export function verify(uuid) {
 				}
 			}
 		};
-
-		for(var i = 0; i < colors.length; i++) {
-			updateWorld(i)
+		for (var i = 0; i < colors.length; i++) {
+			initWorld(i)
 		}
-
 	});
 
 	socket.on('place', function (data) {
@@ -410,6 +412,7 @@ export function verify(uuid) {
 		bl.castShadow = false;
 		scene.add(bl);
 		*/
+		
 	});
 
 	socket.on('break', function (data) {
@@ -543,8 +546,6 @@ const onKeyUp = function (event) {
 	}
 };
 
-const canvas = document.getElementsByTagName("canvas")[0];
-
 const onMouseDown = (event) => {
 	if (nick !== "" && !inputDisablePR.checked && controls.isLocked) {
 	   	switch (event.which) {
@@ -558,18 +559,18 @@ const onMouseDown = (event) => {
 	}
 };
 
+
+const canvas = document.getElementsByTagName("canvas")[0];
+
 canvas.addEventListener('mousedown', onMouseDown);
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
-let click = new Audio('./audio/ui/click.ogg');
-let hover = new Audio('./audio/ui/hover.ogg');
-
 const buttons = document.getElementsByTagName('button');
 
-for (var i = 0; i < buttons.length; i++) {
-	buttons[i].onmouseover = function() { if (!audioDisableUI.checked) { hover.currentTime = 0; hover.play() } };
-	buttons[i].onmousedown = function() { if (!audioDisableUI.checked) { click.currentTime = 0; click.play() } };
+for (let i = 0; i < buttons.length; i++) {
+	buttons[i].onmouseover = function() { if (!audioDisableUI.checked) { playAudio('./audio/ui/hover.ogg') } };
+	buttons[i].onmousedown = function() { if (!audioDisableUI.checked) { playAudio('./audio/ui/click.ogg') } };
 };
 
 function render() {
@@ -605,7 +606,7 @@ function render() {
 	let pos = controls.getObject().position;
 
 	// this should be updated when pos is changed, not always
-	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + ", y: " + ~~(pos.y + 0.5) + ", z: " + ~~(pos.z + 0.5);
+	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + " ╱ y: " + ~~(pos.y + 0.5) + " ╱ z: " + ~~(pos.z + 0.5);
 
 	renderer.render(scene, camera)
 };

@@ -18,8 +18,8 @@
 	<div id="uiCanvas">
 		<!-- maybe -->
 		<div id="itsEditTime">
-			<SwitchPlacement/>
 			<Palette/>
+			<SwitchPlacement/>
 		</div>
 		<Coordinates/>
 		<Chat/>

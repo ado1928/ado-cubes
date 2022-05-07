@@ -1,3 +1,3 @@
-<div id="playerist" class="box">
+<div id="playerlist" class="box">
 	playerlist hereeeeee
 </div>

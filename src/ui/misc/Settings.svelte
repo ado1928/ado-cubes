@@ -15,32 +15,35 @@
 	onMount(async () => {
 		function loadSettings() {
 			let pref = JSON.parse(localStorage.getItem('settings'));
-			let foo = ""
+			let foo;
 			for (let i = 0; i < Object.keys(pref).length; i++) {
-				if (Object.values(pref)[i] == true || Object.values(pref)[i] == false) { foo = ".checked" } else { foo = "" }
-				// Object.keys(pref)[i] + foo = ".pref" + Object.keys(pref)[i];
+				if (Object.values(pref)[i] == true || Object.values(pref)[i] == false) { foo = ".checked" } else { foo = ".value" };
+				let input = Object.keys(pref)[i] + foo;
+				let value = "pref." + Object.keys(pref)[i];
+				eval(input = value)
 			}
 		}
 		loadSettings()
 	});
 
-	let audioMusicVolume = 100;
-	let audioSfxVolume = 100;
-	let audioUiVolume = 100;
+	let audioMusicVolume = "100";
+	let audioSfxVolume = "100";
+	let audioUiVolume = "100";
 
 	function applySettings() {
 		const storeSettings = {
-			inputPlaceCubes: inputPlaceCubes,
-			inputRemoveCubes: inputRemoveCubes,
-			inputToggleGrid: inputToggleGrid,
-			inputPaletteRowScroll: inputPaletteRowScroll,
-			inputIncreaseCameraSpeed: inputIncreaseCameraSpeed,
-			inputDecreaseCameraSpeed: inputDecreaseCameraSpeed,
-			inputIncreaseCameraZoom: inputIncreaseCameraZoom,
-			inputDecreaseCameraZoom: inputDecreaseCameraZoom,
-			inputSettingsShortcut: inputSettingsShortcut,
+			inputPlaceCubes: inputPlaceCubes.value,
+			inputRemoveCubes: inputRemoveCubes.value,
+			inputToggleGrid: inputToggleGrid.value,
+			inputPaletteRowScroll: inputPaletteRowScroll.value,
+			inputIncreaseCameraSpeed: inputIncreaseCameraSpeed.value,
+			inputDecreaseCameraSpeed: inputDecreaseCameraSpeed.value,
+			inputIncreaseCameraZoom: inputIncreaseCameraZoom.value,
+			inputDecreaseCameraZoom: inputDecreaseCameraZoom.value,
+			inputSettingsShortcut: inputSettingsShortcut.value,
 			inputDisablePR: inputDisablePR.checked,
 
+			audioMusicVolume: audioMusicVolume,
 			audioSfxVolume: audioSfxVolume,
 			audioUiVolume: audioUiVolume,
 			audioEnableMusic: audioEnableMusic.checked,
@@ -64,9 +67,9 @@
 	}
 </script>
 
-<div id="winSettings" class="box win center">
+<div id="winSettings" class="box win">
 	<slot/>
-	<div style="overflow-y:scroll;height:80%">
+	<div style="overflow-y:scroll;height:calc(var(--innerHeight) - 128px)">
 		<h2 style="margin:0">legend</h2>
 		<div class="settingsSection">
 			<img src={notfunctional}> - Not functional<br>
@@ -76,7 +79,7 @@
 		</div>
 
 		<h2>general</h2>
-		<div class="settingsSection"><img src="./images/icons/not functional.svg"> Language
+		<div class="settingsSection"><img src={notfunctional}> Language
 			<select id="generalLanguage">
 				<option value="english">English</option>
 				<option value="onlyEnglish">Only English.</option>
@@ -128,9 +131,9 @@
 
 		<h2>audio</h2>
 		<div class="settingsSection">
-			<div><img src={notfunctional}> Music {audioMusicVolume} <input id="musicVolume" class="slider" type="range" value={audioMusicVolume}></div>
-			<div><img src={notfunctional}> SFX {audioSfxVolume} <input id="sfxVolume" class="slider" type="range" value={audioSfxVolume}></div>
-			<div><img src={notfunctional}> UI {audioUiVolume} <input id="uiVolume" class="slider" type="range" value={audioUiVolume}></div>
+			<div><img src={notfunctional}> Music {audioMusicVolume} <input id="musicVolume" class="slider" type="range" bind:value={audioMusicVolume}></div>
+			<div><img src={notfunctional}> SFX {audioSfxVolume} <input id="sfxVolume" class="slider" type="range" bind:value={audioSfxVolume}></div>
+			<div><img src={notfunctional}> UI {audioUiVolume} <input id="uiVolume" class="slider" type="range" bind:value={audioUiVolume}></div>
 
 			<div><img src={requiresrefresh}> Enable music <input id="audioEnableMusic" type="checkbox"></div>
 			<div>Disable place and remove sounds <input id="audioDisablePR" type="checkbox"></div>

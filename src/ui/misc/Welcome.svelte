@@ -32,7 +32,7 @@
 	}
 </script>
 
-<div id="winWelcome" class="box win center" style="top:62%">
+<div id="winWelcome" class="box center" style="top:62%">
 	<div>
 		<img id="welcomeLogo" {src} {style}>
 	</div>

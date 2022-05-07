@@ -1,4 +1,4 @@
-<div id="winCredits" class="box win center">
+<div id="winCredits" class="box win">
 	<slot/>
 	<div style="text-align:center">
 
