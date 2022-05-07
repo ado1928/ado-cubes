@@ -30,4 +30,4 @@ Made with [Node.js](https://nodejs.org), [Three.js](https://threejs.org), and [S
 Sounds generated with [jsfxr](https://sfxr.me)
 
 <br><br><br><br><br><br><br><br><br>
-<p align=center><img src="https://user-images.githubusercontent.com/54080182/124795209-3d6c4d00-df69-11eb-9325-433a2f56f578.png"></p>
+<p align=center><img src="https://cdn.discordapp.com/attachments/968866349633896488/972592866943701082/the_frog.png"></p>
