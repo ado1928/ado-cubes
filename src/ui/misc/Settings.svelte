@@ -17,7 +17,7 @@
 			let pref = JSON.parse(localStorage.getItem('settings'));
 			for (let i = 0; i < Object.keys(pref).length; i++) {
 				console.log(Object.keys(pref)[i] + " = " + Object.values(pref)[i]);
-				if (Object.values(pref)[i] == true || Object.values(pref)[i] == false) {
+				if (Object.values(pref)[i] == (true || false)) {
 					document.getElementById(Object.keys(pref)[i]).checked = Object.values(pref)[i]
 					// document.getElementById(Object.keys(pref)[i]).checked = true
 				} else {
@@ -26,10 +26,9 @@
 				}
 				
 			}
-			document.querySelector(":root").style.setProperty("--chat-width", themeChatWidth.value)
-			document.querySelector(":root").style.setProperty("--chat-maxheight", themeChatMaxHeight.value)
 		}
-		loadSettings()
+		loadSettings();
+		smth();
 	});
 
 	let audioMusicVolume = "100";
@@ -83,8 +82,12 @@
 			themeDisableTextShadows: themeDisableTextShadows.checked
 		};
 		localStorage.setItem('settings', JSON.stringify(storeSettings));
-		loadSettings()
+		smth()
 	};
+	function smth() {
+		document.querySelector(":root").style.setProperty("--chat-width", themeChatWidth.value)
+		document.querySelector(":root").style.setProperty("--chat-maxheight", themeChatMaxHeight.value)
+	}
 
 	function defaultSettings() { localStorage.clear(); history.go(0) }
 

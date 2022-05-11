@@ -3,6 +3,8 @@ import { PointerLockControls } from "/game/jsm/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from '/game/jsm/utils/BufferGeometryUtils.js';
 let socket = io();
 
+function playAudio(url) { let playit = new Audio(url); playit.play() };
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
@@ -36,12 +38,12 @@ varying vec2 vUv;
 void main(void) {
 	vec4 color = vec4(0.0, 0.0, 0.0, 0.1);
 
-	if (mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) { color = vec4(0.1, 0.25, 1.0, 0.5); }
-	else if (mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) { color = vec4(0.1, 0.25, 1.0, 0.5); }
-	else if (mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) { color = vec4(0.1, 0.25, 1.0, 0.5); }
-	else if (mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) { color = vec4(0.1, 0.25, 1.0, 0.5); }
-	else if (mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); }
-	else if (mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); }
+	if (mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
+	if (mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
+	if (mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
+	if (mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
+	if (mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
+	if (mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); }
 
 	gl_FragColor = vec4(color);
 
@@ -82,7 +84,7 @@ renderer.domElement.addEventListener('click', function () {
 		controls.lock();
 		esc.style.display = "none";
 		winSettings.style.display = "none";
-		winCredits.style.display = "none"
+		winCredits.style.display = "none";
 	}
 });
 
@@ -142,11 +144,9 @@ scene.add(dlight2);
 const light = new THREE.AmbientLight(0x606070);
 scene.add(light);
 
-function playAudio(url) { let playit = new Audio(url); playit.play() };
-
 let raycastPlacement = true;
-placeAtRaycast.onclick = function () { raycastPlacement = true; crosshair.style.display = "block" };
-placeInCamera.onclick = function () { raycastPlacement = false; crosshair.style.display = "none" };
+placeAtRaycast.onclick = function() { raycastPlacement = true; crosshair.style.display = "block" };
+placeInCamera.onclick = function() { raycastPlacement = false; crosshair.style.display = "none" };
 
 function placeCube(pos) {
 	if (raycastPlacement) {
@@ -344,14 +344,14 @@ window.verify = verify;
 verify();
 
 function updateCameraZoom() {
-	if (cameraZoom < 10) { cameraZoom = 10 } else
-	if (cameraZoom > 70) { cameraZoom = 70 };
-	camera.fov = cameraZoom;
+	if (cameraZoom < 1) { cameraZoom = 1 } else
+	if (cameraZoom > 8) { cameraZoom = 8 };
+	camera.zoom = cameraZoom;
 	camera.updateProjectionMatrix()
 };
 
 let cameraSpeed = 64.0;
-let cameraZoom = 70;
+let cameraZoom = 1;
 
 let moveForward = false;
 let moveBackward = false;
@@ -361,7 +361,8 @@ let moveUp = false;
 let moveDown = false;
 
 const onKeyDown = function(event) {
-	if (document.activeElement.tagName !== "INPUT" && nick !== "" && controls.isLocked) {
+	console.log(event.code);
+	if (nick !== "" && controls.isLocked) {
 		switch (event.code) {
 			case 'ArrowUp':
 			case 'KeyW':
@@ -396,6 +397,7 @@ const onKeyDown = function(event) {
 				break
 			case "Enter":
 				controls.unlock();
+				inputChat.style.display = "block"
 				inputChat.focus();
 				break
 			case inputSettingsShortcut.value:
@@ -411,15 +413,17 @@ const onKeyDown = function(event) {
 				cameraSpeed = 64.0;
 				break
 			case inputDecreaseCameraZoom.value:
-				cameraZoom = cameraZoom + 1;
+				if (altKey) { cameraZoom = cameraZoom - .1 }
+				else { cameraZoom = cameraZoom - .3 };
 				updateCameraZoom()
 				break
 			case inputIncreaseCameraZoom.value:
-				cameraZoom = cameraZoom - 1;
+				if (altKey) { cameraZoom = cameraZoom + .1 }
+				else { cameraZoom = cameraZoom + .3 };
 				updateCameraZoom();
 				break
 			case inputResetCameraZoom.value:
-				cameraZoom = 70;
+				cameraZoom = 1;
 				updateCameraZoom();
 				break
 			case 'KeyO':
@@ -430,7 +434,7 @@ const onKeyDown = function(event) {
 				// colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
 				break
 		}
-	}
+	};
 };
 
 const onKeyUp = function(event) {
@@ -482,40 +486,55 @@ canvas.addEventListener('mousedown', onMouseDown);
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
-inputUsername.onkeydown = function (input) {
-	if (input.key == "Enter" && inputUsername.value !== "") {
+inputUsername.onkeydown = function(event) {
+	if (event.key == "Enter" && inputUsername.value !== "") {
 		if (!verified) { captchaPlease.style.display = "block" }
 		else {
 			nick = inputUsername.value;
 			winWelcome.style.display = "none";
 			uiCanvas.style.display = "block";
+			if (true) {
+			//if (navigator.userAgentData.mobile) {
+				mobileControls.style.visibility = "visible";
+			}
 			socket.emit("serverMessage", { "message":  nick + " has joined the server!" })
-		};
-	};
+		} 
+	}
 };
 
 inputChat.onkeydown = function(event) {
 	if (event.key == "Enter" && nick !== "" && inputChat.value !== "") {
 		socket.emit("message", { "message": inputChat.value, "sender": nick });
 		inputChat.value = ""
-	}
+	} else if (event.key == "Enter" && nick !== "" && inputChat.value == "") { controls.lock() }
 };
 
 function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
 
 const buttons = document.getElementsByTagName('button');
-
 for (let i = 0; i < buttons.length; i++) {
 	buttons[i].onmouseover = function() { if (!audioDisableUI.checked) { playAudio('./audio/ui/hover.ogg') } };
-	buttons[i].onmousedown = function() { if (!audioDisableUI.checked) { playAudio('./audio/ui/click.ogg') } };
+	buttons[i].onmousedown = function() { if (!audioDisableUI.checked) { playAudio('./audio/ui/click.ogg') } }
 };
+
+function regExp(str) { return /[a-zA-Z]/.test(str) };
+
+var joyMovement = new JoyStick('joyMovementDiv');
+var joyCamera = new JoyStick('joyCameraDiv');
 
 function render() {
 	requestAnimationFrame(render);
 
 	const delta = clock.getDelta();
 
+	let joyMove = joyMovement.GetDir()
+
 	if (verified) {
+		if (joyMove.includes("N")) moveForward = true;
+		if (joyMove.includes("W")) moveLeft = true;
+		if (joyMove.includes("S")) moveBackward = true;
+		if (joyMove.includes("E")) moveRight = true;
+
 		if (moveForward) velocity.z += cameraSpeed * delta;
 		if (moveBackward) velocity.z -= cameraSpeed * delta;
 		if (moveRight) velocity.x += cameraSpeed * delta;
@@ -534,6 +553,14 @@ function render() {
 		moveDown = false
 	};
 
+	if (controls.isLocked) {
+		inputChat.style.display = "none";
+		document.querySelector(":root").style.setProperty("--chat-maxheight", "200px")
+	} else {
+		inputChat.style.display = "block";
+		document.querySelector(":root").style.setProperty("--chat-maxheight", themeChatMaxHeight.value)
+	};
+
 	velocity.multiplyScalar(Math.pow(0.02, delta));
 
 	controls.moveRight(velocity.x * delta);
@@ -542,7 +569,6 @@ function render() {
 
 	let pos = controls.getObject().position;
 
-	// this should be updated when pos is changed, not always
 	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + " ╱ y: " + ~~(pos.y + 0.5) + " ╱ z: " + ~~(pos.z + 0.5);
 
 	renderer.render(scene, camera)

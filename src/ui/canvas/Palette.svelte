@@ -2,7 +2,7 @@
 	<div style="background:#FFFFFF;"/>
 	<div style="background:#AAAAAA;"/>
 	<div style="background:#888888;"/>
-	<div style="background:#484848;"/>
+	<div style="background:#484a48;"/>
 	<div style="background:#000000;"/>
 	<div style="background:#991609;"/>
 	<div style="background:#DF250B;"/>

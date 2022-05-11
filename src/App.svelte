@@ -26,6 +26,11 @@
 		<img id="crosshair" class="center" src="./images/svgs/crosshair.svg" alt="+">
 	</div>
 
+	<div id="mobileControls">
+		<div id="joyMovementDiv" style="position:absolute;bottom:6px;left:6px;width:200px;height:200px"/>
+		<div id="joyCameraDiv" style="position:absolute;bottom:6px;right:6px;width:200px;height:200px"/>
+	</div>
+
 	<Esc/>
 	<Settings><EscWinNavs>settings</EscWinNavs></Settings>
 	<Credits><EscWinNavs>credits</EscWinNavs></Credits>

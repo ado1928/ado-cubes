@@ -32,11 +32,15 @@
 @font-face { font-family: 'Unifont';src: url('Unifont.ttf') }
 @font-face { font-family: 'Silkscreen'; src: url("Mac's Silkscreen.ttf") }
 
+/* cursor stuff */
+*			{ cursor: url(./cursors/default.svg), auto }
+input		{ cursor: url(./cursors/text.svg) 8 12.5, text }
+button, a	{ cursor: url(./cursors/pointer.svg) 16 16, pointer }
+
 html body { background: #000; margin: 0; font-family: 'Unifont'; font-size: var(--font-size) }
 iframe	{ overflow: visible !important; position: absolute !important }
 
-
-*		{ text-shadow: 1px 1px #000 }
+*		{ text-shadow: 1px 1px #000, 0 0 6px #000 }
 p		{ margin: 0 }
 h2, h3, strong { margin-bottom: 0; font-family: 'Silkscreen'; font-weight: normal }
 h2		{ font-size: 24px }
@@ -65,7 +69,6 @@ button:hover { background: #fff3; outline: 1px solid #fff6; letter-spacing: 1px;
 	font-size: var(--font-size)
 }
 .escButton:hover {
-	cursor: pointer;
 	animation-name: buttonhover;
 	animation-duration: .1s;
 	animation-timing-function: ease-out;
@@ -75,7 +78,7 @@ button:hover { background: #fff3; outline: 1px solid #fff6; letter-spacing: 1px;
 @keyframes buttonhover { from { letter-spacing: 0px } to { letter-spacing: 2px } }
 
 .icoButton { opacity: 50%; padding: 0; font-size: 0 }
-.icoButton:hover { opacity: 100%; background: #fff3; outline: 1px solid #fff6; text-shadow: var(--highlight); cursor: pointer }
+.icoButton:hover { opacity: 100%; background: #fff3; outline: 1px solid #fff6; text-shadow: var(--highlight) }
 
 *:focus	{ filter: drop-shadow(0 0 6px #000) }
 
@@ -136,6 +139,7 @@ select { color: #fff; background: var(--bg1); border: var(--br1); border-radius:
 .icoNav *	{ pointer-events: none; }
 
 #uiCanvas, #esc, .win	{ display: none }
+#mobileControls			{ visibility: hidden }
 
 #itsEditTime			{ display: flex; flex-direction: column; position: absolute; right: 6px; bottom: 6px; align-items: flex-end }
 	#palette			{ display: flex; position: relative; width: calc(var(--palette-colors-size) * var(--palette-colors-in-row)); margin-bottom: 6px; flex-wrap: wrap }
@@ -146,9 +150,9 @@ select { color: #fff; background: var(--bg1); border: var(--br1); border-radius:
 	#switchPlacement *:not(:last-child) { margin-right: var(--box-padding)}
 
 #coordinates	{ top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0) }
-#chat			{ bottom: 6px; left: 6px; width: var(--chat-width); max-height: var(--chat-maxheight) 0; }
-#messages		{ overflow-y: scroll; max-height: calc(var(--chat-maxheight) - (var(--box-padding)*4)); overflow-wrap: break-word }
-#inputChat		{ width: -moz-available; width: -webkit-fill-available; margin-top: 4px }
+#chat			{ bottom: 6px; left: 6px; width: auto; max-height: var(--chat-maxheight); }
+#messages		{ overflow-y: scroll; width: calc(var(--chat-width) - (2px + var(--box-padding)*2)); max-height: calc(var(--chat-maxheight) - (26px + var(--box-padding)*3)); overflow-wrap: break-word }
+#inputChat		{ width: -moz-available; width: -webkit-fill-available; margin-top: var(--box-padding) }
 
 #esc div		{ display: flex; flex-direction: column; width: 320px }
 
