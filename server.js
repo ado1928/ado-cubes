@@ -90,5 +90,6 @@ app.get('/', (req, res) => {
 	console.log("Someone's asking to GET " + req.url);
 	if (req.url == '/') res.sendFile(__dirname + '/' + 'public/index.html');
 });
+// xd
 
 http.listen(port, () => {console.log(`listening to http://localhost:${port}/`)});
