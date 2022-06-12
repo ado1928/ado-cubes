@@ -19,12 +19,9 @@
 				console.log(Object.keys(pref)[i] + " = " + Object.values(pref)[i]);
 				if (Object.values(pref)[i] == (true || false)) {
 					document.getElementById(Object.keys(pref)[i]).checked = Object.values(pref)[i]
-					// document.getElementById(Object.keys(pref)[i]).checked = true
 				} else {
 					document.getElementById(Object.keys(pref)[i]).value = Object.values(pref)[i]
-					// document.getElementById(Object.keys(pref)[i]).value = "adobecubes"
 				}
-				
 			}
 		}
 		loadSettings();
@@ -85,11 +82,10 @@
 		smth()
 	};
 	function smth() {
-		document.querySelector(":root").style.setProperty("--chat-width", themeChatWidth.value)
+		document.querySelector(":root").style.setProperty("--chat-width", themeChatWidth.value);
 		document.querySelector(":root").style.setProperty("--chat-maxheight", themeChatMaxHeight.value)
-	}
-
-	function defaultSettings() { localStorage.clear(); history.go(0) }
+	};
+	function defaultSettings() { localStorage.clear(); history.go(0) };
 
 	const onKeyDown = function(event) { surenot.value = event.code };
 
@@ -116,7 +112,7 @@
 		</div>
 
 		<h2>input</h2>
-		<div class="settingsSection">	
+		<div id="inputDesktop" class="settingsSection">
 			<h3>movement</h3>
 				<div><img src={notfunctional}> Movement method
 					<select id="inputMovement" value="both">
@@ -156,7 +152,8 @@
 				<div>Palette row scroll <input id="inputPaletteRowScroll" type="text" value="AltLeft"></div>
 				<div>Settings shortcut <input id="inputSettingsShortcut" type="text" value="KeyL"></div>
 				<div>Disable mouse place and remove <input id="inputDisablePR" type="checkbox"></div>
-		</div>
+		<div id="inputMobile" class="settingsSection">Not entirely sure what to put here for mobile rn.</div>
+		</div> 
 
 		<h2>audio</h2>
 		<div class="settingsSection">

@@ -16,11 +16,8 @@
 
 <main>
 	<div id="uiCanvas">
-		<!-- maybe -->
-		<div id="itsEditTime">
-			<Palette/>
-			<SwitchPlacement/>
-		</div>
+		<Palette/>
+		<SwitchPlacement/>
 		<Coordinates/>
 		<Chat/>
 		<img id="crosshair" class="center" src="./images/svgs/crosshair.svg" alt="+">

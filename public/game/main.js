@@ -14,6 +14,7 @@ document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500);
 camera.position.set(2, 2, 2);
+camera.rotation.order = 'YXZ';
 camera.lookAt(64, 32, 64);
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
@@ -69,10 +70,10 @@ geometry = new THREE.PlaneBufferGeometry(2000, 2000);
 material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
 let ground = new THREE.Mesh(geometry, material);
-ground.position.set(0, -0.51, 0)
+ground.position.set(0, -0.51, 0);
 ground.rotateX(- Math.PI / 2);
 ground.receiveShadow = true;
-ground.renderOrder = -1
+ground.renderOrder = -1;
 ground.material.depthTest = false;
 ground.material.depthWrite = false;
 scene.add(ground);
@@ -84,7 +85,7 @@ renderer.domElement.addEventListener('click', function () {
 		controls.lock();
 		esc.style.display = "none";
 		winSettings.style.display = "none";
-		winCredits.style.display = "none";
+		winCredits.style.display = "none"
 	}
 });
 
@@ -191,27 +192,29 @@ function updateColor() {
 	color = (color % colors.length + colors.length) % colors.length;
 	for (let i = 0; i < colors.length; i++) { colors[i].className = "" };
 	colors[color].className = "selectedbox"
-}
+};
 updateColor();
 
 for (let i = 0; i < colors.length; i++) {
 	// console.log(colors[i]);
-	colors[i].onclick = function () { color = i; updateColor() }
+	colors[i].onclick = function() { color = i; updateColor() }
 };
 
 let colorSkip = 1;
 
 window.onwheel = function (event) {
 	if (controls.isLocked) {
-		if (event.deltaY > 0) { color -= colorSkip }
-		else if (event.deltaY < 0) { color += colorSkip };
+		if (event.deltaY > 0) { color -= colorSkip } else
+		if (event.deltaY < 0) { color += colorSkip };
 		if (!audioDisableUI.checked) { playAudio('./audio/ui/palette scroll.ogg') };
 		updateColor()
 	}
 };
 
 let materials = []
-for (var i = 0; i < colors.length; i++) { materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor }) };
+for (var i = 0; i < colors.length; i++) {
+	materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor })
+};
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 let geometries = []
@@ -230,7 +233,8 @@ function addCube(pos, col) {
 	matrix.compose(pos, new THREE.Quaternion(1, 0, 0, 0), new THREE.Vector3(1, 1, 1));
 	instanceGeometry.applyMatrix4(matrix);
 	cube.igeometry = instanceGeometry;
-	geometries[col].push(instanceGeometry)
+	geometries[col].push(instanceGeometry);
+	sun.shadow.needsUpdate = true
 };
 
 function removeCube(pos) {
@@ -344,14 +348,13 @@ window.verify = verify;
 verify();
 
 function updateCameraZoom() {
-	if (cameraZoom < 1) { cameraZoom = 1 } else
-	if (cameraZoom > 8) { cameraZoom = 8 };
-	camera.zoom = cameraZoom;
+	if (camera.zoom < 1) { camera.zoom = 1 } else
+	if (camera.zoom > 8) { camera.zoom = 8 };
+	console.log(camera.zoom)
 	camera.updateProjectionMatrix()
 };
 
 let cameraSpeed = 64.0;
-let cameraZoom = 1;
 
 let moveForward = false;
 let moveBackward = false;
@@ -364,21 +367,37 @@ const onKeyDown = function(event) {
 	console.log(event.code);
 	if (nick !== "" && controls.isLocked) {
 		switch (event.code) {
-			case 'ArrowUp':
+			// case 'ArrowUp':
 			case 'KeyW':
 				moveForward = true;
 				break
-			case 'ArrowLeft':
+			// case 'ArrowLeft':
 			case 'KeyA':
 				moveLeft = true;
 				break
-			case 'ArrowDown':
+			// case 'ArrowDown':
 			case 'KeyS':
 				moveBackward = true;
 				break
-			case 'ArrowRight':
+			// case 'ArrowRight':
 			case 'KeyD':
 				moveRight = true;
+				break
+			case 'ArrowUp':
+				camera.rotation.x += 0.1;
+				camera.updateProjectionMatrix();
+				break
+			case 'ArrowLeft':
+				camera.rotation.y += 0.1;
+				camera.updateProjectionMatrix();
+				break
+			case 'ArrowDown':
+				camera.rotation.x -= 0.1;
+				camera.updateProjectionMatrix();
+				break
+			case 'ArrowRight':
+				camera.rotation.y -= 0.1;
+				camera.updateProjectionMatrix();
 				break
 			case 'Space':
 				moveUp = true;
@@ -413,13 +432,13 @@ const onKeyDown = function(event) {
 				cameraSpeed = 64.0;
 				break
 			case inputDecreaseCameraZoom.value:
-				if (altKey) { cameraZoom = cameraZoom - .1 }
-				else { cameraZoom = cameraZoom - .3 };
-				updateCameraZoom()
+				if (event.altKey) { camera.zoom -= .3 }
+				else { camera.zoom -= .1 };
+				updateCameraZoom();
 				break
 			case inputIncreaseCameraZoom.value:
-				if (altKey) { cameraZoom = cameraZoom + .1 }
-				else { cameraZoom = cameraZoom + .3 };
+				if (event.altKey) { camera.zoom += .3 }
+				else { camera.zoom += .1 };
 				updateCameraZoom();
 				break
 			case inputResetCameraZoom.value:
@@ -493,9 +512,14 @@ inputUsername.onkeydown = function(event) {
 			nick = inputUsername.value;
 			winWelcome.style.display = "none";
 			uiCanvas.style.display = "block";
-			if (true) {
-			//if (navigator.userAgentData.mobile) {
+			//if (true) {
+			if (navigator.userAgentData.mobile) {
 				mobileControls.style.visibility = "visible";
+				chat.style.top = "6px";
+				palette.style.top = "6px";
+				switchPlacement.style.top = "6px";
+				inputDesktop.style.display = "none";
+				inputMobile.style.display = "block"
 			}
 			socket.emit("serverMessage", { "message":  nick + " has joined the server!" })
 		} 
@@ -519,15 +543,18 @@ for (let i = 0; i < buttons.length; i++) {
 
 function regExp(str) { return /[a-zA-Z]/.test(str) };
 
-var joyMovement = new JoyStick('joyMovementDiv');
-var joyCamera = new JoyStick('joyCameraDiv');
+let joyMovement = new JoyStick('joyMovementDiv');
+let joyCamera = new JoyStick('joyCameraDiv');
 
 function render() {
 	requestAnimationFrame(render);
 
 	const delta = clock.getDelta();
 
-	let joyMove = joyMovement.GetDir()
+	let joyMove = joyMovement.GetDir();
+	let joyCam = joyCamera.GetDir();
+	let joyCamX = joyCamera.GetX();
+	let joyCamY = joyCamera.GetY();
 
 	if (verified) {
 		if (joyMove.includes("N")) moveForward = true;
@@ -535,10 +562,15 @@ function render() {
 		if (joyMove.includes("S")) moveBackward = true;
 		if (joyMove.includes("E")) moveRight = true;
 
+		if (joyCamY > 0) camera.rotation.x += (joyCamY / 32) * delta;
+		if (joyCamX < 0) camera.rotation.y -= (joyCamX / 32) * delta;
+		if (joyCamY < 0) camera.rotation.x += (joyCamY / 32) * delta;
+		if (joyCamX > 0) camera.rotation.y -= (joyCamX / 32) * delta;
+		
 		if (moveForward) velocity.z += cameraSpeed * delta;
+		if (moveLeft) velocity.x -= cameraSpeed * delta;
 		if (moveBackward) velocity.z -= cameraSpeed * delta;
 		if (moveRight) velocity.x += cameraSpeed * delta;
-		if (moveLeft) velocity.x -= cameraSpeed * delta;
 		if (moveUp) velocity.y += cameraSpeed * delta;
 		if (moveDown) velocity.y -= cameraSpeed * delta
 	};

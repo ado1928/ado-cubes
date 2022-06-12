@@ -8,7 +8,8 @@ adocubes is a 3D sandbox game where you edit a canvas by placing or breaking cub
 
 <h1 align=center>Prerequisites</h1>
 
-- [Node.js](https://nodejs.org)
+- A computer 
+- [Node.js](https://nodejs.org) (LTS/Current)
 
 In the project folder, install dependencies from package.json by `npm install`
 <h1 align=center>Notes</h1>
