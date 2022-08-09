@@ -3,7 +3,7 @@ import { PointerLockControls } from "/game/jsm/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from '/game/jsm/utils/BufferGeometryUtils.js';
 let socket = io();
 
-function playAudio(url) { let playit = new Audio(url); playit.play() };
+function playAudio(url) { let foo = new Audio(url); foo.play() };
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -33,21 +33,17 @@ void main() {
 
 let frag = `
 uniform sampler2D colorTexture;
-
 varying vec2 vUv;
 
 void main(void) {
 	vec4 color = vec4(0.0, 0.0, 0.0, 0.1);
-
 	if (mod(vUv.x + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
 	if (mod(vUv.y + 0.005 / 2.0, 1.0/2.0) * 2.0 < 0.01) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
 	if (mod(vUv.x + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
 	if (mod(vUv.y + 0.02 / 16.0, 1.0/16.0) * 16.0 < 0.04) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
 	if (mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
 	if (mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); }
-
 	gl_FragColor = vec4(color);
-
 }`
 
 let geometry, material, grid, pos;
@@ -163,7 +159,7 @@ function placeCube(pos) {
 			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
 		}
 	} else { socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color }) }
-	if (!audioDisablePR.checked) { playAudio('./audio/sfx/place.ogg') }
+	if (!audioDisablePR.checked) playAudio('./audio/sfx/place.ogg')
 }
 
 function breakCube(pos) {
@@ -180,11 +176,10 @@ function breakCube(pos) {
 			socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
 		}
 	} else { socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] }) };
-	if (!audioDisablePR.checked) { playAudio('./audio/sfx/remove.ogg') }
+	if (!audioDisablePR.checked) playAudio('./audio/sfx/remove.ogg')
 }
 
 let cubes = [];
-
 let colors = document.getElementById("palette").children;
 let color = 0;
 
@@ -206,7 +201,7 @@ window.onwheel = function (event) {
 	if (controls.isLocked) {
 		if (event.deltaY > 0) { color -= colorSkip } else
 		if (event.deltaY < 0) { color += colorSkip };
-		if (!audioDisableUI.checked) { playAudio('./audio/ui/palette scroll.ogg') };
+		if (!audioDisableUI.checked) playAudio('./audio/ui/palette scroll.ogg');
 		updateColor()
 	}
 };
@@ -270,9 +265,9 @@ let verified = false;
 
 function initWorld(col) {
 	if (worlds[col] instanceof THREE.Mesh) {
-		scene.remove(worlds[col])
-		worlds[col].geometry.dispose()
-		worlds[col].material.dispose()
+		scene.remove(worlds[col]);
+		worlds[col].geometry.dispose();
+		worlds[col].material.dispose();
 		worlds[col] = undefined
 	};
 
@@ -289,7 +284,7 @@ function initWorld(col) {
 function updateWorld(col) {
 	if(geometries[col].length > 0) {
 		worlds[col].geometry.dispose();
-		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col])
 	} else { worlds[col].geometry = new THREE.BufferGeometry(); }
 };
 
@@ -316,9 +311,7 @@ export function verify(uuid) {
 		for (let x = 0; x < 64; x++) {
 			for (let y = 0; y < 64; y++) {
 				for (let z = 0; z < 64; z++) {
-					if (view[x*4096+y*64+z] > 0) {
-						addCube({ "x": x, "y": y, "z": z }, view[x*4096+y*64+z] - 1);
-					}
+					if (view[x*4096+y*64+z] > 0) addCube({ "x": x, "y": y, "z": z }, view[x*4096+y*64+z] - 1)
 				}
 			}
 		};
@@ -337,8 +330,7 @@ export function verify(uuid) {
 	});
 
 	socket.on('break', function (data) {
-		let pos = data.pos;
-		removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
+		let pos = data.pos; removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
 	})
 };
 
@@ -347,14 +339,12 @@ window.verify = verify;
 // bypass captcha in debug
 verify();
 
+let cameraSpeed = 64.0;
 function updateCameraZoom() {
 	if (camera.zoom < 1) { camera.zoom = 1 } else
 	if (camera.zoom > 8) { camera.zoom = 8 };
-	console.log(camera.zoom)
 	camera.updateProjectionMatrix()
 };
-
-let cameraSpeed = 64.0;
 
 let moveForward = false;
 let moveBackward = false;
@@ -369,89 +359,63 @@ const onKeyDown = function(event) {
 		switch (event.code) {
 			// case 'ArrowUp':
 			case 'KeyW':
-				moveForward = true;
-				break
+				moveForward = true; break
 			// case 'ArrowLeft':
 			case 'KeyA':
-				moveLeft = true;
-				break
+				moveLeft = true; break
 			// case 'ArrowDown':
 			case 'KeyS':
-				moveBackward = true;
-				break
+				moveBackward = true; break
 			// case 'ArrowRight':
 			case 'KeyD':
-				moveRight = true;
-				break
+				moveRight = true; break
 			case 'ArrowUp':
 				camera.rotation.x += 0.1;
-				camera.updateProjectionMatrix();
-				break
+				camera.updateProjectionMatrix(); break
 			case 'ArrowLeft':
 				camera.rotation.y += 0.1;
-				camera.updateProjectionMatrix();
-				break
+				camera.updateProjectionMatrix(); break
 			case 'ArrowDown':
 				camera.rotation.x -= 0.1;
-				camera.updateProjectionMatrix();
-				break
+				camera.updateProjectionMatrix(); break
 			case 'ArrowRight':
 				camera.rotation.y -= 0.1;
-				camera.updateProjectionMatrix();
-				break
+				camera.updateProjectionMatrix(); break
 			case 'Space':
-				moveUp = true;
-				break
+				moveUp = true; break
 			case 'ShiftLeft':
-				moveDown = true;
-				break
+				moveDown = true; break
 			case inputPlaceCubes.value:
-				placeCube(controls.getObject().position);
-				break
+				placeCube(controls.getObject().position); break
 			case inputRemoveCubes.value:
-				breakCube(controls.getObject().position);
-				break
+				breakCube(controls.getObject().position); break
 			case inputToggleGrid.value:
-				grid.visible = !grid.visible;
-				break
+				grid.visible = !grid.visible; break
 			case "Enter":
 				controls.unlock();
 				inputChat.style.display = "block"
-				inputChat.focus();
-				break
+				inputChat.focus(); break
 			case inputSettingsShortcut.value:
-				winSettings.style.display = (winSettings.style.display=="block") ? "none":"block";
-				break
+				winSettings.style.display = (winSettings.style.display=="block") ? "none":"block"; break
 			case inputDecreaseCameraSpeed.value:
-				cameraSpeed = cameraSpeed - 8;
-				break
+				cameraSpeed = cameraSpeed - 8; break
 			case inputIncreaseCameraSpeed.value:
-				cameraSpeed = cameraSpeed + 8;
-				break
+				cameraSpeed = cameraSpeed + 8; break
 			case inputResetCameraSpeed.value:
-				cameraSpeed = 64.0;
-				break
+				cameraSpeed = 64.0; break
 			case inputDecreaseCameraZoom.value:
-				if (event.altKey) { camera.zoom -= .3 }
-				else { camera.zoom -= .1 };
-				updateCameraZoom();
-				break
+				if (event.altKey) { camera.zoom -= .3 } else { camera.zoom -= .1 };
+				updateCameraZoom(); break
 			case inputIncreaseCameraZoom.value:
-				if (event.altKey) { camera.zoom += .3 }
-				else { camera.zoom += .1 };
-				updateCameraZoom();
-				break
+				if (event.altKey) { camera.zoom += .3 } else { camera.zoom += .1 };
+				updateCameraZoom(); break
 			case inputResetCameraZoom.value:
 				cameraZoom = 1;
-				updateCameraZoom();
-				break
+				updateCameraZoom(); break
 			case 'KeyO':
-				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block";
-				break
+				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block"; break
 			case inputPaletteRowScroll.value:
-				colorSkip = -5;
-				// colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
-				break
+				colorSkip = -5; break // colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
 		}
 	};
 };
@@ -460,29 +424,22 @@ const onKeyUp = function(event) {
 	switch (event.code) {
 		case 'ArrowUp':
 		case 'KeyW':
-			moveForward = false;
-			break
+			moveForward = false; break
 		case 'ArrowLeft':
 		case 'KeyA':
-			moveLeft = false;
-			break
+			moveLeft = false; break
 		case 'ArrowDown':
 		case 'KeyS':
-			moveBackward = false;
-			break
+			moveBackward = false; break
 		case 'ArrowRight':
 		case 'KeyD':
-			moveRight = false;
-			break
+			moveRight = false; break
 		case 'Space':
-			moveUp = false;
-			break
+			moveUp = false; break
 		case 'ShiftLeft':
-			moveDown = false;
-			break
+			moveDown = false; break
 		case 'AltLeft':
-			colorSkip = 1;
-			break;
+			colorSkip = 1; break
 	}
 };
 
@@ -490,11 +447,9 @@ const onMouseDown = (event) => {
 	if (nick !== "" && !inputDisablePR.checked && controls.isLocked) {
 	   	switch (event.which) {
 			case 1:
-				breakCube(controls.getObject().position);
-				break
+				breakCube(controls.getObject().position); break
 			case 3:
-				placeCube(controls.getObject().position);
-				break
+				placeCube(controls.getObject().position); break
 		}
 	}
 };
@@ -530,15 +485,15 @@ inputChat.onkeydown = function(event) {
 	if (event.key == "Enter" && nick !== "" && inputChat.value !== "") {
 		socket.emit("message", { "message": inputChat.value, "sender": nick });
 		inputChat.value = ""
-	} else if (event.key == "Enter" && nick !== "" && inputChat.value == "") { controls.lock() }
+	} else if (event.key == "Enter" && nick !== "" && inputChat.value == "") controls.lock()
 };
 
 function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
 
 const buttons = document.getElementsByTagName('button');
 for (let i = 0; i < buttons.length; i++) {
-	buttons[i].onmouseover = function() { if (!audioDisableUI.checked) { playAudio('./audio/ui/hover.ogg') } };
-	buttons[i].onmousedown = function() { if (!audioDisableUI.checked) { playAudio('./audio/ui/click.ogg') } }
+	buttons[i].onmouseover = function() { if (!audioDisableUI.checked) playAudio('./audio/ui/hover.ogg') };
+	buttons[i].onmousedown = function() { if (!audioDisableUI.checked) playAudio('./audio/ui/click.ogg') }
 };
 
 function regExp(str) { return /[a-zA-Z]/.test(str) };
@@ -579,7 +534,7 @@ function render() {
 	if (verified && !controls.isLocked) {
 		moveForward = false;
 		moveLeft = false;
-		moveBackward = false
+		moveBackward = false;
 		moveRight = false;
 		moveUp = false;
 		moveDown = false

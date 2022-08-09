@@ -1,6 +1,5 @@
 {
-  "webhooktoken":"",
-  "bottoken":"",
-  "channelid":""
+	"webhookToken": "",
+	"botToken": "",
+	"channelId": ""
 }
-
