@@ -412,7 +412,8 @@ const onKeyDown = function(event) {
 			case inputResetCameraZoom.value:
 				cameraZoom = 1;
 				updateCameraZoom(); break
-			case 'KeyO':
+			case 'F1':
+				event.preventDefault();
 				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block"; break
 			case inputPaletteRowScroll.value:
 				colorSkip = -5; break // colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");

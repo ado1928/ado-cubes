@@ -1,20 +1,21 @@
 const express = require('express');
-const app = express()
+const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const fs = require('fs');
 const path = require('path');
 const textencoder = new TextEncoder();
 const textdecoder = new TextDecoder();
+
 const { Webhook } = require('discord-webhook-node');
 const { Client, Intents } = require('discord.js');
 const dsbridgeconfig = require('./dsbridgeconfig');
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES + Intents.FLAGS.GUILDS ] });
 const hook = new Webhook(dsbridgeconfig.webhookToken);
 
+const port = 1928;
 var world;
 var lastsaved = Date.now();
-const port = 1928;
 
 fs.readFile('./world.caw', 'utf8' , (err, data) => {
 	if (err) throw err; world = textencoder.encode(data)
@@ -26,15 +27,15 @@ io.on('connection', (socket) => {
 
 	socket.on('place', (data) => {
 		pos = data.pos;
-		if (posvalid(pos)) {
+		if (isPosValid(pos)) {
 			world[pos[0]*4096+pos[1]*64+pos[2]] = data.color + 1;
 			io.emit('place', data);
-			if (Date.now() - lastsaved > 60000) worldsave()
+			if (Date.now() - lastsaved > 60000) saveWorld()
 		}
 	});
 	socket.on('break', (data) => {
 		pos = data.pos;
-		if (posvalid(pos)) {
+		if (isPosValid(pos)) {
 			world[pos[0]*4096+pos[1]*64+pos[2]] = 0;
 			io.emit('break', data)
 		}
@@ -58,21 +59,19 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('disconnect', (reason) => {
-		if (io.engine.clientsCount == 0) {
-			lastsaved = Date.now(); worldsave()
-		}
+		if (io.engine.clientsCount == 0) { lastsaved = Date.now(); saveWorld() }
 	});
 });
 
 
-function posvalid(pos) {
+function isPosValid(pos) {
 	let valid = true;
-	for (const coord of pos) { if (0 > coord || coord > 63) valid=false; }
+	for (const coord of pos) { if (0 > coord || coord > 63) valid = false }
 	return(valid)
 }
-function worldsave() {
-	console.log("Saved world.");
+function saveWorld() {
 	lastsaved = Date.now();
+	console.log("Saved world.");
 	fs.writeFile('./world.caw', textdecoder.decode(world), err => {if(err) throw err;})
 }
 
