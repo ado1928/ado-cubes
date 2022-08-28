@@ -2,8 +2,10 @@ import * as THREE from 'three';
 import { PointerLockControls } from "/game/jsm/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from '/game/jsm/utils/BufferGeometryUtils.js';
 let socket = io();
+import * as commands from './commands.js';
 
-function playAudio(url) { let foo = new Audio(url); foo.play() };
+function playAudio(url, condition) { if (condition || condition == undefined) { let i = new Audio('./audio/'+url+'.ogg'); i.play() } };
+function randomInt(max) { return Math.floor(Math.random() * max) };
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -13,9 +15,9 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500);
-camera.position.set(2, 2, 2);
+camera.position.set(-16, 96, -16);
 camera.rotation.order = 'YXZ';
-camera.lookAt(64, 32, 64);
+camera.lookAt(48, 0, 48);
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const controls = new PointerLockControls(camera, renderer.domElement);
@@ -44,6 +46,7 @@ void main(void) {
 	if (mod(vUv.x + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); } else
 	if (mod(vUv.y + 0.025 / 64.0, 1.0/64.0) * 64.0 < 0.05) { color = vec4(0.1, 0.25, 1.0, 0.5); }
 	gl_FragColor = vec4(color);
+
 }`
 
 let geometry, material, grid, pos;
@@ -74,16 +77,6 @@ ground.material.depthTest = false;
 ground.material.depthWrite = false;
 scene.add(ground);
 
-let raycaster = new THREE.Raycaster();
-
-renderer.domElement.addEventListener('click', function () {
-	if (nick !== "") {
-		controls.lock();
-		esc.style.display = "none";
-		winSettings.style.display = "none";
-		winCredits.style.display = "none"
-	}
-});
 
 scene.add(controls.getObject());
 
@@ -91,7 +84,6 @@ const direction = new THREE.Vector3();
 const velocity = new THREE.Vector3();
 
 window.addEventListener('resize', onWindowResize);
-
 function onWindowResize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
@@ -101,7 +93,7 @@ function onWindowResize() {
 document.documentElement.style.setProperty("--innerHeight", window.innerHeight + "px")
 
 const loader = new THREE.CubeTextureLoader();
-const texture = loader.load([
+const skybox = loader.load([
 	'/game/sky/Daylight Box_Right.png',
 	'/game/sky/Daylight Box_Left.png',
 	'/game/sky/Daylight Box_Top.png',
@@ -109,7 +101,7 @@ const texture = loader.load([
 	'/game/sky/Daylight Box_Front.png',
 	'/game/sky/Daylight Box_Back.png'
 ]);
-scene.background = texture;
+scene.background = skybox;
 
 const sun = new THREE.DirectionalLight(0xffffff, 0.35);
 sun.position.set(20, 90, 50);
@@ -128,6 +120,9 @@ sun.shadow.camera.top = 35;
 sun.shadow.camera.bottom = -71;
 sun.shadow.autoUpdate = false;
 
+const light = new THREE.AmbientLight(0x606070);
+scene.add(light);
+
 const dlight = new THREE.DirectionalLight(0xffffff, 0.2);
 dlight.position.set(0.3, 0.6, 0.5);
 dlight.castShadow = false;
@@ -138,12 +133,12 @@ dlight2.position.set(-0.3, 0.6, -0.2);
 dlight2.castShadow = false;
 scene.add(dlight2);
 
-const light = new THREE.AmbientLight(0x606070);
-scene.add(light);
+let raycaster = new THREE.Raycaster();
 
+// Showing or hiding crosshair depending on what placement method/mode(?) the player is using
 let raycastPlacement = true;
-placeAtRaycast.onclick = function() { raycastPlacement = true; crosshair.style.display = "block" };
-placeInCamera.onclick = function() { raycastPlacement = false; crosshair.style.display = "none" };
+placeAtRaycast.onclick = () => { raycastPlacement = true; crosshair.style.display = "block" };
+placeInCamera.onclick = () => { raycastPlacement = false; crosshair.style.display = "none" };
 
 function placeCube(pos) {
 	if (raycastPlacement) {
@@ -159,7 +154,7 @@ function placeCube(pos) {
 			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
 		}
 	} else { socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color }) }
-	if (!audioDisablePR.checked) playAudio('./audio/sfx/place.ogg')
+	playAudio('sfx/place', !audioDisablePR.checked)
 }
 
 function breakCube(pos) {
@@ -176,33 +171,27 @@ function breakCube(pos) {
 			socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
 		}
 	} else { socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] }) };
-	if (!audioDisablePR.checked) playAudio('./audio/sfx/remove.ogg')
-}
+	playAudio('sfx/remove', !audioDisablePR.checked)
+};
 
-let cubes = [];
-let colors = document.getElementById("palette").children;
+let colors = palette.children;
 let color = 0;
+let colorSkip = 1;
 
 function updateColor() {
 	color = (color % colors.length + colors.length) % colors.length;
-	for (let i = 0; i < colors.length; i++) { colors[i].className = "" };
+	for (let i = 0; i < colors.length; i++) colors[i].className = "";
 	colors[color].className = "selectedbox"
 };
+for (let i = 0; i < colors.length; i++) { colors[i].onclick = () => { color = i; updateColor() } }
 updateColor();
 
-for (let i = 0; i < colors.length; i++) {
-	// console.log(colors[i]);
-	colors[i].onclick = function() { color = i; updateColor() }
-};
-
-let colorSkip = 1;
-
-window.onwheel = function (event) {
+window.onwheel = event => {
 	if (controls.isLocked) {
-		if (event.deltaY > 0) { color -= colorSkip } else
-		if (event.deltaY < 0) { color += colorSkip };
-		if (!audioDisableUI.checked) playAudio('./audio/ui/palette scroll.ogg');
-		updateColor()
+		if (event.deltaY > 0) color -= colorSkip;
+		if (event.deltaY < 0) color += colorSkip;
+		updateColor();
+		playAudio('ui/palette scroll', !audioDisableUI.checked)
 	}
 };
 
@@ -213,18 +202,21 @@ for (var i = 0; i < colors.length; i++) {
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 let geometries = []
-for (var i = 0; i < colors.length; i++) { geometries[i] = [] };
+for (var i = 0; i < colors.length; i++) geometries[i] = [];
+
+let cubes = [];
 
 function addCube(pos, col) {
 	let cube = new THREE.Mesh(geometry, materials[col], 100);
+	const matrix = new THREE.Matrix4();
+	const instanceGeometry = geometry.clone();
+
 	cube.position.set(pos.x, pos.y, pos.z);
 	cube.receiveShadow = true;
 	cube.castShadow = true;
 	cube.col = col;
 	cubes.push(cube);
 
-	const matrix = new THREE.Matrix4();
-	const instanceGeometry = geometry.clone();
 	matrix.compose(pos, new THREE.Quaternion(1, 0, 0, 0), new THREE.Vector3(1, 1, 1));
 	instanceGeometry.applyMatrix4(matrix);
 	cube.igeometry = instanceGeometry;
@@ -241,27 +233,24 @@ function removeCube(pos) {
 			for (var j = 0; j < geometries[e.col].length; j++) {
 				if (c.igeometry.id == geometries[e.col][j].id) {
 					geometries[e.col].splice(j, 1);
-					updateWorld(e.col);
 					sun.shadow.needsUpdate = true;
+					updateWorld(e.col);
 					return
 				}
 			}
 		}
 	}
-}
+};
 
-function escapeHTML(unsafe) {
+export function escapeHTML(unsafe) {
 	return unsafe
 		.replace(/&/g, "&amp;")
 		.replace(/</g, "&lt;")
 		.replace(/>/g, "&gt;")
 		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&#039;")
+		.replace(/'/g, "&apos;")
 		.replace(/`/g, "&#96;")
 }
-
-let nick = "";
-let verified = false;
 
 function initWorld(col) {
 	if (worlds[col] instanceof THREE.Mesh) {
@@ -272,38 +261,38 @@ function initWorld(col) {
 	};
 
 	let mergedGeometry;
-	if (geometries[col].length > 0) { mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]) }
-		
-	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
+	if (geometries[col].length > 0) mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
+	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col]);
 	worlds[col].castShadow = true;
 	worlds[col].receiveShadow = true;
-	scene.add(worlds[col]);
-	sun.shadow.needsUpdate = true
+	sun.shadow.needsUpdate = true;
+	scene.add(worlds[col])
 };
 
 function updateWorld(col) {
-	if(geometries[col].length > 0) {
+	if (geometries[col].length > 0) {
 		worlds[col].geometry.dispose();
 		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col])
-	} else { worlds[col].geometry = new THREE.BufferGeometry(); }
+	} else worlds[col].geometry = new THREE.BufferGeometry()
 };
+
+export function createMessage(msg, audio) {
+	if (!audio) audio = 'ui/message';
+	messages.insertAdjacentHTML('beforeend', msg + "<br>")
+	scrollToBottom(messages);
+	playAudio(audio)
+}
+
+let nick, verified;
 
 export function verify(uuid) {
 	socket = io({ extraHeaders: { "uuid": uuid } });
 	verified = true;
-	socket.on('message', function (data) {
-		messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + ":</b> " + escapeHTML(data["message"]) + "<br>")
-		scrollToBottom(messages);
-		playAudio('./audio/ui/message.ogg')
-	});
 
-	socket.on('serverMessage', function (data) {
-		messages.insertAdjacentHTML('beforeend', escapeHTML(data["message"]) + "<br>");
-		scrollToBottom(messages);
-		playAudio('./audio/ui/server message.ogg');
-	});
+	socket.on('message', data => createMessage(`<b>${escapeHTML(data["sender"])}:</b> ${escapeHTML(data["message"])}`));
+	socket.on('serverMessage', data => createMessage(`<b>${escapeHTML(data["message"])}</b>`, 'ui/server message'));
 
-	socket.on('connected', function (arr) {
+	socket.on('connected', arr => {
 		const view = new Uint8Array(arr);
 		// console.log(view);
 		window.arr = view;
@@ -311,195 +300,161 @@ export function verify(uuid) {
 		for (let x = 0; x < 64; x++) {
 			for (let y = 0; y < 64; y++) {
 				for (let z = 0; z < 64; z++) {
-					if (view[x*4096+y*64+z] > 0) addCube({ "x": x, "y": y, "z": z }, view[x*4096+y*64+z] - 1)
+					if (view[x*4096+y*64+z] > 0) {
+						addCube({ "x": x, "y": y, "z": z }, view[x*4096+y*64+z] - 1);
+					}
 				}
 			}
 		};
-		for (var i = 0; i < colors.length; i++) { initWorld(i) }
+		for (var i = 0; i < colors.length; i++) initWorld(i)
 	});
 
-	socket.on('place', function (data) {
+	socket.on('place', data => {
 		let pos = data.pos;
 		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
 		updateWorld(data.color)
+
 		// fancy block illumination, do not uncomment unless you want framerate to die
-		/* const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
+		/*const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
 		bl.position.set(pos[0], pos[1], pos[2]);
 		bl.castShadow = false;
-		scene.add(bl) */
+		scene.add(bl)*/
 	});
-
-	socket.on('break', function (data) {
-		let pos = data.pos; removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
-	})
+	socket.on('break', data => { let pos = data.pos; removeCube(new THREE.Vector3(pos[0], pos[1], pos[2])) })
 };
 
 window.verify = verify;
 
-// bypass captcha in debug
-verify();
+verify(); // bypass captcha in debug
 
+let moveForward, moveBackward, moveLeft, moveRight, moveUp, moveDown;
 let cameraSpeed = 64.0;
-function updateCameraZoom() {
-	if (camera.zoom < 1) { camera.zoom = 1 } else
-	if (camera.zoom > 8) { camera.zoom = 8 };
+
+const onKeyDown = event => {
+	if (nick && controls.isLocked) {
+		event.preventDefault();
+		switch (event.code) {
+		// Movement
+			case 'KeyW': /*case 'ArrowUp':*/ moveForward = true; break
+			case 'KeyA': /*case 'ArrowLeft':*/ moveLeft = true; break
+			case 'KeyS': /*case 'ArrowDown':*/ moveBackward = true; break
+			case 'KeyD': /*case 'ArrowRight':*/ moveRight = true; break
+			case 'Space': moveUp = true; break
+			case 'ShiftLeft': moveDown = true; break
+
+		// Camera
+			/*
+			case 'ArrowUp': camera.rotation.x += 0.1; camera.updateProjectionMatrix(); break
+			case 'ArrowLeft': camera.rotation.y += 0.1; camera.updateProjectionMatrix(); break
+			case 'ArrowDown': camera.rotation.x -= 0.1; camera.updateProjectionMatrix(); break
+			case 'ArrowRight': camera.rotation.y -= 0.1; camera.updateProjectionMatrix(); break
+			*/
+			case inputDecreaseCameraSpeed.value: cameraSpeed -= 8; break
+			case inputIncreaseCameraSpeed.value: cameraSpeed += 8; break
+			case inputResetCameraSpeed.value: cameraSpeed = 64.0; break
+			case inputDecreaseCameraZoom.value: (event.altKey) ? cameraZoom(-.3) : cameraZoom(-.1); break
+			case inputIncreaseCameraZoom.value: (event.altKey) ? cameraZoom(+.3) : cameraZoom(+.1); break
+			case inputResetCameraZoom.value: cameraZoom(); break
+
+		// Placement
+			case inputPlaceCubes.value: placeCube(controls.getObject().position); break
+			case inputRemoveCubes.value: breakCube(controls.getObject().position); break
+			case inputToggleGrid.value: grid.visible = !grid.visible; break
+
+		// Other
+			case "Enter": controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
+			case inputSettingsShortcut.value: controls.unlock(); settings.style.display = (settings.style.display == "flex") ? "none" : "flex"; break
+			case inputPaletteRowScroll.value: colorSkip = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row")) * -1; break
+			case 'F1': uiCanvas.style.display = (uiCanvas.style.display=="flex") ? "none" : "flex"; break
+			case 'F5': history.go(); break
+		}
+	}
+};
+
+const onKeyUp = event => {
+	switch (event.code) {
+		case 'KeyW': moveForward = false; break
+		case 'KeyA': moveLeft = false; break
+		case 'KeyS': moveBackward = false; break
+		case 'KeyD': moveRight = false; break
+		case 'Space': moveUp = false; break
+		case 'ShiftLeft': moveDown = false; break
+		case 'AltLeft': colorSkip = 1; break
+	}
+};
+
+const onMouseDown = event => {
+	if (nick && !inputDisablePR.checked && controls.isLocked) {
+		switch (event.which) {
+			case 1: breakCube(controls.getObject().position); break
+			case 3: placeCube(controls.getObject().position); break
+		}
+	}
+};
+
+function cameraZoom(zoom) {
+	camera.zoom += zoom;
+	if (!zoom) camera.zoom = 0;
+	if (camera.zoom < 1) camera.zoom = 1;
+	if (camera.zoom > 8) camera.zoom = 8;
 	camera.updateProjectionMatrix()
 };
 
-let moveForward = false;
-let moveBackward = false;
-let moveLeft = false;
-let moveRight = false;
-let moveUp = false;
-let moveDown = false;
-
-const onKeyDown = function(event) {
-	console.log(event.code);
-	if (nick !== "" && controls.isLocked) {
-		switch (event.code) {
-			// case 'ArrowUp':
-			case 'KeyW':
-				moveForward = true; break
-			// case 'ArrowLeft':
-			case 'KeyA':
-				moveLeft = true; break
-			// case 'ArrowDown':
-			case 'KeyS':
-				moveBackward = true; break
-			// case 'ArrowRight':
-			case 'KeyD':
-				moveRight = true; break
-			case 'ArrowUp':
-				camera.rotation.x += 0.1;
-				camera.updateProjectionMatrix(); break
-			case 'ArrowLeft':
-				camera.rotation.y += 0.1;
-				camera.updateProjectionMatrix(); break
-			case 'ArrowDown':
-				camera.rotation.x -= 0.1;
-				camera.updateProjectionMatrix(); break
-			case 'ArrowRight':
-				camera.rotation.y -= 0.1;
-				camera.updateProjectionMatrix(); break
-			case 'Space':
-				moveUp = true; break
-			case 'ShiftLeft':
-				moveDown = true; break
-			case inputPlaceCubes.value:
-				placeCube(controls.getObject().position); break
-			case inputRemoveCubes.value:
-				breakCube(controls.getObject().position); break
-			case inputToggleGrid.value:
-				grid.visible = !grid.visible; break
-			case "Enter":
-				controls.unlock();
-				inputChat.style.display = "block"
-				inputChat.focus(); break
-			case inputSettingsShortcut.value:
-				winSettings.style.display = (winSettings.style.display=="block") ? "none":"block"; break
-			case inputDecreaseCameraSpeed.value:
-				cameraSpeed = cameraSpeed - 8; break
-			case inputIncreaseCameraSpeed.value:
-				cameraSpeed = cameraSpeed + 8; break
-			case inputResetCameraSpeed.value:
-				cameraSpeed = 64.0; break
-			case inputDecreaseCameraZoom.value:
-				if (event.altKey) { camera.zoom -= .3 } else { camera.zoom -= .1 };
-				updateCameraZoom(); break
-			case inputIncreaseCameraZoom.value:
-				if (event.altKey) { camera.zoom += .3 } else { camera.zoom += .1 };
-				updateCameraZoom(); break
-			case inputResetCameraZoom.value:
-				cameraZoom = 1;
-				updateCameraZoom(); break
-			case 'F1':
-				event.preventDefault();
-				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block"; break
-			case inputPaletteRowScroll.value:
-				colorSkip = -5; break // colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
-		}
-	};
-};
-
-const onKeyUp = function(event) {
-	switch (event.code) {
-		case 'ArrowUp':
-		case 'KeyW':
-			moveForward = false; break
-		case 'ArrowLeft':
-		case 'KeyA':
-			moveLeft = false; break
-		case 'ArrowDown':
-		case 'KeyS':
-			moveBackward = false; break
-		case 'ArrowRight':
-		case 'KeyD':
-			moveRight = false; break
-		case 'Space':
-			moveUp = false; break
-		case 'ShiftLeft':
-			moveDown = false; break
-		case 'AltLeft':
-			colorSkip = 1; break
-	}
-};
-
-const onMouseDown = (event) => {
-	if (nick !== "" && !inputDisablePR.checked && controls.isLocked) {
-	   	switch (event.which) {
-			case 1:
-				breakCube(controls.getObject().position); break
-			case 3:
-				placeCube(controls.getObject().position); break
-		}
-	}
-};
-
 const canvas = document.getElementsByTagName("canvas")[0];
-
 canvas.addEventListener('mousedown', onMouseDown);
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
-inputUsername.onkeydown = function(event) {
-	if (event.key == "Enter" && inputUsername.value !== "") {
-		if (!verified) { captchaPlease.style.display = "block" }
-		else {
+renderer.domElement.addEventListener('click', () => {
+	if (nick) {
+		controls.lock();
+		esc.style.display = "none";
+		settings.style.display = "none";
+		credits.style.display = "none"
+	}
+});
+
+inputUsername.onkeydown = event => {
+	if (event.key == "Enter" && inputUsername.value) {
+		if (verified) {
+			if (inputUsername.value.length > 30) { alert("Your name is too long!"); return };
 			nick = inputUsername.value;
-			winWelcome.style.display = "none";
-			uiCanvas.style.display = "block";
-			//if (true) {
-			if (navigator.userAgentData.mobile) {
+			welcome.style.display = "none";
+			uiCanvas.style.display = "flex";
+			if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) || true) {
 				mobileControls.style.visibility = "visible";
-				chat.style.top = "6px";
-				palette.style.top = "6px";
-				switchPlacement.style.top = "6px";
 				inputDesktop.style.display = "none";
-				inputMobile.style.display = "block"
+				inputMobile.style.display = "flex"
 			}
-			socket.emit("serverMessage", { "message":  nick + " has joined the server!" })
-		} 
+			socket.emit("playerJoin", { "name": nick, "id": Math.random() }) // id is placeholder
+		} else captchaPlease.style.display = "flex"
 	}
 };
 
-inputChat.onkeydown = function(event) {
-	if (event.key == "Enter" && nick !== "" && inputChat.value !== "") {
-		socket.emit("message", { "message": inputChat.value, "sender": nick });
-		inputChat.value = ""
-	} else if (event.key == "Enter" && nick !== "" && inputChat.value == "") controls.lock()
+inputChat.onkeydown = event => {
+	if (event.key == "Enter" && nick) {
+		if (inputChat.value.startsWith("/")) { commands.execute() } else
+		if (inputChat.value) {
+			socket.emit("message", { "sender": nick, "message": inputChat.value });
+			inputChat.value = ""
+		} else controls.lock()
+	}
 };
 
 function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
 
+// buttons make clicky sounds
 const buttons = document.getElementsByTagName('button');
 for (let i = 0; i < buttons.length; i++) {
-	buttons[i].onmouseover = function() { if (!audioDisableUI.checked) playAudio('./audio/ui/hover.ogg') };
-	buttons[i].onmousedown = function() { if (!audioDisableUI.checked) playAudio('./audio/ui/click.ogg') }
+	buttons[i].onmouseover = () => playAudio('ui/hover', !audioDisableUI.checked);
+	buttons[i].onmousedown = () => playAudio('ui/click', !audioDisableUI.checked)
 };
 
-function regExp(str) { return /[a-zA-Z]/.test(str) };
+/* what is this supposed to be for? it's not used as far as i see */
+// function regExp(str) { return /[a-zA-Z]/.test(str) };
 
-let joyMovement = new JoyStick('joyMovementDiv');
+let joyMovementXZ = new JoyStick('joyMovementXZDiv');
+let joyMovementY = new JoyStick('joyMovementYDiv');
 let joyCamera = new JoyStick('joyCameraDiv');
 
 function render() {
@@ -507,21 +462,26 @@ function render() {
 
 	const delta = clock.getDelta();
 
-	let joyMove = joyMovement.GetDir();
+	let joyMoveXZ = joyMovementXZ.GetDir();
+	let joyMoveY = joyMovementY.GetDir();
 	let joyCam = joyCamera.GetDir();
 	let joyCamX = joyCamera.GetX();
 	let joyCamY = joyCamera.GetY();
 
 	if (verified) {
-		if (joyMove.includes("N")) moveForward = true;
-		if (joyMove.includes("W")) moveLeft = true;
-		if (joyMove.includes("S")) moveBackward = true;
-		if (joyMove.includes("E")) moveRight = true;
+		if (joyMoveXZ.includes("N")) moveForward = true;
+		if (joyMoveXZ.includes("W")) moveLeft = true;
+		if (joyMoveXZ.includes("S")) moveBackward = true;
+		if (joyMoveXZ.includes("E")) moveRight = true;
+		if (joyMoveY.includes("N")) moveUp = true;
+		if (joyMoveY.includes("S")) moveDown = true;
 
-		if (joyCamY > 0) camera.rotation.x += (joyCamY / 32) * delta;
-		if (joyCamX < 0) camera.rotation.y -= (joyCamX / 32) * delta;
-		if (joyCamY < 0) camera.rotation.x += (joyCamY / 32) * delta;
-		if (joyCamX > 0) camera.rotation.y -= (joyCamX / 32) * delta;
+		if (joyCamY > 0) camera.rotation.x += (joyCamY / 48) * delta;
+		if (joyCamX < 0) camera.rotation.y -= (joyCamX / 48) * delta;
+		if (joyCamY < 0) camera.rotation.x += (joyCamY / 48) * delta;
+		if (joyCamX > 0) camera.rotation.y -= (joyCamX / 48) * delta;
+
+		camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x)); // Enfore limit with mobile controls
 		
 		if (moveForward) velocity.z += cameraSpeed * delta;
 		if (moveLeft) velocity.x -= cameraSpeed * delta;
@@ -529,23 +489,22 @@ function render() {
 		if (moveRight) velocity.x += cameraSpeed * delta;
 		if (moveUp) velocity.y += cameraSpeed * delta;
 		if (moveDown) velocity.y -= cameraSpeed * delta
-	};
-	
-	// this is probably not a good way to do it
-	if (verified && !controls.isLocked) {
-		moveForward = false;
-		moveLeft = false;
-		moveBackward = false;
-		moveRight = false;
-		moveUp = false;
-		moveDown = false
+
+		if (!controls.isLocked) {
+			moveForward = false;
+			moveLeft = false;
+			moveBackward = false;
+			moveRight = false;
+			moveUp = false;
+			moveDown = false
+		}
 	};
 
 	if (controls.isLocked) {
 		inputChat.style.display = "none";
 		document.querySelector(":root").style.setProperty("--chat-maxheight", "200px")
 	} else {
-		inputChat.style.display = "block";
+		inputChat.style.display = "flex";
 		document.querySelector(":root").style.setProperty("--chat-maxheight", themeChatMaxHeight.value)
 	};
 
@@ -556,8 +515,7 @@ function render() {
 	controls.getObject().position.y += velocity.y * delta;
 
 	let pos = controls.getObject().position;
-
-	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + " ╱ y: " + ~~(pos.y + 0.5) + " ╱ z: " + ~~(pos.z + 0.5);
+	coords.innerText = "x: " + ~~(pos.x + 0.5) + " ╱ y: " + ~~(pos.y + 0.5) + " ╱ z: " + ~~(pos.z + 0.5);
 
 	renderer.render(scene, camera)
 };

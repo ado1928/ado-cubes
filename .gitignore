@@ -1,4 +1,7 @@
 node_modules/
+
 world.caw
 dsbridgeconfig.json
-pnpm-lock.yaml
+
+package-lock.json*
+pnpm-lock.yaml*
