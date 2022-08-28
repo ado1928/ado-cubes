@@ -142,8 +142,8 @@ const light = new THREE.AmbientLight(0x606070);
 scene.add(light);
 
 let raycastPlacement = true;
-placeAtRaycast.onclick = function() { raycastPlacement = true; crosshair.style.display = "block" };
-placeInCamera.onclick = function() { raycastPlacement = false; crosshair.style.display = "none" };
+placeAtRaycast.onclick = function () { raycastPlacement = true; crosshair.style.display = "block" };
+placeInCamera.onclick = function () { raycastPlacement = false; crosshair.style.display = "none" };
 
 let hcube = new THREE.Mesh();
 let hcube2 = new THREE.Mesh();
@@ -163,49 +163,49 @@ function highlightCube() {
 		pos.add(intersect.point);
 		pos = new THREE.Vector3(~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5));
 
-		hcube = new THREE.Mesh(hgeometry, new THREE.MeshBasicMaterial({color: intersect.object.material.color.r + intersect.object.material.color.g + intersect.object.material.color.b < 0.1 ? 0xffffffff : 0x000000, depthTest: false}));
+		hcube = new THREE.Mesh(hgeometry, new THREE.MeshBasicMaterial({ color: intersect.object.material.color.r + intersect.object.material.color.g + intersect.object.material.color.b < 0.1 ? 0xffffffff : 0x000000, depthTest: false }));
 		hcube.position.set(pos.x, pos.y, pos.z);
 		scene.add(hcube)
 
-		hcube2 = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({color: intersect.object.material.color, depthTest: false}));
+		hcube2 = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: intersect.object.material.color, depthTest: false }));
 		hcube2.position.set(pos.x, pos.y, pos.z);
 		scene.add(hcube2)
 
-		
+
 	}
 }
 
 function placeCube(pos) {
 	if (raycastPlacement) {
-		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
-		const intersects = raycaster.intersectObjects(scene.children);
-		if (intersects.length > 0) {
+		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera); // send ray
+		const intersects = raycaster.intersectObjects(scene.children); // find intersections
+		if (intersects.length > 0) { // if intersection found
 			const intersect = intersects[0];
 			let pos = new THREE.Vector3();
-			if (intersect.object == grid) { pos.sub(intersect.face.normal) } else { pos.add(intersect.face.normal) };
-			pos.multiplyScalar(0.5);
-			pos.add(intersect.point);
+			if (intersect.object == grid) { pos.sub(intersect.face.normal) } else { pos.add(intersect.face.normal) }; // if intersection is grid, subtract normal, if not, add normal
+			pos.multiplyScalar(0.5); // make it so that the normal length is 0.5
+			pos.add(intersect.point); // add coordinate to position
 			//console.log(pos);
-			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
+			socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color }) // emit placement
 		}
-	} else { socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color }) }
+	} else { socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color }) } // emit placement at player position
 	if (!audioDisablePR.checked) playAudio('./audio/sfx/place.ogg')
 }
 
 function breakCube(pos) {
 	if (raycastPlacement) {
-		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera); // send ray
 		const intersects = raycaster.intersectObjects(scene.children);
-		if (intersects.length > 0) {
-			const intersect = intersects[0];
+		if (intersects.length > 0) { // if intersection is found
+			const intersect = intersects[0]; 
 			let pos = new THREE.Vector3();
-			pos.sub(intersect.face.normal);
+			pos.sub(intersect.face.normal); // subtract normal to put position in middle
 			pos.multiplyScalar(0.5);
 			pos.add(intersect.point);
 			// console.log(pos);
-			socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
+			socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] }) // emit break
 		}
-	} else { socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] }) };
+	} else { socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] }) }; // emit break at player position
 	if (!audioDisablePR.checked) playAudio('./audio/sfx/remove.ogg')
 }
 
@@ -214,15 +214,15 @@ let colors = document.getElementById("palette").children;
 let color = 0;
 
 function updateColor() {
-	color = (color % colors.length + colors.length) % colors.length;
-	for (let i = 0; i < colors.length; i++) { colors[i].className = "" };
-	colors[color].className = "selectedbox"
+	color = (color % colors.length + colors.length) % colors.length; // loop colors
+	for (let i = 0; i < colors.length; i++) { colors[i].className = "" }; // remove highlight for all colors if it exists
+	colors[color].className = "selectedbox" // hightlight that color
 };
 updateColor();
 
 for (let i = 0; i < colors.length; i++) {
 	// console.log(colors[i]);
-	colors[i].onclick = function() { color = i; updateColor() }
+	colors[i].onclick = function () { color = i; updateColor() } 
 };
 
 let colorSkip = 1;
@@ -230,7 +230,7 @@ let colorSkip = 1;
 window.onwheel = function (event) {
 	if (controls.isLocked) {
 		if (event.deltaY > 0) { color -= colorSkip } else
-		if (event.deltaY < 0) { color += colorSkip };
+			if (event.deltaY < 0) { color += colorSkip };
 		if (!audioDisableUI.checked) playAudio('./audio/ui/palette scroll.ogg');
 		updateColor()
 	}
@@ -238,7 +238,7 @@ window.onwheel = function (event) {
 
 let materials = []
 for (var i = 0; i < colors.length; i++) {
-	materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor })
+	materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor }) // create materials for colors in palette
 };
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -262,16 +262,18 @@ function addCube(pos, col) {
 	sun.shadow.needsUpdate = true
 };
 
-function removeCube(pos) {
+function removeCube(pos) { // removes cube at position
 	// console.log(pos);
-	for (var i = 0; i < cubes.length; i++) {
+	for (var i = 0; i < cubes.length; i++) { // iterates through all cubes
 		let e = cubes[i];
-		if (~~e.position.x == ~~(pos.x + 0.5) && ~~e.position.y == ~~(pos.y + 0.5) && ~~e.position.z == ~~(pos.z + 0.5)) {
-			let c = cubes.splice(i, 1)[0];
-			for (var j = 0; j < geometries[e.col].length; j++) {
-				if (c.igeometry.id == geometries[e.col][j].id) {
-					geometries[e.col].splice(j, 1);
-					updateWorld(e.col);
+		if (~~e.position.x == ~~(pos.x + 0.5) &&
+			~~e.position.y == ~~(pos.y + 0.5) &&
+			~~e.position.z == ~~(pos.z + 0.5)) { // if it finds cube at this position
+			let c = cubes.splice(i, 1)[0];   // remove the cube from cubes
+			for (var j = 0; j < geometries[e.col].length; j++) { // iterates through all cubes in the cube's color's geometries
+				if (c.igeometry.id == geometries[e.col][j].id) { // when it finds it
+					geometries[e.col].splice(j, 1); // remove it from geometry
+					updateWorld(e.col); // and update world
 					sun.shadow.needsUpdate = true;
 					return
 				}
@@ -294,7 +296,7 @@ let nick = "";
 let verified = false;
 
 function initWorld(col) {
-	if (worlds[col] instanceof THREE.Mesh) {
+	if (worlds[col] instanceof THREE.Mesh) { // so that the world updates correctly if initialized twice
 		scene.remove(worlds[col]);
 		worlds[col].geometry.dispose();
 		worlds[col].material.dispose();
@@ -302,8 +304,8 @@ function initWorld(col) {
 	};
 
 	let mergedGeometry;
-	if (geometries[col].length > 0) { mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]) }
-		
+	if (geometries[col].length > 0) { mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]) } // merge geometries of color
+
 	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col])
 	worlds[col].castShadow = true;
 	worlds[col].receiveShadow = true;
@@ -312,56 +314,59 @@ function initWorld(col) {
 };
 
 function updateWorld(col) {
-	if(geometries[col].length > 0) {
-		worlds[col].geometry.dispose();
-		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col])
-	} else { worlds[col].geometry = new THREE.BufferGeometry(); }
+	if (geometries[col].length > 0) { // if geometries of color has cubes
+		worlds[col].geometry.dispose(); // dispose of it
+		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]) // and merge geometries again
+	} else { worlds[col].geometry = new THREE.BufferGeometry(); } // else, just create a new one
 };
 
 export function verify(uuid) {
-	socket = io({ extraHeaders: { "uuid": uuid } });
-	verified = true;
-	socket.on('message', function (data) {
-		messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + ":</b> " + escapeHTML(data["message"]) + "<br>")
-		scrollToBottom(messages);
-		playAudio('./audio/ui/message.ogg')
-	});
+	if (!verified) {
+		socket = io({ extraHeaders: { "uuid": uuid } });
 
-	socket.on('serverMessage', function (data) {
-		messages.insertAdjacentHTML('beforeend', escapeHTML(data["message"]) + "<br>");
-		scrollToBottom(messages);
-		playAudio('./audio/ui/server message.ogg');
-	});
+		socket.on('message', function (data) {
+			messages.insertAdjacentHTML('beforeend', "<b>" + escapeHTML(data["sender"]) + ":</b> " + escapeHTML(data["message"]) + "<br>")
+			scrollToBottom(messages);
+			playAudio('./audio/ui/message.ogg')
+		});
 
-	socket.on('connected', function (arr) {
-		const view = new Uint8Array(arr);
-		// console.log(view);
-		window.arr = view;
-		cubes.forEach(e => { scene.remove(e) });
-		for (let x = 0; x < 64; x++) {
-			for (let y = 0; y < 64; y++) {
-				for (let z = 0; z < 64; z++) {
-					if (view[x*4096+y*64+z] > 0) addCube({ "x": x, "y": y, "z": z }, view[x*4096+y*64+z] - 1)
+		socket.on('serverMessage', function (data) {
+			messages.insertAdjacentHTML('beforeend', escapeHTML(data["message"]) + "<br>");
+			scrollToBottom(messages);
+			playAudio('./audio/ui/server message.ogg');
+		});
+
+		socket.on('connected', function (arr) {
+			const view = new Uint8Array(arr);
+			// console.log(view);
+			window.arr = view;
+			cubes.forEach(e => { scene.remove(e) }); // if for some reason connecting again, remove all cubes from scene
+			for (let x = 0; x < 64; x++) {  // loop through all recieved cubes and add them
+				for (let y = 0; y < 64; y++) {
+					for (let z = 0; z < 64; z++) {
+						if (view[x * 4096 + y * 64 + z] > 0) addCube({ "x": x, "y": y, "z": z }, view[x * 4096 + y * 64 + z] - 1)
+					}
 				}
-			}
-		};
-		for (var i = 0; i < colors.length; i++) { initWorld(i) }
-	});
+			};
+			for (var i = 0; i < colors.length; i++) { initWorld(i) } // initialize worlds for all colors
+		});
 
-	socket.on('place', function (data) {
-		let pos = data.pos;
-		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
-		updateWorld(data.color)
-		// fancy block illumination, do not uncomment unless you want framerate to die
-		/* const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
-		bl.position.set(pos[0], pos[1], pos[2]);
-		bl.castShadow = false;
-		scene.add(bl) */
-	});
+		socket.on('place', function (data) {
+			let pos = data.pos;
+			addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
+			updateWorld(data.color)
+			// fancy block illumination, do not uncomment unless you want framerate to die
+			/* const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 1.5 );
+			bl.position.set(pos[0], pos[1], pos[2]);
+			bl.castShadow = false;
+			scene.add(bl) */
+		});
 
-	socket.on('break', function (data) {
-		let pos = data.pos; removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
-	})
+		socket.on('break', function (data) {
+			let pos = data.pos; removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
+		})
+	}
+	verified = true;
 };
 
 window.verify = verify;
@@ -372,7 +377,7 @@ verify();
 let cameraSpeed = 64.0;
 function updateCameraZoom() {
 	if (camera.zoom < 1) { camera.zoom = 1 } else
-	if (camera.zoom > 8) { camera.zoom = 8 };
+		if (camera.zoom > 8) { camera.zoom = 8 };
 	camera.updateProjectionMatrix()
 };
 
@@ -383,7 +388,7 @@ let moveRight = false;
 let moveUp = false;
 let moveDown = false;
 
-const onKeyDown = function(event) {
+const onKeyDown = function (event) {
 	console.log(event.code);
 	if (nick !== "" && controls.isLocked) {
 		switch (event.code) {
@@ -426,7 +431,7 @@ const onKeyDown = function(event) {
 				inputChat.style.display = "block"
 				inputChat.focus(); break
 			case inputSettingsShortcut.value:
-				winSettings.style.display = (winSettings.style.display=="block") ? "none":"block"; break
+				winSettings.style.display = (winSettings.style.display == "block") ? "none" : "block"; break
 			case inputDecreaseCameraSpeed.value:
 				cameraSpeed = cameraSpeed - 8; break
 			case inputIncreaseCameraSpeed.value:
@@ -444,16 +449,16 @@ const onKeyDown = function(event) {
 				updateCameraZoom(); break
 			case 'F1':
 				event.preventDefault();
-				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block"; break
+				uiCanvas.style.display = (uiCanvas.style.display == "block") ? "none" : "block"; break
 			case inputPaletteRowScroll.value:
 				colorSkip = -5; break // colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
 			case 'KeyV':
 				highlightCube();
-			}
+		}
 	};
 };
 
-const onKeyUp = function(event) {
+const onKeyUp = function (event) {
 	switch (event.code) {
 		case 'ArrowUp':
 		case 'KeyW':
@@ -478,7 +483,7 @@ const onKeyUp = function(event) {
 
 const onMouseDown = (event) => {
 	if (nick !== "" && !inputDisablePR.checked && controls.isLocked) {
-	   	switch (event.which) {
+		switch (event.which) {
 			case 1:
 				breakCube(controls.getObject().position); break
 			case 3:
@@ -493,7 +498,7 @@ canvas.addEventListener('mousedown', onMouseDown);
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
-inputUsername.onkeydown = function(event) {
+inputUsername.onkeydown = function (event) {
 	if (event.key == "Enter" && inputUsername.value !== "") {
 		if (!verified) { captchaPlease.style.display = "block" }
 		else {
@@ -509,12 +514,12 @@ inputUsername.onkeydown = function(event) {
 				inputDesktop.style.display = "none";
 				inputMobile.style.display = "block"
 			}
-			socket.emit("serverMessage", { "message":  nick + " has joined the server!" })
-		} 
+			socket.emit("serverMessage", { "message": nick + " has joined the server!" })
+		}
 	}
 };
 
-inputChat.onkeydown = function(event) {
+inputChat.onkeydown = function (event) {
 	if (event.key == "Enter" && nick !== "" && inputChat.value !== "") {
 		socket.emit("message", { "message": inputChat.value, "sender": nick });
 		inputChat.value = ""
@@ -525,8 +530,8 @@ function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, b
 
 const buttons = document.getElementsByTagName('button');
 for (let i = 0; i < buttons.length; i++) {
-	buttons[i].onmouseover = function() { if (!audioDisableUI.checked) playAudio('./audio/ui/hover.ogg') };
-	buttons[i].onmousedown = function() { if (!audioDisableUI.checked) playAudio('./audio/ui/click.ogg') }
+	buttons[i].onmouseover = function () { if (!audioDisableUI.checked) playAudio('./audio/ui/hover.ogg') };
+	buttons[i].onmousedown = function () { if (!audioDisableUI.checked) playAudio('./audio/ui/click.ogg') }
 };
 
 function regExp(str) { return /[a-zA-Z]/.test(str) };
@@ -554,7 +559,7 @@ function render() {
 		if (joyCamX < 0) camera.rotation.y -= (joyCamX / 32) * delta;
 		if (joyCamY < 0) camera.rotation.x += (joyCamY / 32) * delta;
 		if (joyCamX > 0) camera.rotation.y -= (joyCamX / 32) * delta;
-		
+
 		if (moveForward) velocity.z += cameraSpeed * delta;
 		if (moveLeft) velocity.x -= cameraSpeed * delta;
 		if (moveBackward) velocity.z -= cameraSpeed * delta;
@@ -562,7 +567,7 @@ function render() {
 		if (moveUp) velocity.y += cameraSpeed * delta;
 		if (moveDown) velocity.y -= cameraSpeed * delta
 	};
-	
+
 	// this is probably not a good way to do it
 	if (verified && !controls.isLocked) {
 		moveForward = false;
@@ -590,9 +595,9 @@ function render() {
 	let pos = controls.getObject().position;
 
 	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + " ╱ y: " + ~~(pos.y + 0.5) + " ╱ z: " + ~~(pos.z + 0.5);
-                  
-	renderer.render(scene, camera );     
- 
+
+	renderer.render(scene, camera);
+
 };
 
 render()
