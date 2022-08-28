@@ -9,7 +9,7 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
+renderer.autoClear = true;
 document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500);
@@ -66,7 +66,7 @@ geometry = new THREE.PlaneBufferGeometry(2000, 2000);
 material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
 let ground = new THREE.Mesh(geometry, material);
-ground.position.set(0, -0.51, 0);
+ground.position.set(0, -0.50, 0);
 ground.rotateX(- Math.PI / 2);
 ground.receiveShadow = true;
 ground.renderOrder = -1;
@@ -144,6 +144,36 @@ scene.add(light);
 let raycastPlacement = true;
 placeAtRaycast.onclick = function() { raycastPlacement = true; crosshair.style.display = "block" };
 placeInCamera.onclick = function() { raycastPlacement = false; crosshair.style.display = "none" };
+
+let hcube = new THREE.Mesh();
+let hcube2 = new THREE.Mesh();
+
+function highlightCube() {
+	scene.remove(hcube);
+	scene.remove(hcube2);
+	let hgeometry = new THREE.BoxGeometry(1.05, 1.05, 1.05);
+	raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+	const intersects = raycaster.intersectObjects(scene.children);
+	if (intersects.length > 0) {
+		const intersect = intersects[0];
+
+		let pos = new THREE.Vector3();
+		pos.sub(intersect.face.normal);
+		pos.multiplyScalar(0.5);
+		pos.add(intersect.point);
+		pos = new THREE.Vector3(~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5));
+
+		hcube = new THREE.Mesh(hgeometry, new THREE.MeshBasicMaterial({color: intersect.object.material.color.r + intersect.object.material.color.g + intersect.object.material.color.b < 0.1 ? 0xffffffff : 0x000000, depthTest: false}));
+		hcube.position.set(pos.x, pos.y, pos.z);
+		scene.add(hcube)
+
+		hcube2 = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({color: intersect.object.material.color, depthTest: false}));
+		hcube2.position.set(pos.x, pos.y, pos.z);
+		scene.add(hcube2)
+
+		
+	}
+}
 
 function placeCube(pos) {
 	if (raycastPlacement) {
@@ -417,7 +447,9 @@ const onKeyDown = function(event) {
 				uiCanvas.style.display = (uiCanvas.style.display=="block") ? "none":"block"; break
 			case inputPaletteRowScroll.value:
 				colorSkip = -5; break // colorSkip = getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row");
-		}
+			case 'KeyV':
+				highlightCube();
+			}
 	};
 };
 
@@ -558,8 +590,9 @@ function render() {
 	let pos = controls.getObject().position;
 
 	document.getElementById("coords").innerText = "x: " + ~~(pos.x + 0.5) + " ╱ y: " + ~~(pos.y + 0.5) + " ╱ z: " + ~~(pos.z + 0.5);
-
-	renderer.render(scene, camera)
+                  
+	renderer.render(scene, camera );     
+ 
 };
 
 render()
