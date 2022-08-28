@@ -20,7 +20,7 @@
 	<div id="uiCanvas">
 		<Palette/>
 		<SwitchPlacement/>
-		<!--<Sign/>-->
+		<Sign/>
 		<Coordinates/>
 		<Chat/>
 		<img id="crosshair" class="center" src="./images/svgs/crosshair.svg" alt="+">

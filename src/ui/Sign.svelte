@@ -1,4 +1,17 @@
-<div id="sign" class="box center" style="white-space: pre">
+<script>
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		sign.style.display = "none";
+		new ResizeObserver(() => {
+			signContent.style.width = Math.round(signContent.style.width)
+			signContent.style.height = Math.round(signContent.style.width)
+		}).observe(signContent)
+	})
+</script>
+
+<div id="sign" class="box center">
+<textarea id="signContent" style="max-height: 450px; white-space: pre">
 This is a sign! or a cubic sign?
 ─────────────────────────────────────────────────────
 the quick brown fox jumps over the lazy dog
@@ -19,4 +32,5 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG!!!
            ˙-.     |     .-˙             ─  ─  ─  ─
               ˙-.  |  .-˙     md2      𛲖𛲖𛲖𛲖𛲖𛲖𛲖𛲖𛲖𛲖𛲖𛲖𛲖𛲖
                  ˙-|-˙
+</textarea>
 </div>

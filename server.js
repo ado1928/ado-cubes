@@ -9,7 +9,8 @@ const textdecoder = new TextDecoder();
 const moment = require('moment');
 
 const { Webhook } = require('discord-webhook-node');
-const dsbridgeconfig = require('./dsbridgeconfig');
+const dsbridgeconfig = { "webhookToken": "", "botToken": "", "channelId": "" }
+//const dsbridgeconfig = require('./dsbridgeconfig');
 const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES + Intents.FLAGS.GUILDS ] });
 const hook = new Webhook(dsbridgeconfig.webhookToken);
@@ -21,7 +22,7 @@ var lastsaved = Date.now();
 fs.readFile('./world.caw', 'utf8' , (err, data) => {
 	if (err) throw err;
 	world = textencoder.encode(data);
-	// world = new Uint8Array(262144).fill(0);
+	// world = new Uint8Array(262144).fill(0); // Fills the world with nothing
 })
 
 // very unnecessary little indicator
@@ -38,11 +39,21 @@ function osIcon() {
 	}
 }
 
-function dateLog(msg) { console.log(`  ${moment(Date.now()).format("L HH:mm:ss")}\x1b[90m | \x1b[0m${msg} \x1b[0m`) };
+function dateLog(msg) { console.log(`  ${moment(Date.now()).format("L HH:mm:ss")}\x1b[90m │ \x1b[0m${msg} \x1b[0m`) };
 console.clear(); console.log();
 
+function serverMessage(msg) {
+	io.emit('serverMessage', { "message": msg });
+	dateLog(msg);
+	if (dsbridgeconfig.webhookToken) {
+		hook.setUsername("Server");
+		hook.setAvatar("https://cdn.discordapp.com/attachments/968866349633896488/968866464150978620/favicon.png");
+		hook.send(msg.replace(/\x1b\[[0-9;]*m/g,""))
+	}
+}
+
 io.on('connection', socket => {
-	socket.emit('connected', world);
+	if (!socket.id.name) socket.emit('connected', world);
 
 	socket.on('place', data => {
 		pos = data.pos;
@@ -63,32 +74,22 @@ io.on('connection', socket => {
 
 	socket.on('message', data => {
 		io.emit('message', data);
-		dateLog("\x1b[1m" + data.sender + "\x1b[0m: " + data.message);
+		dateLog("\x1b[1m" + data.sender + "\x1b[0m: " + data.msg);
 		if (dsbridgeconfig.webhookToken) {
 			hook.setUsername(data.sender);
 			hook.setAvatar();
-			hook.send(data.message)
-		}
-	});
-
-	socket.on('serverMessage', data => {
-		if (dsbridgeconfig.webhookToken) {
-			hook.setUsername("Server");
-			hook.setAvatar("https://cdn.discordapp.com/attachments/968866349633896488/968866464150978620/favicon.png");
-			hook.send(data.message)
+			hook.send(data.msg.replace(/\x1b\[[0-9;]*m/g,""))
 		}
 	});
 
 	socket.on('playerJoin', data => {
 		socket.id = data;
-		io.emit('serverMessage', { "message": `${socket.id.name} joined the server` });
-		dateLog(`\x1b[1m${socket.id.name} joined the server`)
+		serverMessage(`${socket.id.name} joined the server`);
 	});
 
 	socket.on('disconnect', reason => {
 		if (!socket.id.name) return; // Botch fix for 2 sockets per player
-		io.emit('serverMessage', { "message": `${socket.id.name} left the server` });
-		dateLog(`\x1b[1m${socket.id.name} left the server`)
+		serverMessage(`${socket.id.name} left the server`);
 		if (io.engine.clientsCount == 0) { lastsaved = Date.now(); saveWorld() }
 	});
 });
@@ -107,12 +108,13 @@ function saveWorld() {
 
 // Discord bot bridging
 client.on('messageCreate', async message => {
-	if (message.author.bot) return;
-	if (message.webhookID) return;
-	if (message.channel != dsbridgeconfig.channelId) return;
-	io.emit('message', { "sender": `[${message.author.username}]`, "message": message.content });
+	if (!message.user
+	|| message.webhookID
+	|| message.channel !== `<#${dsbridgeconfig.channelId}>`) return;
+	dateLog(message.msg);
+	io.emit('message', { "sender": `[${message.author.username}]`, "msg": message.content });
 });
-client.once('ready', () => { dateLog("Bridge is ready!") });
+client.once('ready', () => { dateLog("🎮 \x1b[38;5;75mBridge is ready!") });
 if (dsbridgeconfig.botToken) client.login(dsbridgeconfig.botToken);
 
 // Serve static files
@@ -122,4 +124,4 @@ app.get('/', (req, res) => {
 	if (req.url == '/') res.sendFile(__dirname + '/public/index.html');
 });
 
-http.listen(port, () => dateLog(`${osIcon()} Listening to http://localhost:${port}/`));
+http.listen(port, () => dateLog(`${osIcon()} Listening to \x1b[38;5;87mhttp://localhost:${port}/`));

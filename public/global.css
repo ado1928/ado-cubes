@@ -15,10 +15,11 @@
 input		{ cursor: url(./cursors/text.svg) 8 12.5, text }
 button, a	{ cursor: url(./cursors/pointer.svg) 16 16, pointer }
 
-html body	{ background: #000; margin: 0; font-family: 'Unifont'; font-size: var(--font-size) }
+html body	{ background: #000; margin: 0; font-size: var(--font-size) }
 iframe		{ overflow: visible !important; position: absolute !important } /* for iocaptcha */
+textarea	{ color: #fff; background: #000; font-size: var(--font-size) }
 
-*		{ text-shadow: 1px 1px #fff4, 2px 2px #000 }
+*		{ font-family: 'Unifont'; text-shadow: 1px 1px #fff4, 2px 2px #000 }
 *:focus	{ filter: drop-shadow(0 0 6px #000) }
 
 p		{ margin: 0 }
@@ -28,7 +29,6 @@ h3		{ font-size: 16px }
 b		{ font-weight: normal; letter-spacing: 1px; text-shadow: 1px 0 0px #fff, 1px 1px 1px #000, 2px 1px 1px #000 }
 a		{ color: #67b9fc; text-decoration: none }
 a:hover	{ color: #fff; text-shadow: var(--highlight); text-decoration: underline }
-
 .box {
 	position: absolute;
 	display: flex;
@@ -103,7 +103,7 @@ input[type="text"]:focus, select:focus { background: #000; outline-color: #fff }
 	-webkit-appearance: none
 }
 
-::-webkit-scrollbar			{ background: 0; border-radius: 6px; width: 6px; margin: 6px }
+::-webkit-scrollbar			{ background: 0; border-radius: 6px; height: 6px; width: 6px; margin: 6px }
 ::-webkit-scrollbar-thumb	{ background: #aaa; border-radius: 6px }
 
 .credits		{ text-align: initial; width: auto }

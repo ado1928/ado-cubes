@@ -11,16 +11,16 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
+renderer.autoClear = true;
 document.body.appendChild(renderer.domElement);
 
-const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500);
+export const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500);
 camera.position.set(-16, 96, -16);
 camera.rotation.order = 'YXZ';
 camera.lookAt(48, 0, 48);
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
-const controls = new PointerLockControls(camera, renderer.domElement);
+export const controls = new PointerLockControls(camera, renderer.domElement);
 
 let worlds = [];
 
@@ -69,7 +69,7 @@ geometry = new THREE.PlaneBufferGeometry(2000, 2000);
 material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
 let ground = new THREE.Mesh(geometry, material);
-ground.position.set(0, -0.51, 0);
+ground.position.set(0, -0.5, 0);
 ground.rotateX(- Math.PI / 2);
 ground.receiveShadow = true;
 ground.renderOrder = -1;
@@ -83,13 +83,12 @@ scene.add(controls.getObject());
 const direction = new THREE.Vector3();
 const velocity = new THREE.Vector3();
 
-window.addEventListener('resize', onWindowResize);
-function onWindowResize() {
+window.addEventListener('resize', () => {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.documentElement.style.setProperty("--innerHeight", window.innerHeight + "px")
-};
+});
 document.documentElement.style.setProperty("--innerHeight", window.innerHeight + "px")
 
 const loader = new THREE.CubeTextureLoader();
@@ -133,6 +132,126 @@ dlight2.position.set(-0.3, 0.6, -0.2);
 dlight2.castShadow = false;
 scene.add(dlight2);
 
+export function escapeHTML(unsafe) {
+	return unsafe
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&apos;")
+		.replace(/`/g, "&#96;")
+}
+
+renderer.domElement.addEventListener('click', () => {
+	if (nick) {
+		controls.lock();
+		esc.style.display = "none";
+		settings.style.display = "none";
+		credits.style.display = "none"
+	}
+});
+
+inputUsername.onkeydown = event => {
+	if (event.key == "Enter" && inputUsername.value) {
+		if (verified) {
+			if (inputUsername.value.length > 30) { alert("Your name is too long!"); return };
+			nick = inputUsername.value;
+			welcome.style.display = "none";
+			uiCanvas.style.display = "flex";
+			if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) || true) {
+				mobileControls.style.visibility = "visible";
+				inputDesktop.style.display = "none";
+				inputMobile.style.display = "flex"
+			}
+			socket.emit("playerJoin", { "name": nick, "id": Math.random() }) // id is placeholder
+		} else captchaPlease.style.display = "flex"
+	}
+};
+
+inputChat.onkeydown = event => {
+	if (event.key == "Enter" && nick) {
+		if (inputChat.value.startsWith("/")) { commands.execute() } else
+		if (inputChat.value) {
+			socket.emit("message", { "sender": nick, "msg": inputChat.value });
+			inputChat.value = ""
+		} else controls.lock()
+	}
+};
+
+export function createMessage(msg, audio) {
+	if (!audio) audio = 'ui/message';
+	messages.insertAdjacentHTML('beforeend', msg + "<br>")
+	scrollToBottom(messages);
+	playAudio(audio)
+}
+
+let nick, verified;
+
+export function verify(uuid) {
+	if (!verified) {
+		socket = io({ extraHeaders: { "uuid": uuid } });
+
+		socket.on('message', data => createMessage(`<b>${escapeHTML(data["sender"])}:</b> ${escapeHTML(data["msg"])}`));
+		socket.on('serverMessage', data => createMessage(`<b>${escapeHTML(data["message"])}</b>`, 'ui/server message'));
+
+		socket.on('connected', arr => {
+			const view = new Uint8Array(arr);
+			// console.log(view);
+			window.arr = view;
+			cubes.forEach(e => { scene.remove(e) }); // if for some reason connecting again, remove all cubes from scene,
+			for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
+				for (let y = 0; y < 64; y++) {
+					for (let z = 0; z < 64; z++) {
+						if (view[x*4096+y*64+z] > 0) {
+							addCube({ "x": x, "y": y, "z": z }, view[x*4096+y*64+z] - 1);
+						}
+					}
+				}
+			};
+			for (var i = 0; i < colors.length; i++) initWorld(i)
+		});
+
+		socket.on('place', data => {
+			let pos = data.pos;
+			addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
+			updateWorld(data.color)
+
+			// fancy block illumination, do not uncomment unless you want framerate to die
+			/*const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
+			bl.position.set(pos[0], pos[1], pos[2]);
+			bl.castShadow = false;
+			scene.add(bl)*/
+		});
+		socket.on('break', data => { let pos = data.pos; removeCube(new THREE.Vector3(pos[0], pos[1], pos[2])) })
+	};
+	verified = true;
+};
+
+// (1) so that the world updates correctly if initialized twice, (2) merge geometries of color
+function initWorld(col) { // 1
+	if (worlds[col] instanceof THREE.Mesh) {
+		scene.remove(worlds[col]);
+		worlds[col].geometry.dispose();
+		worlds[col].material.dispose();
+		worlds[col] = undefined
+	};
+
+	let mergedGeometry;
+	if (geometries[col].length > 0) mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]); // 2
+	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col]);
+	worlds[col].castShadow = true;
+	worlds[col].receiveShadow = true;
+	sun.shadow.needsUpdate = true;
+	scene.add(worlds[col])
+};
+
+function updateWorld(col) {
+	if (geometries[col].length > 0) {
+		worlds[col].geometry.dispose();
+		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col])
+	} else worlds[col].geometry = new THREE.BufferGeometry()
+};
+
 let raycaster = new THREE.Raycaster();
 
 // Showing or hiding crosshair depending on what placement method/mode(?) the player is using
@@ -174,16 +293,50 @@ function breakCube(pos) {
 	playAudio('sfx/remove', !audioDisablePR.checked)
 };
 
+let hcube = new THREE.Mesh();
+let hcube2 = new THREE.Mesh();
+function highlightCube() {
+	scene.remove(hcube); scene.remove(hcube2);
+	raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+	const intersects = raycaster.intersectObjects(scene.children);
+	if (intersects[0].object.material.type == 'ShaderMaterial') { messages.clildren.remove(); return };
+
+	let hgeometry = new THREE.BoxGeometry(1.1, 1.1, 1.1);
+	if (intersects.length > 0) {
+		let pos = new THREE.Vector3();
+		pos.sub(intersects[0].face.normal);
+		pos.multiplyScalar(0.5);
+		pos.add(intersects[0].point);
+		pos = new THREE.Vector3(~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5));
+
+		hcube = new THREE.Mesh(hgeometry, new THREE.MeshBasicMaterial({ color: intersects[0].object.material.color.r + intersects[0].object.material.color.g + intersects[0].object.material.color.b < 0.1 ? 0xffffffff : 0x000000, depthTest: false }));
+		hcube.position.set(pos.x, pos.y, pos.z);
+		scene.add(hcube);
+		hcube2 = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: intersects[0].object.material.color, depthTest: false }));
+		hcube2.position.set(pos.x, pos.y, pos.z);
+		scene.add(hcube2)
+	}
+};
+
 let colors = palette.children;
 let color = 0;
 let colorSkip = 1;
+
+function colorPicker() {
+	raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+	const intersects = raycaster.intersectObjects(scene.children);
+	if (intersects.length > 0) {
+		color = worlds.indexOf(intersects[0].object);
+		updateColor();
+	}
+}
 
 function updateColor() {
 	color = (color % colors.length + colors.length) % colors.length;
 	for (let i = 0; i < colors.length; i++) colors[i].className = "";
 	colors[color].className = "selectedbox"
 };
-for (let i = 0; i < colors.length; i++) { colors[i].onclick = () => { color = i; updateColor() } }
+for (let i = 0; i < colors.length; i++) colors[i].onclick = () => { color = i; updateColor() };
 updateColor();
 
 window.onwheel = event => {
@@ -196,15 +349,12 @@ window.onwheel = event => {
 };
 
 let materials = []
-for (var i = 0; i < colors.length; i++) {
-	materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor })
-};
+for (var i = 0; i < colors.length; i++) materials[i] = new THREE.MeshStandardMaterial({ color: colors[i].style.backgroundColor }) // create materials for colors in palette
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 let geometries = []
-for (var i = 0; i < colors.length; i++) geometries[i] = [];
-
 let cubes = [];
+for (var i = 0; i < colors.length; i++) geometries[i] = [];
 
 function addCube(pos, col) {
 	let cube = new THREE.Mesh(geometry, materials[col], 100);
@@ -225,7 +375,6 @@ function addCube(pos, col) {
 };
 
 function removeCube(pos) {
-	// console.log(pos);
 	for (var i = 0; i < cubes.length; i++) {
 		let e = cubes[i];
 		if (~~e.position.x == ~~(pos.x + 0.5) && ~~e.position.y == ~~(pos.y + 0.5) && ~~e.position.z == ~~(pos.z + 0.5)) {
@@ -240,87 +389,6 @@ function removeCube(pos) {
 			}
 		}
 	}
-};
-
-export function escapeHTML(unsafe) {
-	return unsafe
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&apos;")
-		.replace(/`/g, "&#96;")
-}
-
-function initWorld(col) {
-	if (worlds[col] instanceof THREE.Mesh) {
-		scene.remove(worlds[col]);
-		worlds[col].geometry.dispose();
-		worlds[col].material.dispose();
-		worlds[col] = undefined
-	};
-
-	let mergedGeometry;
-	if (geometries[col].length > 0) mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col]);
-	worlds[col] = new THREE.Mesh(mergedGeometry, materials[col]);
-	worlds[col].castShadow = true;
-	worlds[col].receiveShadow = true;
-	sun.shadow.needsUpdate = true;
-	scene.add(worlds[col])
-};
-
-function updateWorld(col) {
-	if (geometries[col].length > 0) {
-		worlds[col].geometry.dispose();
-		worlds[col].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[col])
-	} else worlds[col].geometry = new THREE.BufferGeometry()
-};
-
-export function createMessage(msg, audio) {
-	if (!audio) audio = 'ui/message';
-	messages.insertAdjacentHTML('beforeend', msg + "<br>")
-	scrollToBottom(messages);
-	playAudio(audio)
-}
-
-let nick, verified;
-
-export function verify(uuid) {
-	socket = io({ extraHeaders: { "uuid": uuid } });
-	verified = true;
-
-	socket.on('message', data => createMessage(`<b>${escapeHTML(data["sender"])}:</b> ${escapeHTML(data["message"])}`));
-	socket.on('serverMessage', data => createMessage(`<b>${escapeHTML(data["message"])}</b>`, 'ui/server message'));
-
-	socket.on('connected', arr => {
-		const view = new Uint8Array(arr);
-		// console.log(view);
-		window.arr = view;
-		cubes.forEach(e => { scene.remove(e) });
-		for (let x = 0; x < 64; x++) {
-			for (let y = 0; y < 64; y++) {
-				for (let z = 0; z < 64; z++) {
-					if (view[x*4096+y*64+z] > 0) {
-						addCube({ "x": x, "y": y, "z": z }, view[x*4096+y*64+z] - 1);
-					}
-				}
-			}
-		};
-		for (var i = 0; i < colors.length; i++) initWorld(i)
-	});
-
-	socket.on('place', data => {
-		let pos = data.pos;
-		addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
-		updateWorld(data.color)
-
-		// fancy block illumination, do not uncomment unless you want framerate to die
-		/*const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
-		bl.position.set(pos[0], pos[1], pos[2]);
-		bl.castShadow = false;
-		scene.add(bl)*/
-	});
-	socket.on('break', data => { let pos = data.pos; removeCube(new THREE.Vector3(pos[0], pos[1], pos[2])) })
 };
 
 window.verify = verify;
@@ -367,6 +435,7 @@ const onKeyDown = event => {
 			case inputPaletteRowScroll.value: colorSkip = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row")) * -1; break
 			case 'F1': uiCanvas.style.display = (uiCanvas.style.display=="flex") ? "none" : "flex"; break
 			case 'F5': history.go(); break
+			case 'KeyV': highlightCube(); break
 		}
 	}
 };
@@ -387,6 +456,7 @@ const onMouseDown = event => {
 	if (nick && !inputDisablePR.checked && controls.isLocked) {
 		switch (event.which) {
 			case 1: breakCube(controls.getObject().position); break
+			case 2: colorPicker(); break
 			case 3: placeCube(controls.getObject().position); break
 		}
 	}
@@ -404,42 +474,6 @@ const canvas = document.getElementsByTagName("canvas")[0];
 canvas.addEventListener('mousedown', onMouseDown);
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
-
-renderer.domElement.addEventListener('click', () => {
-	if (nick) {
-		controls.lock();
-		esc.style.display = "none";
-		settings.style.display = "none";
-		credits.style.display = "none"
-	}
-});
-
-inputUsername.onkeydown = event => {
-	if (event.key == "Enter" && inputUsername.value) {
-		if (verified) {
-			if (inputUsername.value.length > 30) { alert("Your name is too long!"); return };
-			nick = inputUsername.value;
-			welcome.style.display = "none";
-			uiCanvas.style.display = "flex";
-			if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) || true) {
-				mobileControls.style.visibility = "visible";
-				inputDesktop.style.display = "none";
-				inputMobile.style.display = "flex"
-			}
-			socket.emit("playerJoin", { "name": nick, "id": Math.random() }) // id is placeholder
-		} else captchaPlease.style.display = "flex"
-	}
-};
-
-inputChat.onkeydown = event => {
-	if (event.key == "Enter" && nick) {
-		if (inputChat.value.startsWith("/")) { commands.execute() } else
-		if (inputChat.value) {
-			socket.emit("message", { "sender": nick, "message": inputChat.value });
-			inputChat.value = ""
-		} else controls.lock()
-	}
-};
 
 function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
 
