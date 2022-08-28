@@ -175,6 +175,17 @@ function highlightCube() {
 	}
 }
 
+function selectColor() {
+	console.log("hi")
+	raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+	const intersects = raycaster.intersectObjects(scene.children);
+	if (intersects.length > 0) {
+		const intersect = intersects[0];
+		color = worlds.indexOf(intersect.object);
+		updateColor();
+	}
+}
+
 function placeCube(pos) {
 	if (raycastPlacement) {
 		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera); // send ray
@@ -483,10 +494,13 @@ const onKeyUp = function (event) {
 
 const onMouseDown = (event) => {
 	if (nick !== "" && !inputDisablePR.checked && controls.isLocked) {
-		switch (event.which) {
-			case 1:
+		console.log(event.button)
+		switch (event.button) {
+			case 0:
 				breakCube(controls.getObject().position); break
-			case 3:
+			case 1: 
+				selectColor(); break
+			case 2:
 				placeCube(controls.getObject().position); break
 		}
 	}
