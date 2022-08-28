@@ -28,9 +28,11 @@ io.on('connection', (socket) => {
 	socket.on('place', (data) => {
 		pos = data.pos;
 		if (isPosValid(pos)) {
-			world[pos[0]*4096+pos[1]*64+pos[2]] = data.color + 1;
-			io.emit('place', data);
-			if (Date.now() - lastsaved > 60000) saveWorld()
+			if (world[pos[0]*4096+pos[1]*64+pos[2]] == 0) { 
+				world[pos[0]*4096+pos[1]*64+pos[2]] = data.color + 1;
+				io.emit('place', data);
+				if (Date.now() - lastsaved > 60000) saveWorld()
+			}
 		}
 	});
 	socket.on('break', (data) => {
