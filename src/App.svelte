@@ -1,34 +1,39 @@
-<script>	
-	import Palette from './ui/canvas/Palette.svelte'
-	import Coordinates from './ui/canvas/Coordinates.svelte';
-	import SwitchPlacement from './ui/canvas/SwitchPlacement.svelte'
-	import Chat from './ui/canvas/Chat.svelte';
+<script>
+	import Welcome from './ui/win/Welcome.svelte';
 
-	import Esc from './ui/esc/Esc.svelte';
-	import EscWinNavs from './ui/esc/EscWinNavs.svelte';
+	import Toolbar from './ui/Toolbar.svelte';
+	import Coords from './ui/Coords.svelte'
+	import Chat from './ui/Chat.svelte';
 
-	import Welcome from './ui/misc/Welcome.svelte';
-	import Settings from './ui/misc/Settings.svelte';
-	import Credits from './ui/misc/Credits.svelte'
+	import Sign from './ui/misc/Sign.svelte';
+	import Playerlist from './ui/misc/Playerlist.svelte';
+
+	import Esc from './ui/Esc.svelte'
+	import Win from './ui/win/Win.svelte';
+	import Settings from './ui/win/settings/Main.svelte';
+	import Credits from './ui/win/Credits.svelte'
 </script>
 
-<Welcome/>
-
 <main>
+	<Welcome/>
 	<div id="uiCanvas">
-		<Palette/>
-		<SwitchPlacement/>
-		<Coordinates/>
-		<Chat/>
-		<img id="crosshair" class="center" src="./images/svgs/crosshair.svg" alt="+">
+		<img id="crosshair" class="center" src="./img/crosshair.svg" alt="+">
+		<div id="palette" class="box"></div> <Toolbar/> <Coords/> <Chat/>
+		<Sign/>
 	</div>
+
+	<div>
+		<!--<div class="background-blur"></div>-->
+		<Esc/>
+		<Win id="settings" title="SETTINGS"><Settings/></Win>
+		<Win id="credits" title="CREDITS"><Credits/></Win>
+	</div>
+
+	<Playerlist/>
 
 	<div id="mobileControls">
-		<div id="joyMovementDiv" style="position:absolute;bottom:6px;left:6px;width:200px;height:200px"/>
-		<div id="joyCameraDiv" style="position:absolute;bottom:6px;right:6px;width:200px;height:200px"/>
+		<div id="joyMovementXZDiv" style="position:absolute;bottom:6px;left:6px;width:160px;height:160px"/>
+		<div id="joyMovementYDiv" style="position:absolute;bottom:140px;right:6px;width:160px;height:160px"/>
+		<div id="joyCameraDiv" style="position:absolute;bottom:6px;right:6px;width:160px;height:160px"/>
 	</div>
-
-	<Esc/>
-	<Settings><EscWinNavs>settings</EscWinNavs></Settings>
-	<Credits><EscWinNavs>credits</EscWinNavs></Credits>
 </main>

@@ -1,0 +1,16 @@
+name = "a adocubes server"
+description = "this is the description i guess?"
+author = "ado1928"
+
+port = 1928
+maxPlayers = 100
+
+[language]
+	server = "english"
+	client = "english"
+
+[dsbridge] # Discord bridge
+	enabled = false
+	webhookToken = "Webhook token here"
+	botToken = "Bot token here"
+	channelId = "Channel ID here"

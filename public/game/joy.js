@@ -1,4 +1,9 @@
 /*
+ * Note: This script has been slighty modified, using brollin:multi-joystick-support
+ *       (https://github.com/bobboteck/JoyStick/pull/37)
+ */
+
+/*
  * Name          : joy.js
  * @author       : Roberto D'Amico (Bobboteck)
  * Last modified : 09.06.2020
@@ -175,9 +180,11 @@ var JoyStick = (function(container, parameters, callback)
     /**
      * @desc Events for manage touch
      */
-    function onTouchStart(event) 
+    let touchId = null;
+    function onTouchStart(event)
     {
         pressed = 1;
+        touchId = event.targetTouches[0].identifier;
     }
 
     function onTouchMove(event)
@@ -215,6 +222,7 @@ var JoyStick = (function(container, parameters, callback)
 
     function onTouchEnd(event) 
     {
+        if (event.changedTouches[0].identifier !== touchId) return;
         pressed = 0;
         // If required reset position store variable
         if(autoReturnToCenter)
