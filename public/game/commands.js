@@ -1,15 +1,15 @@
-import { createMessage, escapeHTML } from './main.js'
+import { createMessage, escapeHTML, camera } from './main.js'
+import { coordsValid } from './utils.js';
 
 export var flook;
 
-export function executeCommand(cmd) {
-	let args = escapeHTML(cmd).slice(1).split(" ");
-	let command = args[0].toLowerCase(); args.shift()
+export function executeCommand() {
+	let args = escapeHTML(inputChat.value).slice(1).split(" ");
+	let command = args[0].toLowerCase(); args.shift();
 	inputChat.value = '';
 
-	for (let i = 0; i < args.length; i++) {
-		if (!isNaN(args[i])) args[i] = parseInt(args[i]);
-	}; console.log(args);
+	for (let i = 0; i < args.length; i++) if (!isNaN(args[i])) args[i] = parseInt(args[i]);
+	//console.log(args);
 
 	try { switch (command) {
 		case 'egg':
@@ -20,20 +20,21 @@ export function executeCommand(cmd) {
 			break
 
 		case 'tp':
-			if (args.length < 3) { createMessage("One or more coord is missing!"); return };
-			for (let i = 0; i < args.length; i++) if (isNaN(args[i])) { createMessage(`Coord ${args[i]} is invalid!`); return };
+			if (!coordsValid(args)) { createMessage("Invalid coords!"); return };
 			camera.position.set(args[0], args[1], args[2]);
-			createMessage(`Teleported to ${args}`)
+			createMessage(`Teleported to ${args}`);
+			break
+
+		case 'look':
+			if (!coordsValid(args)) { createMessage("Invalid coords!"); return }
+			camera.lookAt(args[0], args[1], args[2]);
+			createMessage(`Looked to ${args}`);
 			break
 
 		case 'flook':
-			if (args.length < 3) {
-				flook = '';
-				createMessage('Stopped flooking');
-				return
-			};
+			if (args == 'stop') { flook = ''; createMessage("Stopped flooking"); return };
+			if (!coordsValid(args)) { createMessage("Invalid coords!"); return };
 			flook = args;
-			createMessage(`Flooking at ${args}`)
 			break
 
 		case 'msgself': createMessage(args[0]); break

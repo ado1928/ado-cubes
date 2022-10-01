@@ -6,6 +6,8 @@ export function playAudio(url, vol, cond) {
 	}
 };
 
-export function randomInt(max) {
-	return Math.floor(Math.random() * max)
+export function coordsValid(coords) {
+	if (coords.length < 3) return false;
+	for (let i = 0; i < coords.length; i++) if (isNaN(coords[i])) return false;
+	return true
 }

@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { PointerLockControls } from "/game/jsm/controls/PointerLockControls.js";
-import * as BufferGeometryUtils from '/game/jsm/utils/BufferGeometryUtils.js';
+import { PointerLockControls } from "./three/examples/jsm/controls/PointerLockControls.js";
+import * as BufferGeometryUtils from './three/examples/jsm/utils/BufferGeometryUtils.js';
 import { playAudio } from './utils.js'
-import { executeCommand } from './commands.js'
+import { executeCommand, flook } from './commands.js'
 let socket = io();
 
 const renderer = new THREE.WebGLRenderer();
@@ -157,7 +157,7 @@ inputUsername.onkeydown = event => {
 
 inputChat.onkeydown = event => {
 	if (event.key == 'Enter' && nick) {
-		if (inputChat.value.startsWith("/")) { executeCommand(inputChat.value) } else
+		if (inputChat.value.startsWith("/")) { executeCommand() } else
 		if (inputChat.value) {
 			socket.emit('message', { "sender": nick, "senderId": socket.id, "content": inputChat.value });
 			inputChat.value = ''
@@ -570,7 +570,7 @@ function render() {
 	let pos = controls.getObject().position;
 	coords.innerText = "x: " + ~~(pos.x + 0.5) + " ╱ y: " + ~~(pos.y + 0.5) + " ╱ z: " + ~~(pos.z + 0.5);
 
-	//if (flook) camera.lookAt(COMMANDS.flook[0], COMMANDS.flook[1], COMMANDS.flook[2])
+	if (flook) camera.lookAt(flook[0], flook[1], flook[2])
 
 	renderer.render(scene, camera)
 };
