@@ -56,12 +56,12 @@ material = new THREE.ShaderMaterial({
 });
 
 material.transparent = true;
-geometry = new THREE.BoxBufferGeometry(64, 64, 64);
+geometry = new THREE.BoxGeometry(64, 64, 64);
 grid = new THREE.Mesh(geometry, material);
 grid.position.set(31.5, 31.5, 31.5);
 scene.add(grid);
 
-geometry = new THREE.PlaneBufferGeometry(2000, 2000);
+geometry = new THREE.PlaneGeometry(2000, 2000);
 material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
 let ground = new THREE.Mesh(geometry, material);

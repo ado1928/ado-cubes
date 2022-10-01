@@ -7,7 +7,6 @@
 		"dev": "rollup -c -w"
 	},
 	"devDependencies": {
-		"moment": "^2.29.4",
 		"@rollup/plugin-commonjs": "^22.0.2",
 		"@rollup/plugin-json": "^4.1.0",
 		"@rollup/plugin-node-resolve": "^13.3.0",
@@ -21,10 +20,12 @@
 	"dependencies": {
 		"discord-webhook-node": "^1.1.8",
 		"discord.js": "^13.6.0",
+		"es-module-shims": "^1.6.0",
 		"express": "^4.17.3",
 		"http": "^0.0.1-security",
+		"moment": "^2.29.4",
 		"socket.io": "^4.4.1",
-		"toml": "^3.0.0",
-		"toml-require": "^1.2.0"
+		"three": "^0.145.0",
+		"toml": "^3.0.0"
 	}
 }

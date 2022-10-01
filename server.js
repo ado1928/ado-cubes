@@ -131,9 +131,10 @@ if (config.dsbridge.enabled) {
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/game', express.static(path.join(__dirname, 'node_modules')));
 app.get('/', (req, res) => {
 	log(`Someone's asking to GET ${req.url}`);
-	if (req.url == '/') res.sendFile(__dirname + '/public/index.html');
+	if (req.url == '/') res.sendFile(__dirname + 'public/index.html');
 });
 
 http.listen(config.port, () => log(`${osIcon[process.platform]} Listening to \x1b[38;5;87mhttp://localhost:${config.port}/\x1b[0!`));

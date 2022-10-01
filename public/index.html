@@ -14,13 +14,13 @@
 	<meta property='theme-color' content="#FFFFFF"/>
 </head>
 <body>
-	<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.140/build/three.module.js"}}</script>
-	<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script async src="./game/es-module-shims/dist/es-module-shims.js"></script>
+	<script src="./game/socket.io/client-dist/socket.io.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<script type="importmap" crossorigin="anonymous" referrerpolicy="no-referrer">{"imports":{"three":"/game/three/build/three.module.js","io":"/game/socket.io.js"}}</script>
 
 	<script type="module" src="./game/utils.js"></script>
-
-	<script src='/build/bundle.js' defer></script>
+	<script src='./build/bundle.js' defer></script>
 	<script type="module" src="./game/main.js"></script>
 	<script src="./game/joy.js"/>
 	
