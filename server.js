@@ -19,12 +19,21 @@ const hook = new Webhook(config.dsbridge.webhookToken);
 function log(msg) { console.log(`  ${moment().format("HH:mm:ss")}\x1b[90m │ \x1b[0m${msg} \x1b[0m`) };
 console.clear(); console.log();
 
-var world;
 var lastsaved = Date.now();
 
-fs.readFile('./worlds/world.caw', 'utf8', (err, data) => { if (err) throw err;
-	world = textencoder.encode(data);
-	// world = new Uint8Array(262144).fill(0) // Fills the world with nothing
+let worlds = {};
+let worldslist = [];
+fs.readdir('worlds', (err, crows) => { if (err) throw err;
+	crows.forEach((crow, i) => {
+		crow = crow.substr(0, crow.length - 4);
+		worldslist.push(crow);
+		fs.readFile(`./worlds/${crow}.caw`, 'utf8', (err, data) => { if (err) throw err;
+			worlds[crow] = textencoder.encode(data);
+			// worlds[i] = new Uint8Array(262144).fill(0) // Fills the world with nothing. i don't recommend uncomentting it.
+		})
+	})
+	worldslist.sort()
+	log(`\x1b[90mloaded ${worldslist}`)
 })
 
 // very unnecessary little indicator
@@ -45,12 +54,6 @@ function posValid(pos) {
 	return(valid)
 }
 
-function saveWorld() {
-	fs.writeFile('./worlds/world.caw', textdecoder.decode(world), err => { if (err) throw err });
-	lastsaved = Date.now();
-	log("🌍 Saved world.")
-}
-
 function serverMessage(msg) {
 	io.emit('serverMessage', { "content": msg });
 	log(msg);
@@ -61,29 +64,45 @@ function serverMessage(msg) {
 	}
 }
 
+function loadWorld(socket) {
+	socket.join(socket.world);
+	fs.readFile(`./worlds/${socket.world}.caw`, 'utf8', (err, data) => { if (err) throw err;
+		world = textencoder.encode(data);
+		io.to(socket.id).emit('connected', world);
+	})
+}
+
+function saveWorld(i) {
+	fs.writeFile(`./worlds/${i}.caw`, textdecoder.decode(worlds[i]), err => { if (err) throw err });
+	lastsaved = Date.now();
+	log("🌍 Saved world.")
+}
+
 io.on('connection', socket => {
-	socket.emit('connected', world);
+	socket.world = 'world';
+
+	io.emit('worldslist', worldslist)
 
 	socket.on('place', data => {
 		pos = data.pos;
 		if (posValid(pos)) {
-			if (world[pos[0] * 4096 + pos[1] * 64 + pos[2]] !== 0) return;
-			world[pos[0] * 4096 + pos[1] * 64 + pos[2]] = data.color + 1;
-			io.emit('place', data);
-			if (Date.now() - lastsaved > 60000) saveWorld()
+			if (worlds[socket.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] !== 0) return;
+			worlds[socket.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = data.color + 1;
+			io.to(socket.world).emit('place', data);
+			if (Date.now() - lastsaved > 30000) saveWorld()
 		}
 	});
 
 	socket.on('break', data => {
 		pos = data.pos;
 		if (posValid(pos)) {
-			world[pos[0] * 4096 + pos[1] * 64 + pos[2]] = 0;
-			io.emit('break', data)
+			worlds[socket.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = 0;
+			io.to(socket.world).emit('break', data)
 		}
 	});
 
 	socket.on('message', data => {
-		io.emit('message', data);
+		io.to(socket.world).emit('message', data);
 		log(`\x1b[1m${data.sender}\x1b[0m: ${data.content}`);
 		if (config.dsbridge.enabled) {
 			hook.setUsername(data.sender);
@@ -94,25 +113,31 @@ io.on('connection', socket => {
 
 	// Join message
 	socket.on('join', data => {
+		socket.world = data['world'];
 		socket.player = data;
-		io.emit('joinMessage', { 'player': socket.player.name });
-		log(`🤝 ${socket.player.name} joined the server`)
+		loadWorld(socket);
+		io.to(socket.world).emit('joinMessage', { 'player': socket.player.name });
+		log(`🤝 ${socket.player.name} joined the server`);
 	});
 
 	// Disconnect message & world saving if no players online
 	socket.on('disconnect', reason => {
 		if (!socket.player) return; // Botch fix for 2 sockets per player
-		io.emit('leaveMessage', { 'player': socket.player.name });
-		log(`👋 ${socket.player.name} left the server`)
-		if (io.engine.clientsCount == 0) { lastsaved = Date.now(); saveWorld() };
+		io.to(socket.world).emit('leaveMessage', { 'player': socket.player.name });
+		log(`👋 ${socket.player.name} left the server`);
+
+		if (!io.sockets.adapter.rooms.has(socket.world)) {
+			saveWorld(socket.world);
+			lastsaved = Date.now();
+		}
 	});
 
-	io.of("/").adapter.on("create-room", (room) => {
-		log(`room ${room} was created`);
+	io.of('/').adapter.once('create-room', room => {
+		log(`\x1b[37mroom ${room} was created`);
 	});
 
-	io.of("/").adapter.on("join-room", (room, id) => {
-		log(`socket ${id} has joined room ${room}`);
+	io.of('/').adapter.once('join-room', (room, id) => {
+		log(`\x1b[37msocket ${id} joined room ${room}`);
 	});
 });
 

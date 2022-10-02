@@ -100,7 +100,7 @@ const skybox = loader.load([
 ]);
 scene.background = skybox;
 
-const sun = new THREE.DirectionalLight(0xffffff, 0.35);
+export var sun = new THREE.DirectionalLight(0xffffff, 0.35);
 sun.position.set(20, 90, 50);
 sun.castShadow = true;
 scene.add(sun);
@@ -110,7 +110,7 @@ sun.shadow.normalBias = 0.1;
 sun.shadow.mapSize.width = 4096;
 sun.shadow.mapSize.height = 4096;
 sun.shadow.camera.near = 0.5;
-sun.shadow.camera.far = 130;
+sun.shadow.camera.far = 1000;
 sun.shadow.camera.right = 60;
 sun.shadow.camera.left = -30;
 sun.shadow.camera.top = 35;
@@ -150,7 +150,7 @@ inputUsername.onkeydown = event => {
 			if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) !== null || debugForceMobileControls.checked) {
 				mobileControls.style.visibility = 'visible';
 			}
-			socket.emit('join', { "name": nick })
+			socket.emit('join', { "name": nick, "world": selectWorld.value })
 		} else captchaPlease.style.display = 'flex'
 	}
 };
@@ -185,17 +185,21 @@ let nick, verified;
 
 export function verify(uuid) {
 	if (!verified) {
+		verified = true;
+
 		socket = io({ extraHeaders: { "uuid": uuid } });
 
-		socket.on('joinMessage', data => createMessage(`<b>${escapeHTML(data['player'])}</b> joined the server`, "ui/msg/player join"));
-		socket.on('leaveMessage', data => createMessage(`<b>${escapeHTML(data['player'])}</b> left the server`, "ui/msg/player left"));
-
-		socket.on('message', data => createMessage(`<b title="session id ${data['senderId']}" style="cursor:help">${escapeHTML(data['sender'])}:</b> ${escapeHTML(data['content'])}`));
-		socket.on('serverMessage', data => createMessage(`<i>${data['content']}</i>`));
+		socket.on('worldslist', arr => {
+			for (let i = 0; i < arr.length; i++) {
+				let option = document.createElement("option");
+				option.text = arr[i];
+				selectWorld.add(option)
+			}
+		})
 
 		socket.on('connected', arr => {
 			const view = new Uint8Array(arr);
-			// console.log(view);
+			console.log(view);
 			window.arr = view;
 			cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
 			for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
@@ -209,6 +213,12 @@ export function verify(uuid) {
 			};
 			for (var i = 0; i < colors.length; i++) initWorld(i)
 		});
+
+		socket.on('joinMessage', data => createMessage(`<b>${escapeHTML(data['player'])}</b> joined the server`, "ui/msg/player join"));
+		socket.on('leaveMessage', data => createMessage(`<b>${escapeHTML(data['player'])}</b> left the server`, "ui/msg/player left"));
+
+		socket.on('message', data => createMessage(`<b title="session id ${data['senderId']}" style="cursor:help">${escapeHTML(data['sender'])}:</b> ${escapeHTML(data['content'])}`));
+		socket.on('serverMessage', data => createMessage(`<i>${data['content']}</i>`));
 
 		socket.on('place', data => {
 			let pos = data.pos;
@@ -227,7 +237,6 @@ export function verify(uuid) {
 			removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
 		})
 	};
-	verified = true;
 };
 
 window.verify = verify;
@@ -258,76 +267,7 @@ function updateWorld(color) {
 	} else world[color].geometry = new THREE.BufferGeometry()
 };
 
-let raycaster = new THREE.Raycaster();
 
-
-let raycastPlacement = true;
-let cubeType = 'basic'
-
-// Showing or hiding crosshair depending on what placement method/mode(?) the player is using
-placeAtRaycast.onclick = () => { raycastPlacement = true; crosshair.style.display = "block" };
-placeInCamera.onclick = () => { raycastPlacement = false; crosshair.style.display = "none" };
-
-placeCubeBasic.onclick = () => cubeType = 'basic';
-placeCubeLight.onclick = () => cubeType = 'light';
-
-function placeCube(pos) {
-	if (raycastPlacement) {
-		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
-		const intersects = raycaster.intersectObjects(scene.children);
-		if (intersects.length > 0) {
-			let pos = new THREE.Vector3();
-			(intersects[0].object == grid) ? pos.sub(intersects[0].face.normal) : pos.add(intersects[0].face.normal);
-			pos.multiplyScalar(0.5);
-			pos.add(intersects[0].point);
-			//console.log(pos);
-			socket.emit('place', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
-		}
-	} else socket.emit('place', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
-	playAudio('sfx/place', volumeSfx.value, !audioDisablePR.checked)
-}
-
-function breakCube(pos) {
-	if (raycastPlacement) {
-		raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
-		const intersects = raycaster.intersectObjects(scene.children);
-		if (intersects.length > 0) {
-			let pos = new THREE.Vector3();
-			pos.sub(intersects[0].face.normal);
-			pos.multiplyScalar(0.5);
-			pos.add(intersects[0].point);
-			// console.log(pos);
-			socket.emit('break', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
-		}
-	} else socket.emit('break', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
-	playAudio('sfx/remove', volumeSfx.value, !audioDisablePR.checked)
-};
-
-let hcube = new THREE.Mesh();
-let hcube2 = new THREE.Mesh();
-function highlightCube() {
-	scene.remove(hcube); scene.remove(hcube2);
-	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
-	const intersects = raycaster.intersectObjects(scene.children);
-	if (intersects[0].object.material.type == 'ShaderMaterial') { sign.style.display = "none"; return };
-	sign.style.display = "block";
-
-	let hgeometry = new THREE.BoxGeometry(1.1, 1.1, 1.1);
-	if (intersects.length > 0) {
-		let pos = new THREE.Vector3();
-		pos.sub(intersects[0].face.normal);
-		pos.multiplyScalar(0.5);
-		pos.add(intersects[0].point);
-		pos = new THREE.Vector3(~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5));
-
-		hcube = new THREE.Mesh(hgeometry, new THREE.MeshToonMaterial({ color: intersects[0].object.material.color.r + intersects[0].object.material.color.g + intersects[0].object.material.color.b < 0.1 ? 0xffffffff : 0x000000, depthTest: false }));
-		hcube.position.set(pos.x, pos.y, pos.z);
-		scene.add(hcube);
-		hcube2 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: intersects[0].object.material.color, depthTest: false }));
-		hcube2.position.set(pos.x, pos.y, pos.z);
-		scene.add(hcube2)
-	}
-};
 
 let paletteColors = [ 'FFFFFF', 'AAAAAA', '777777', '484848', '000000', '991609', 'F3280C', 'FF5610', 'FF832A', 'FFB885', '936100', 'E29705', 'FFD223', 'FFF280', '47561E', '71892B', '94BE1A', 'DCFF77', '124B36', '0F8158', '03C07C', '90FFCA', '024851', '0D7A89', '01A6BD', '34E7FF', '013462', '0D569A', '066ECE', '4CA9FF', '181691', '2A25F5', '4E55FF', '9DB8FF', '58196B', 'AC01E0', 'C82EF7', 'DC91FF', '650036', 'B0114B', 'EA3477', 'FF95BC', '62071D', '9B0834', 'CB003D', 'FF7384', '49230A', '814A17', 'D17A2B', 'FFB470' ]
 for (let i = 0; i < paletteColors.length; i++) {
@@ -369,10 +309,56 @@ window.onwheel = event => {
 let materials = []
 for (var i = 0; i < colors.length; i++) materials[i] = new THREE.MeshPhongMaterial({ color: colors[i].style.backgroundColor }) // create materials for colors in palette
 
+
+
+let raycaster = new THREE.Raycaster();
+
+let raycastPlacement = true;
+let cubeType = 'basic'
+
+// Showing or hiding crosshair depending on what placement method/mode(?) the player is using
+placeAtRaycast.onclick = () => { raycastPlacement = true; crosshair.style.display = "block" };
+placeInCamera.onclick = () => { raycastPlacement = false; crosshair.style.display = "none" };
+
+placeCubeBasic.onclick = () => cubeType = 'basic';
+placeCubeLight.onclick = () => cubeType = 'light';
+
 geometry = new THREE.BoxGeometry(1, 1, 1);
 let geometries = []
 let cubes = [];
 for (var i = 0; i < colors.length; i++) geometries[i] = [];
+
+function placeCube(pos) {
+	if (raycastPlacement) {
+		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+		const intersects = raycaster.intersectObjects(scene.children);
+		if (intersects.length > 0) {
+			let pos = new THREE.Vector3();
+			(intersects[0].object == grid) ? pos.sub(intersects[0].face.normal) : pos.add(intersects[0].face.normal);
+			pos.multiplyScalar(0.5);
+			pos.add(intersects[0].point);
+			//console.log(pos);
+			socket.emit('place', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
+		}
+	} else socket.emit('place', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
+	playAudio('sfx/place', volumeSfx.value, !audioDisablePR.checked)
+}
+
+function breakCube(pos) {
+	if (raycastPlacement) {
+		raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
+		const intersects = raycaster.intersectObjects(scene.children);
+		if (intersects.length > 0) {
+			let pos = new THREE.Vector3();
+			pos.sub(intersects[0].face.normal);
+			pos.multiplyScalar(0.5);
+			pos.add(intersects[0].point);
+			// console.log(pos);
+			socket.emit('break', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
+		}
+	} else socket.emit('break', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+	playAudio('sfx/remove', volumeSfx.value, !audioDisablePR.checked)
+};
 
 function addCube(pos, color) {
 	let cube = new THREE.Mesh(geometry, materials[color], 100);
@@ -410,6 +396,36 @@ function removeCube(pos) {
 		}
 	}
 };
+
+
+
+let hcube = new THREE.Mesh();
+let hcube2 = new THREE.Mesh();
+function highlightCube() {
+	scene.remove(hcube); scene.remove(hcube2);
+	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
+	const intersects = raycaster.intersectObjects(scene.children);
+	if (intersects[0].object.material.type == 'ShaderMaterial') { sign.style.display = "none"; return };
+	sign.style.display = "block";
+
+	let hgeometry = new THREE.BoxGeometry(1.1, 1.1, 1.1);
+	if (intersects.length > 0) {
+		let pos = new THREE.Vector3();
+		pos.sub(intersects[0].face.normal);
+		pos.multiplyScalar(0.5);
+		pos.add(intersects[0].point);
+		pos = new THREE.Vector3(~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5));
+
+		hcube = new THREE.Mesh(hgeometry, new THREE.MeshToonMaterial({ color: intersects[0].object.material.color.r + intersects[0].object.material.color.g + intersects[0].object.material.color.b < 0.1 ? 0xffffffff : 0x000000, depthTest: false }));
+		hcube.position.set(pos.x, pos.y, pos.z);
+		scene.add(hcube);
+		hcube2 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: intersects[0].object.material.color, depthTest: false }));
+		hcube2.position.set(pos.x, pos.y, pos.z);
+		scene.add(hcube2)
+	}
+};
+
+
 
 let moveForward, moveBackward, moveLeft, moveRight, moveUp, moveDown;
 let cameraSpeed = 64.0;
@@ -505,6 +521,8 @@ for (let i = 0; i < buttons.length; i++) {
 
 /* what is this supposed to be for? it's not used as far as i see */
 // function regExp(str) { return /[a-zA-Z]/.test(str) };
+
+
 
 let joyMovementXZ = new JoyStick('joyMovementXZDiv');
 let joyMovementY = new JoyStick('joyMovementYDiv');

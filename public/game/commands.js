@@ -1,4 +1,4 @@
-import { createMessage, escapeHTML, camera } from './main.js'
+import { createMessage, escapeHTML, camera, sun } from './main.js'
 import { coordsValid } from './utils.js';
 
 export var flook;
@@ -19,6 +19,10 @@ export function executeCommand() {
 			createMessage(egg);
 			break
 
+		case 'msgself': createMessage(args[0]); break
+
+		case 'clear': messages.innerHTML = ''; break
+
 		case 'tp':
 			if (!coordsValid(args)) { createMessage("Invalid coords!"); return };
 			camera.position.set(args[0], args[1], args[2]);
@@ -26,7 +30,7 @@ export function executeCommand() {
 			break
 
 		case 'look':
-			if (!coordsValid(args)) { createMessage("Invalid coords!"); return }
+			if (!coordsValid(args)) { createMessage("Invalid coords!"); return };
 			camera.lookAt(args[0], args[1], args[2]);
 			createMessage(`Looked to ${args}`);
 			break
@@ -35,11 +39,18 @@ export function executeCommand() {
 			if (args == 'stop') { flook = ''; createMessage("Stopped flooking"); return };
 			if (!coordsValid(args)) { createMessage("Invalid coords!"); return };
 			flook = args;
+			createMessage(`Flooking at ${args}`);
 			break
 
-		case 'msgself': createMessage(args[0]); break
+		case 'sun':
+			if (args == 'reset') { sun.position.set(20, 90, 50); createMessage('Resetted sun'); return }
+			if (!coordsValid(args)) { createMessage("Invalid coords!"); return };
+			sun.position.set(args[0], args[1], args[2]);
+			sun.shadow.needsUpdate = true;
+			createMessage(`Repositioned sun`)
+			break
 
-		case 'clear': messages.innerHTML = ''; break
+
 
 		default: createMessage(`Command ${command} does not exist`); break
 	}} catch(err) { createMessage(err); throw err }
