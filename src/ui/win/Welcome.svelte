@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 
 	let src = "./img/logo/adocubes.svg";
-	let style = "position:absolute;transform:translate(-50%, -256px);top:50%;left:50%;pointer-events:none";
 
 	onMount(() => {
 		inputUsername.value = localStorage.getItem('lastUsedUsername');
@@ -21,13 +20,13 @@
 </script>
 
 <div id="welcome">
-	<img id="welcomeLogo" {src} {style}>
+	<img id="welcomeLogo" {src} class="floaty-adocubes">
 	
 	<div class="box" style="flex-direction:column;width:400px;top:48%;right:62%;padding:16px">
 		Nickname: <input id="inputUsername" type="text" onkeypress="localStorage.setItem('lastUsedUsername', inputUsername.value)">
 		<p><img src="./cursor/wait.gif"> ignore this gif</p><br>
 
-		World:<select id="selectWorld"></select><br>
+		World:<select id="selectWorld"></select>
 
 		<p id="captchaPlease" style="display:none;"><br>Please take the captcha! If you can't see it, please refresh page.</p>
 		<div class="io-captcha" data-pubkey="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADO" data-theme="dark" data-scale="1.0" data-font="mono" data-callback-solve="solve" data-widgetid="iocaptcha"></div>

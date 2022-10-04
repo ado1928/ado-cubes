@@ -17,11 +17,11 @@
 	<script async src="./game/es-module-shims/dist/es-module-shims.js"></script>
 	<script src="./game/socket.io/client-dist/socket.io.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-	<script type="importmap" crossorigin="anonymous" referrerpolicy="no-referrer">{"imports":{"three":"/game/three/build/three.module.js","io":"/game/socket.io.js"}}</script>
+	<script type="importmap" crossorigin="anonymous" referrerpolicy="no-referrer" defer>{"imports":{"three":"/game/three/build/three.module.js","io":"/game/socket.io.js"}}</script>
 
-	<script type="module" src="./game/utils.js"></script>
-	<script src='./build/bundle.js' defer></script>
-	<script type="module" src="./game/main.js"></script>
+	<script type="module" src="./game/main.js" async></script>
+	<script src="./build/bundle.js" async></script>
+
 	<script src="./game/joy.js"/>
 	
 	<script src="./game/iocaptcha.js" type="module" defer></script>

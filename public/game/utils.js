@@ -1,9 +1,19 @@
 export function playAudio(url, vol, cond) {
 	if (cond || cond == undefined) {
 		let i = new Audio('./audio/'+url+'.ogg');
-		i.volume = vol;
+		i.volume = vol / 100;
 		i.play()
 	}
+};
+
+export function escapeHTML(unsafe) {
+	return unsafe
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&apos;')
+		.replace(/`/g, '&#96;')
 };
 
 export function coordsValid(coords) {

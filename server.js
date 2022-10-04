@@ -75,7 +75,7 @@ function loadWorld(socket) {
 function saveWorld(i) {
 	fs.writeFile(`./worlds/${i}.caw`, textdecoder.decode(worlds[i]), err => { if (err) throw err });
 	lastsaved = Date.now();
-	log("🌍 Saved world.")
+	log(`🌍 Saved world ${i}`)
 }
 
 io.on('connection', socket => {

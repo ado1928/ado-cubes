@@ -1,6 +1,5 @@
 <div style="height:430px;overflow-y:scroll;text-align:center">
 	<br><img src="./img/logo/adocubes-text.svg" alt="adocubes">
-	<br><br>
 
 	<h2>developers</h2>
 	<div style="display:flex;justify-content:center">
@@ -25,17 +24,25 @@
 				<td>Mouse placing</td>
 			</tr>
 		</table>
-	</div><br>
+	</div>
 
-	Made with <a href="https://nodejs.org" target="_blank" rel="noopener noreferrer">Node.js</a>, <a href="https://threejs.org" target="_blank" rel="noopener noreferrer">Three.js</a>, and <a href="https://svelte.dev" target="_blank" rel="noopener noreferrer">Svelte</a><br>
+	<h2>made with</h2>
+	<div style="display:flex;justify-content:center">
+		<table class="credits">
+			<tr>
+				<td><img src="./img/icon/credits/node.js.png"></td>
+				<td><a href="https://nodejs.org" target="_blank" rel="noopener noreferrer">Node.js</a></td>
+				<td><img src="./img/icon/credits/svelte.png"></td>
+				<td><a href="https://svelte.dev" target="_blank" rel="noopener noreferrer">Svelte</a></td>
+				<td><img src="./img/icon/credits/three.js.png"></td>
+				<td><a href="https://threejs.org" target="_blank" rel="noopener noreferrer">Three.js</a></td>
+			</tr>
+		</table>
+	</div>
 	Sounds generated with <a href="https://sfxr.me">jsfxr</a><br>
 	<br>
 	Music by Kevin MacLeod (from <a href="https://incompetech.com">incompetech.com</a>)<br>
-	"Chill"<br>
-	"Ether Vox"<br>
-	"Look Busy"<br>
-	"Northen Glade"<br>
-	"Pixel Peeker Polka - faster"<br>
+	"Chill", "Ether Vox", "Look Busy", "Northen Glade",<br>"Pixel Peeker Polka - faster"<br>
 	Licensed under Creative Commons: By Attribution 4.0 License<br>
 	http://creativecommons.org/licenses/by/4.0/
 </div>

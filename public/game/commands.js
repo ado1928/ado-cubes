@@ -1,5 +1,5 @@
-import { createMessage, escapeHTML, camera, sun } from './main.js'
-import { coordsValid } from './utils.js';
+import { createMessage, camera, sun } from './main.js'
+import { escapeHTML, coordsValid } from './utils.js';
 
 export var flook;
 

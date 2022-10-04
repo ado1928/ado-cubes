@@ -5,19 +5,15 @@
 	let nonFunctional = "./img/icon/non-functional.png";
 	let refresh = "./img/icon/refresh.png";
 
-	let volumeMusic = 0.5;
-	let volumeSfx = 0.5;
-	let volumeUi = 0.5;
-
 	onMount(async () => {
 		function loadSettings() {
 			let sets = JSON.parse(localStorage.getItem('settings'));
 			let logsets = {};
 			if (!sets) { console.log('No settings saved'); return }
 			for (let i = 0; i < Object.keys(sets).length; i++) {
-				if (isNaN(Object.values(sets)[i]))
-				{ document.getElementById(Object.keys(sets)[i]).value = Object.values(sets)[i] } else
-				{ document.getElementById(Object.keys(sets)[i]).checked = Object.values(sets)[i] };
+				if ([true, false].includes(Object.values(sets)[i]))
+				{ document.getElementById(Object.keys(sets)[i]).checked = Object.values(sets)[i] } else
+				{ document.getElementById(Object.keys(sets)[i]).value = Object.values(sets)[i] };
 				logsets[Object.keys(sets)[i]] = Object.values(sets)[i];
 			}; console.table(logsets)
 		}; loadSettings();
@@ -33,8 +29,8 @@
 			let set = sets[i].children[sets[i].children.length - 1];
 			console.log(set.type)
 			switch (set.type) {
-				case "text":		settings[set.id] = set.value; break
-				case "checkbox":	settings[set.id] = set.checked; break
+				case 'checkbox':	settings[set.id] = set.checked; break
+				default: 			settings[set.id] = set.value
 			};
 			localStorage.setItem('settings', JSON.stringify(settings));
 		}
@@ -65,7 +61,7 @@
 	<div id="settingsContent">
 		<section id="general">
 			<h2>🗺️ General</h2>
-			<Set id="generalLanguage" type="text" label="🌐 Language" value="English"/>
+			<Set id="generalLanguage" type="text" label="Language" value="English"/>
 		</section>
 
 
@@ -114,32 +110,32 @@
 
 		<section id="audio">
 			<h2>🔊 Audio</h2>
-			<strong>NOTE</strong>: Volumes aren't saved yet
-			<div>Music {Math.round(volumeMusic * 100)} <input id="volumeMusic" type="range" min="0" max="1" step="0.01" bind:value={volumeMusic}></div>
-			<div>SFX {Math.round(volumeSfx * 100)} <input id="volumeSfx" type="range" min="0" max="1" step="0.01" bind:value={volumeSfx}></div>
-			<div>UI {Math.round(volumeUi * 100)} <input id="volumeUi" type="range" min="0" max="1" step="0.01" bind:value={volumeUi}></div>
+			<Set id="volumeMusic" type="range" label="Music" value="50"/>
+			<Set id="volumeSfx" type="range" label="SFX" value="50"/>
+			<Set id="volumeUi" type="range" label="UI" value="50"/>
 			<Set icon={nonFunctional} id="audioEnableMusic" type="checkbox" label="Enable music"/>
 			<Set id="audioDisablePR" type="checkbox" label="Disable cube placement sounds"/>
 			<Set id="audioDisablePalette" type="checkbox" label="Disable palette sounds"/>
 			<Set id="audioDisableColorPicker" type="checkbox" label="Disable color picker sounds"/>
 			<Set id="audioDisableButton" type="checkbox" label="Disable button sounds"/>
 			<Set id="audioDisableMessage" type="checkbox" label="Disable message sounds"/>
-
 		</section>
 
 
 		<section id="appearance">
 			<h2>🎨 Appearance</h2>
 			<Set icon={refresh} id="miscEnableRandomLogos" type="checkbox" label="Enable random logos in welcome"/>
-			<Set id="themeChatWidth" type="text" label="Chat width" value="440px"/>
-			<Set id="themeChatMaxHeight" type="text" label="Chat max height" value="480px"/>
-			<button>👓</button>
+			<Set id="themeChatWidth" type="range" label="Chat width" max="1000" step="10" value="440"/>
+			<Set id="themeChatMaxHeight" type="range" label="Chat max height" max="1000" step="10" value="480"/>
+			<button onclick="document.documentElement.style.setProperty('--backdrop-blur', '0px')">👓</button>
 		</section>
 
 
 		<section id="debug">
 			<h2>🐛 Debug</h2>
-			<Set id="debugForceMobileControls" type="checkbox" label="Force mobile controls"/>
+			<Set icon={refresh} id="debugForceMobileControls" type="checkbox" label="Force mobile controls"/>
+			<button class="button-icon" onclick="mobileControls.style.visibility = (mobileControls.style.visibility == 'hidden') ? 'visible' : 'hidden'">Toggle mobile controls</button>
+			<Set id="slidertest" type="range" label="slider test"/>
 		</section>
 	</div>
 </div>

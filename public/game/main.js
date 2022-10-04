@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { PointerLockControls } from "./three/examples/jsm/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from './three/examples/jsm/utils/BufferGeometryUtils.js';
-import { playAudio } from './utils.js'
+import { playAudio, escapeHTML } from './utils.js'
 import { executeCommand, flook } from './commands.js'
 let socket = io();
 
@@ -73,7 +73,6 @@ ground.material.depthTest = false;
 ground.material.depthWrite = false;
 scene.add(ground);
 
-
 scene.add(controls.getObject());
 
 const direction = new THREE.Vector3();
@@ -129,16 +128,6 @@ const dlight2 = new THREE.DirectionalLight(0xffffff, 0.15);
 dlight2.position.set(-0.3, 0.6, -0.2);
 dlight2.castShadow = false;
 scene.add(dlight2);
-
-export function escapeHTML(unsafe) {
-	return unsafe
-		.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&apos;')
-		.replace(/`/g, '&#96;')
-}
 
 inputUsername.onkeydown = event => {
 	if (event.key == 'Enter' && inputUsername.value) {
@@ -521,8 +510,6 @@ for (let i = 0; i < buttons.length; i++) {
 
 /* what is this supposed to be for? it's not used as far as i see */
 // function regExp(str) { return /[a-zA-Z]/.test(str) };
-
-
 
 let joyMovementXZ = new JoyStick('joyMovementXZDiv');
 let joyMovementY = new JoyStick('joyMovementYDiv');

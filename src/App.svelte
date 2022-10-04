@@ -10,8 +10,11 @@
 
 	import Esc from './ui/Esc.svelte'
 	import Win from './ui/win/Win.svelte';
-	import Settings from './ui/win/settings/Main.svelte';
+	import Settings from './ui/win/Settings.svelte';
+	import Changelog from './ui/win/Changelog.svelte';
 	import Credits from './ui/win/Credits.svelte'
+
+
 </script>
 
 <main>
@@ -27,11 +30,12 @@
 		<Esc/>
 		<Win id="settings" title="SETTINGS"><Settings/></Win>
 		<Win id="credits" title="CREDITS"><Credits/></Win>
+		<Win id="changelog" title="CHANGELOG"><Changelog/></Win>
 	</div>
 
 	<Playerlist/>
 
-	<div id="mobileControls">
+	<div id="mobileControls" style="visibility:hidden">
 		<div id="joyMovementXZDiv" style="position:absolute;bottom:6px;left:6px;width:160px;height:160px"/>
 		<div id="joyMovementYDiv" style="position:absolute;bottom:140px;right:6px;width:160px;height:160px"/>
 		<div id="joyCameraDiv" style="position:absolute;bottom:6px;right:6px;width:160px;height:160px"/>
