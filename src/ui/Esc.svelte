@@ -23,9 +23,5 @@
 		<button id="escChangelog" on:click={() => escOpen(changelog)}>📰 Changelog</button>
 		<button id="escSettings" on:click={() => escOpen(settings)}>⚙️ Settings</button>
 		<button id="escCredits" on:click={() => escOpen(credits)}>👥 Credits</button>
-		<br>
-		<div style="display:flex;flex-direction:row;width:auto">
-			<a href="https://github.com/ado1928/ado-cubes" target="_blank" rel="noopener noreferrer">Source code</a>&nbsp•&nbsp<a href="https://discord.gg/rNMTeADfnc" target="_blank" rel="noopener noreferrer">Discord server</a>
-		</div>
 	</div>
 </div>

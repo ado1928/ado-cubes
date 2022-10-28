@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { PointerLockControls } from "./three/examples/jsm/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from './three/examples/jsm/utils/BufferGeometryUtils.js';
-import { playAudio, escapeHTML } from './utils.js'
+import { playAudio, escapeHTML, hideWins, usingMobile } from './utils.js'
 import { executeCommand, flook } from './commands.js'
 let socket = io();
 
@@ -78,15 +78,15 @@ scene.add(controls.getObject());
 const direction = new THREE.Vector3();
 const velocity = new THREE.Vector3();
 
-window.addEventListener('resize', () => {
+window.onresize = () => {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize(window.innerWidth, window.innerHeight);
-	document.documentElement.style.setProperty('--innerWidth', window.innerWidth + 'px');
-	document.documentElement.style.setProperty('--innerHeight', window.innerHeight + 'px')
-});
-document.documentElement.style.setProperty('--innerWidth', window.innerWidth + 'px');
-document.documentElement.style.setProperty('--innerHeight', window.innerHeight + 'px');
+	document.documentElement.style.setProperty('--innerWidth', document.documentElement.clientWidth + 'px');
+	document.documentElement.style.setProperty('--innerHeight', document.documentElement.clientHeight + 'px')
+};
+document.documentElement.style.setProperty('--innerWidth', document.documentElement.clientWidth + 'px');
+document.documentElement.style.setProperty('--innerHeight', document.documentElement.clientHeight + 'px');
 
 const loader = new THREE.CubeTextureLoader();
 const skybox = loader.load([
@@ -129,20 +129,20 @@ dlight2.position.set(-0.3, 0.6, -0.2);
 dlight2.castShadow = false;
 scene.add(dlight2);
 
-inputUsername.onkeydown = event => {
-	if (event.key == 'Enter' && inputUsername.value) {
-		if (verified) {
-			if (inputUsername.value.length > 30) { alert('Your name is too long!'); return };
-			nick = inputUsername.value;
-			welcome.style.display = 'none';
-			uiCanvas.style.display = 'flex';
-			if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) !== null || debugForceMobileControls.checked) {
-				mobileControls.style.visibility = 'visible';
-			}
-			socket.emit('join', { "name": nick, "world": selectWorld.value })
-		} else captchaPlease.style.display = 'flex'
+function joinRoom(event) {
+	if (!verified) { captchaPlease.style.display = 'flex'; return }
+	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value) return;
+	if (inputUsername.value.length > 30) { alert('Your name is too long!'); return };
+	nick = inputUsername.value;
+	welcome.style.display = 'none';
+	uiCanvas.style.display = 'flex';
+	if (usingMobile() || debugForceMobileControls.checked) {
+		mobileControls.style.visibility = 'visible';
 	}
+	socket.emit('join', { "name": nick, "world": selectWorld.value })
 };
+inputUsername.onkeydown = event => joinRoom(event);
+joinWorld.onclick = event => joinRoom(event)
 
 inputChat.onkeydown = event => {
 	if (event.key == 'Enter' && nick) {
@@ -155,12 +155,10 @@ inputChat.onkeydown = event => {
 };
 
 renderer.domElement.addEventListener('click', () => {
-	if (nick) {
-		controls.lock();
-		esc.style.display = 'none';
-		settings.style.display = 'none';
-		credits.style.display = 'none'
-	}
+	if (!verified) return;
+	controls.lock();
+	esc.style.display = 'none';
+	hideWins()
 });
 
 export function createMessage(msg, audio) {

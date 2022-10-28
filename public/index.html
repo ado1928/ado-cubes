@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0">
+
 	<meta charset='utf-8'>
-	<meta name='viewport' content='width=device-width,initial-scale=1'>
 
 	<title>adocubes</title>
 	<link rel='icon' type='image/svg' href='/favicon.svg'>
 	<link rel='stylesheet' href='/global.css'>
+	<link rel='stylesheet' href='/build/bundle.css'>
 
-	<meta property='og:title' content="adocubes"/>
-	<meta property='og:description' content="editable 3D canvas"/>
-	<meta property='og:image' content="/img/icon/cube.png"/>
-	<meta property='theme-color' content="#FFFFFF"/>
+	<meta property='og:title' content="adocubes">
+	<meta property='og:description' content="editable 3D canvas">
+	<meta property='og:image' content="/img/icon/cube.png">
+	<meta property='theme-color' content="#FFFFFF">
+
+	<base target="_blank">
 </head>
 <body>
 	<script async src="./game/es-module-shims/dist/es-module-shims.js"></script>
@@ -19,9 +23,8 @@
 
 	<script type="importmap" crossorigin="anonymous" referrerpolicy="no-referrer" defer>{"imports":{"three":"/game/three/build/three.module.js","io":"/game/socket.io.js"}}</script>
 
-	<script type="module" src="./game/main.js" async></script>
 	<script src="./build/bundle.js" async></script>
-
+	<script type="module" src="./game/main.js" async></script>
 	<script src="./game/joy.js"/>
 	
 	<script src="./game/iocaptcha.js" type="module" defer></script>

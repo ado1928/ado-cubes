@@ -21,3 +21,13 @@ export function coordsValid(coords) {
 	for (let i = 0; i < coords.length; i++) if (isNaN(coords[i])) return false;
 	return true
 }
+
+export function hideWins() {
+	let wins = document.getElementsByClassName('win');
+	for (let i = 0; i < wins.length; i++) wins[i].style.display = 'none'
+}
+
+export function usingMobile() {
+	if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) !== null) return true;
+	return false
+}

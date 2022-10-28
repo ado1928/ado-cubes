@@ -1,3 +1,9 @@
+<style>
+	details[open] {
+		margin-bottom: 12px;
+	}
+</style>
+
 <script>
 	import { onMount } from 'svelte';
 	import Set from './Setting.svelte';
@@ -5,9 +11,9 @@
 	let nonFunctional = "./img/icon/non-functional.png";
 	let refresh = "./img/icon/refresh.png";
 
-	onMount(async () => {
+	onMount(() => {
 		function loadSettings() {
-			let sets = JSON.parse(localStorage.getItem('settings'));
+			let sets = JSON.parse(localStorage.settings);
 			let logsets = {};
 			if (!sets) { console.log('No settings saved'); return }
 			for (let i = 0; i < Object.keys(sets).length; i++) {
@@ -15,8 +21,11 @@
 				{ document.getElementById(Object.keys(sets)[i]).checked = Object.values(sets)[i] } else
 				{ document.getElementById(Object.keys(sets)[i]).value = Object.values(sets)[i] };
 				logsets[Object.keys(sets)[i]] = Object.values(sets)[i];
-			}; console.table(logsets)
-		}; loadSettings();
+			};
+			console.table(logsets)
+		};
+
+		loadSettings();
 
 		for (let e = 0; e < settingsContent.children.length; e++) settingsContent.children[e].style.display = 'none';
 		general.style.display = 'flex'
@@ -26,7 +35,7 @@
 		let settings = {};
 		let sets = document.getElementsByClassName('set');
 		for (let i = 0; i < sets.length; i++) {
-			let set = sets[i].children[sets[i].children.length - 1];
+			let set = sets[i].children[0];
 			console.log(set.type)
 			switch (set.type) {
 				case 'checkbox':	settings[set.id] = set.checked; break
@@ -42,13 +51,11 @@
 	function switchPage(i) {
 		for (let e = 0; e < settingsContent.children.length; e++) settingsContent.children[e].style.display = 'none';
 		document.getElementById(i).style.display = 'flex'
-	};
+	}
 </script>
 
 <div style="height:400px;overflow-y:scroll">
-	<img src={nonFunctional}> - Not functional     <img src={refresh}> - Requires refresh
-
-	<br>
+	<p class="central"><img src={nonFunctional}> - Not functional / <img src={refresh}> - Requires refresh</p>
 
 	<div style="display:flex">
 		<button on:click={() => switchPage('general')}>🗺️ General</button>
@@ -61,7 +68,7 @@
 	<div id="settingsContent">
 		<section id="general">
 			<h2>🗺️ General</h2>
-			<Set id="generalLanguage" type="text" label="Language" value="English"/>
+			<Set id="generalLanguage" type="select" label="Language" value="English"/>
 		</section>
 
 
@@ -70,40 +77,40 @@
 			<details>
 				<summary>🕹️ Movement</summary>
 				<div id="primaryMovement" style="display:flex;gap:24px">
-					<Set id="inputMoveForward" value="KeyW"/>
-					<Set id="inputMoveLeft" value="KeyA"/>
-					<Set id="inputMoveBackward" value="KeyS"/>
-					<Set id="inputMoveRight" value="KeyD"/>
+					<Set keybind id="inputMoveForward" value="KeyW"/>
+					<Set keybind id="inputMoveLeft" value="KeyA"/>
+					<Set keybind id="inputMoveBackward" value="KeyS"/>
+					<Set keybind id="inputMoveRight" value="KeyD"/>
 				</div>
 				<div id="secondaryMovement" style="display:flex;gap:24px">
-					<Set id="inputSecondaryMoveForward" value="ArrowUp"/>
-					<Set id="inputSecondaryMoveLeft" value="ArrowLeft"/>
-					<Set id="inputSecondaryMoveBackward" value="ArrowDown"/>
-					<Set id="inputSecondaryMoveRight" value="ArrowRight"/>
+					<Set keybind id="inputSecondaryMoveForward" value="ArrowUp"/>
+					<Set keybind id="inputSecondaryMoveLeft" value="ArrowLeft"/>
+					<Set keybind id="inputSecondaryMoveBackward" value="ArrowDown"/>
+					<Set keybind id="inputSecondaryMoveRight" value="ArrowRight"/>
 				</div>
-				<Set id="inputMoveUp" label="Fly up" value="Space"/>
-				<Set id="inputMoveDown" label="Fly down" value="Shift"/>
+				<Set keybind id="inputMoveUp" label="Fly up" value="Space"/>
+				<Set keybind id="inputMoveDown" label="Fly down" value="Shift"/>
 			</details>
 			<details>
 				<summary>🧊 Cube placing</summary>
-				<Set id="inputPlaceCubes" label="Place cubes" value="KeyX"/>
-				<Set id="inputRemoveCubes" label="Remove cubes" value="KeyC"/>
+				<Set keybind id="inputPlaceCubes" label="Place cubes" value="KeyX"/>
+				<Set keybind id="inputRemoveCubes" label="Remove cubes" value="KeyC"/>
+				<Set id="inputDisablePR" type="checkbox" label="Disable mouse place and remove"/>
 			</details>
 			<details>
 				<summary>📹 Camera</summary>
-				<Set id="inputIncreaseCameraSpeed" label="Increase camera speed" value="BracketLeft"/>
-				<Set id="inputDecreaseCameraSpeed" label="Decrease camera speed" value="BracketRight"/>
-				<Set id="inputResetCameraSpeed" label="Reset camera speed" value="Backslash"/>
-				<Set id="inputIncreaseCameraZoom" label="Increase camera zoom" value="Equal"/>
-				<Set id="inputDecreaseCameraZoom" label="Decrease camera zoom" value="Minus"/>
-				<Set id="inputResetCameraZoom" label="Reset camera zoom" value="Quote"/>
+				<Set keybind id="inputIncreaseCameraSpeed" label="Increase camera speed" value="BracketLeft"/>
+				<Set keybind id="inputDecreaseCameraSpeed" label="Decrease camera speed" value="BracketRight"/>
+				<Set keybind id="inputResetCameraSpeed" label="Reset camera speed" value="Backslash"/>
+				<Set keybind id="inputIncreaseCameraZoom" label="Increase camera zoom" value="Equal"/>
+				<Set keybind id="inputDecreaseCameraZoom" label="Decrease camera zoom" value="Minus"/>
+				<Set keybind id="inputResetCameraZoom" label="Reset camera zoom" value="Quote"/>
 			</details>
 			<details>
 				<summary>❓ Other</summary>
-				<Set id="inputToggleGrid" label="Toggle grid" value="KeyG"/>
-				<Set id="inputPaletteRowScroll" label="Palette row scroll" value="AltLeft"/>
-				<Set id="inputSettingsShortcut" label="Settings shortcut" value="KeyL"/>
-				<Set id="inputDisablePR" type="checkbox" label="Disable mouse place and remove"/>
+				<Set keybind id="inputToggleGrid" label="Toggle grid" value="KeyG"/>
+				<Set keybind id="inputPaletteRowScroll" label="Palette row scroll" value="AltLeft"/>
+				<Set keybind id="inputSettingsShortcut" label="Settings shortcut" value="KeyL"/>
 			</details>
 		</section>
 
@@ -124,7 +131,7 @@
 
 		<section id="appearance">
 			<h2>🎨 Appearance</h2>
-			<Set icon={refresh} id="miscEnableRandomLogos" type="checkbox" label="Enable random logos in welcome"/>
+			<Set icon={nonFunctional} id="miscEnableRandomLogos" type="checkbox" label="Enable random logos in welcome"/>
 			<Set id="themeChatWidth" type="range" label="Chat width" max="1000" step="10" value="440"/>
 			<Set id="themeChatMaxHeight" type="range" label="Chat max height" max="1000" step="10" value="480"/>
 			<button onclick="document.documentElement.style.setProperty('--backdrop-blur', '0px')">👓</button>
@@ -135,7 +142,6 @@
 			<h2>🐛 Debug</h2>
 			<Set icon={refresh} id="debugForceMobileControls" type="checkbox" label="Force mobile controls"/>
 			<button class="button-icon" onclick="mobileControls.style.visibility = (mobileControls.style.visibility == 'hidden') ? 'visible' : 'hidden'">Toggle mobile controls</button>
-			<Set id="slidertest" type="range" label="slider test"/>
 		</section>
 	</div>
 </div>

@@ -6,6 +6,7 @@
 	export let icon = '';
 	export let label = '';
 	export let value = false;
+	export let keybind = false;
 	export let step = 1;
 	export let max = 100;
 	export let min = 0;
@@ -15,19 +16,16 @@
 		let setting = document.getElementById(id);
 		if (type == 'checkbox') return;
 
-		let keybind = localStorage.getItem(id);
-		if (keybind) id.value = keybind;
+		let value = localStorage.getItem(id);
+		if (value) id.value = value;
 
-		setting.onkeydown = event => {
-			event.preventDefault();
-			setting.value = event.key
+		if (keybind) {
+			setting.onkeydown = event => {
+				event.preventDefault();
+				setting.value = event.code
+			}			
 		}
 	})
-
-	/*function test() {
-		if (type !== 'checkbox') return;
-		this.children[0].checked = !this.children[0].checked
-	}*/
 
 	$: dvalue = value;
 
@@ -35,25 +33,24 @@
 		dvalue = (this.value)
 	}
 
-	let style;
+	let clank;
 	switch (type) {
-		case 'text': style = 'gap:12px'; break;
-		case 'range': style = 'margin-bottom:6px;flex-direction:column;align-items:flex-start'
+		case 'range': clank = 'set set-range'; break
+		default: clank = 'set'
 	}
 </script>
 
 {#if id}
-<div class="set" {style}>
+<div class={clank}>
 	{#if type == 'select'}
 		<select {id}></select>
+		<p class="central">{label} {@html icon}</p>
+	{:else if type == 'range'}
+		<input {id} {type} {step} {max} {min} {value} on:input={displayValue}>
+		<p class="central">{label} <v>{dvalue}</v> {@html icon}</p>
 	{:else}
-		{#if type == 'range'}
-			<p>{label} <v>{dvalue}</v> {@html icon}</p>
-			<input {id} {type} {step} {max} {min} {value} on:click={() => event => event.preventDefault()} on:input={displayValue}>
-		{:else}
-			<input {id} {type} {value} on:click={() => event => event.preventDefault()}>
-			<p>{label} {@html icon}</p>
-		{/if}
+		<input {id} {type} {value}>
+		<p class="central">{label} {@html icon}</p>
 	{/if}
 </div>
 {/if}
