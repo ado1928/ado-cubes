@@ -1,0 +1,63 @@
+[
+	{
+		"id": "general",
+		"label": "🐦 General",
+		"structure": [
+			{ "type": "dropdown", "id": "language", "label": "Language", "options": ["English", "Gibbrish"], "value": "English" },
+			{ "type": "dropdown", "id": "uiScale", "label": "UI Scale", "options": ["1×", "2×"], "value": "1×" },
+			{ "type": "line" },
+			{ "type": "toggle", "id": "randomLogosInWelcome", "label": "Random logos in welcome", "value": false },
+			{ "type": "toggle", "id": "splashTextsInWelcome", "label": "Splash texts in welcome", "value": true },
+			{ "type": "line" },
+			{ "type": "slider", "id": "chatWidth", "label": "Chat width", "min": 100, "max": 1280, "step": 10, "value": 440 },
+			{ "type": "slider", "id": "chatMaxHeight", "label": "Chat max height", "min": 100, "max": 720, "step": 10, "value": 480 }
+		]
+	},
+	{
+		"id": "input",
+		"label": "🎮 Input",
+		"structure": [
+			{ "type": "keybind", "id": "placeCubes", "label": "Place cubes", "value": "KeyX" },
+			{ "type": "keybind", "id": "removeCubes", "label": "Remove cubes", "value": "KeyC" },
+			{ "type": "line" },
+			{ "type": "keybind", "id": "increaseCameraSpeed", "label": "Increase camera speed", "value": "BracketLeft" },
+			{ "type": "keybind", "id": "decreaseCameraSpeed", "label": "Decrease camera speed", "value": "BracketRight" },
+			{ "type": "keybind", "id": "resetCameraSpeed", "label": "Reset camera speed", "value": "Backslash" },
+			{ "type": "keybind", "id": "increaseCameraZoom", "label": "Increase camera zoom", "value": "Equal" },
+			{ "type": "keybind", "id": "decreaseCameraZoom", "label": "Decrease camera zoom", "value": "Minus" },
+			{ "type": "keybind", "id": "resetCameraZoom", "label": "Reset camera zoom", "value": "Quote" },
+			{ "type": "line" },
+			{ "type": "keybind", "id": "toggleGrid", "label": "Toggle grid", "value": "KeyG" },
+			{ "type": "keybind", "id": "settingsShortcut", "label": "Settings shortcut", "value": "KeyL" }
+		]
+	},
+	{
+		"id": "audio",
+		"label": "🔊 Audio",
+		"structure": [
+			{ "type": "slider", "id": "volumeMusic", "label": "Music", "min": 0, "max": 100, "value": 50 },
+			{ "type": "slider", "id": "volumeSFX", "label": "SFX", "min": 0, "max": 100, "value": 50 },
+			{ "type": "slider", "id": "volumeUI", "label": "UI", "min": 0, "max": 100, "value": 50 },
+			{ "type": "line" },
+			{ "type": "toggle", "id": "disablePR", "label": "Disable cube placement sounds", "value": true },
+			{ "type": "toggle", "id": "disablePalette", "label": "Disable palette scrolling sounds", "value": false },
+			{ "type": "toggle", "id": "disableColorPicker", "label": "Disable color picker sound", "value": false },
+			{ "type": "toggle", "id": "disableButton", "label": "Disable button sounds", "value": false },
+			{ "type": "toggle", "id": "disableMessage", "label": "Disable message sounds", "value": false }
+		]
+	},
+	{
+		"id": "gameplay",
+		"label": "🎲 Gameplay",
+		"structure": [
+			{ "type": "toggle", "id": "bVvBb", "label": "tf do i add here", "value": true }
+		]
+	},
+	{
+		"id": "debug",
+		"label": "🐜 Debug",
+		"structure": [
+			{ "type": "toggle", "id": "forceMobileControls", "label": "Force mobile controls", "value": false }
+		]
+	}
+]

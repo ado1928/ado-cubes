@@ -1,4 +1,4 @@
-<div id="chat" class="box">
+<b-x id="chat">
 	<div id="messages"/>
 	<input id="inputChat" type="text">
-</div>
+</b-x>

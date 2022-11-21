@@ -6,28 +6,27 @@
 	--chat-maxheight: 480px;
 	--font-size: 16px;
 	--backdrop-blur: 6px;
+
+	--box-border: 1px solid #484848;
+	--box-outline: 2px solid #0e0e0e;
 }
 
-@font-face	{ font-family: Unifont; src: url('./font/Unifont.ttf') }
-@font-face	{ font-family: Silkscreen; src: url("./font/Mac's Silkscreen.ttf") }
+@font-face	{ font-family: "Unifont 1"; src: url("./font/unifont-15.0.01.otf") }
+@font-face	{ font-family: "Unifont 2"; src: url("./font/unifont_upper-15.0.01.otf") }
+@font-face	{ font-family: "Silkscreen"; src: url("./font/Mac's Silkscreen.ttf") }
 
-/* cursors */
-* { cursor: url(./cursor/default.png) 1 1, auto }
-
-input, #messages p
-{ cursor: url(./cursor/text.png) 8 12.5, text }
-
-button, input[type="checkbox"], input[type="range"], a, #palette *
-{ cursor: url(./cursor/pointer.png) 1 1, pointer }
-
-
-
-html body	{ background: #f5f5ff; margin: 0; font-size: var(--font-size); overflow: hidden }
+html body	{ background: #f5f5ff; margin: 0; overflow: hidden }
 iframe		{ overflow: visible !important; position: absolute !important } /* for iocaptcha */
 textarea	{ color: #fff; background: #0000; font-size: var(--font-size) }
 
+*
+{ cursor: url("./cursor/auto.png"), auto }
+button:hover
+{ cursor: url("./cursor/pointer.png"), pointer }
+input[type="text"]
+{ cursor: url("./cursor/text.png") 10 16, text }
 
-*				{ font-family: 'Unifont'; text-shadow: 2px 2px #000; user-select: none }
+*				{ font-family: 'Unifont 2', 'Unifont 1'; text-shadow: 2px 2px #000; user-select: none }
 .no-text-shadow { text-shadow: none }
 
 h2, h3, strong, summary { margin-bottom: 0; font-family: Silkscreen, Unifont; font-weight: normal }
@@ -41,113 +40,321 @@ a				{ color: #67b9fc; text-decoration: none }
 a *				{ height: auto; pointer-events: none }
 a:hover			{ color: #fff; text-shadow: var(--highlight); text-decoration: underline }
 
-.box {
+b-x, .box {
 	position: absolute;
 	display: flex;
 	color: #fff;
 	background: radial-gradient(circle at 50% 56px, #111d, #000e);
-	outline: 2px solid #000;
-	border: 1px solid #666;
+	border: var(--box-border);
 	border-bottom-width: 3px;
+	outline: var(--box-outline);
 	border-radius: 6px;
 	padding: 6px;
 	backdrop-filter: blur(var(--backdrop-blur));
 	box-shadow: inset 0 0 20px #000;
-	overflow: hidden
-}
-.win {
-	width: -moz-available;
-	width: 640px;
-	height: 500px;
+	gap: 6px;
 }
 
-button {
-	color: #fff;
+
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
 	background: 0;
-	border: 0;
-	outline: 0;
-	border-radius: 4px;
-	padding: 6px;
-	font-family: Unifont;
-	font-size: var(--font-size);
+	margin: 6px;
+	background-clip: padding-box;
 }
-button *		{ pointer-events: none }
-button:hover	{ background: #fff3; padding: 5px; border: 1px solid #fff6; text-shadow: var(--highlight) }
-button:active	{ filter: brightness(0.5) }
 
-.button-icon		{ padding: 1px }
-.button-icon:hover	{ padding: 0; background: #fff3; outline: 1px solid #fff6; text-shadow: var(--highlight) }
-
-#escMenu { top: 72%; flex-direction: column; width: 320px }
-#esc button {
-	height: fit-content;
-	font-family: Unifont;
-	font-size: var(--font-size);
-	animation-name: outHover;
-	animation-duration: 1s;
-	animation-timing-function: cubic-bezier(0, 1, 0, 1);
+::-webkit-scrollbar-thumb {
+	background: #aaa;
+	margin: 6px;
+	background-clip: padding-box;
 }
-#esc button:hover {
-	letter-spacing: 0px;
-	animation-name: inHover;
-	animation-duration: .5s;
-	animation-fill-mode: both;
-	animation-timing-function: cubic-bezier(0, 1, 0, 1);
+
+::-webkit-scrollbar-thumb:hover {
+	background: #fff;
 }
-@keyframes inHover  { from { letter-spacing: 0px } to { letter-spacing: 6px } }
-@keyframes outHover { from { letter-spacing: 6px } to { letter-spacing: 0px } }
+
+	line-vertical {
+		width: 2px;
+		height: auto;
+		background: #666;
+	}
+	line-horizontal {
+		width: -moz-available;
+		width: -webkit-fill-available;
+		height: 2px;;
+		margin: 8px 0;
+		background: #666;
+	}
 
 
-img	{ width: min-content; image-rendering: pixelated }
+
+/*
+	Buttons
+*/
+	button {
+		padding: 2px 6px 4px;
+		color: #fff;
+		background: #0E0E0E;
+		border: 1px solid #484848;
+		outline: 2px solid #0e0e0e;
+		border-radius: 6px;
+		font-size: var(--font-size);
+	}
+	button *		{ pointer-events: none }
+	button:hover	{ background: #fff3; border: 1px solid #fff6; text-shadow: var(--highlight) }
+	button:active	{ color: #000; background: #fff; border: 1px solid #0e0e0e; outline: 2px solid #eaeaea}
+	button:focus:not(:active) {
+		border: 1px solid #fff8;
+		text-shadow: var(--highlight);
+	}
+
+
+	.button-icon {
+		padding: 8px;
+		line-height: 0;
+	}
+	.button-icon:hover	{ background: #fff3; outline: 1px solid #fff6; text-shadow: var(--highlight) }
+	.button-icon:active	{ opacity: 50% }
+	.button-icon:focus {
+		background: #fff3;
+		border: 1px solid #fff6;
+		text-shadow: var(--highlight);
+	}
+
+	.button-toolbar	{
+		padding: 4px;
+		line-height: 0;
+	}
+	.button-toolbar:hover	{ background: #fff3; outline: 1px solid #fff6; text-shadow: var(--highlight) }
+	.button-toolbar:active	{ opacity: 50% }
+	.button-toolbar:focus {
+		background: #fff3;
+		border: 1px solid #fff6;
+		text-shadow: var(--highlight);
+	}
+
+	.button-esc {
+		padding: 6px;
+		background: 0;
+		border: 1px solid #484848;
+		border-radius: 69px;
+		outline: 0;
+		letter-spacing: 0px;
+		transition: background, color .1s;
+		transition-duration: .1s;
+		animation-name: outHover;
+		animation-duration: .5s;
+		animation-timing-function: cubic-bezier(0, 1, 0, 1);
+	}
+	.button-esc:hover {
+		letter-spacing: 8px;
+		transition: background, color .1s;
+		animation-name: inHover;
+		animation-duration: .3s;
+		animation-fill-mode: both;
+		animation-timing-function: cubic-bezier(0, 1, 0, 1);
+	}
+	.button-esc:active {
+		padding: 6px;
+		color: #fff;
+		background: #fff3;
+		border: 1px solid #fff6;
+		outline: 0;
+		opacity: 50%;
+		letter-spacing: 0px;
+		transition: none;
+		animation-name: outHover;
+		animation-duration: .5s;
+		animation-timing-function: cubic-bezier(0, 1, 0, 1);
+	}
+	@keyframes inHover  { from { letter-spacing: 0px } to { letter-spacing: 8px } }
+	@keyframes outHover { from { letter-spacing: 8px } to { letter-spacing: 0px } }
+
+	.button-esc-icon {
+		position: absolute;
+		left: 16px;
+		transform: rotateX(-360deg);
+		transition: left 0.5s cubic-bezier(0, 1, 0, 1), transform 0.2s cubic-bezier(0, 0.64, 0, 0.64)
+	}
+
+	.button-esc:hover .button-esc-icon {
+		left: calc(100% - 32px);
+		transform: rotateX(360deg);
+	}
+
+/*
+### Esc
+*/
+	/*#esc {
+		animation-name: esc-scale;
+		animation-duration: 0.5s;
+		animation-timing-function: cubic-bezier(0.5, 1, 0.5, 1);
+	}
+	@keyframes esc-scale {
+		from { transform: scale(0) translateY(calc(var(--innerHeight)*1)) } to { transform: scale(1) translateY(calc(var(--innerHeight)*0.5)) }
+	}*/
+
+	esc-background {
+		display: block;
+		position: static;
+		width: var(--innerWidth);
+		height: var(--innerHeight);
+		pointer-events: none;
+		/*background: #0005;*/
+		backdrop-filter: blur(6px);
+	}
+
+	esc-menu {
+		display: flex;
+		flex-direction: column;
+		top: 72%;
+		width: 320px;
+		gap: 4px;
+	}
+
+	wind-w {
+		flex-direction: column;
+		width: 600px;
+		height: 92vh;
+		animation-name: escWindow-scale;
+		animation-duration: .2s;
+		animation-timing-function: cubic-bezier(.1, 0, 0, 1);
+	}
+
+	win-heading {
+		display: flex;
+		padding: 8px 16px;
+		background: #00000080;
+		border-bottom: 1px solid #484848;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	win-content {
+		display: flex;
+		max-height: calc(92vh - 59px);
+		overflow-y: scroll;
+		overflow: overlay;
+	}
+
+	win-content > * {
+		width: -moz-available;
+		width: -webkit-fill-available;
+	}
+
+	@keyframes escWindow-scale {
+		from { width: 320px; height: 104px; transform: scale(0) }
+		to { width: 600px; height: 92vh; transform: scale(1) }
+	}
+
+
+/*
+### Settings
+*/
+	settings-tab {
+		display: flex;
+		padding: 8px 16px;
+		border-bottom: 1px solid #484848;
+		justify-content: center;
+		gap: 6px;
+	}
+
+	settings-status {
+		display: flex;
+		padding: 8px 16px;
+		background: #00000080;
+		justify-content: space-between;
+		gap: 6px;
+	}
+
+	tab-content:hover {
+		background: #00000080;
+	}
+
+	game-setting {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.setting-slider {
+		display: flex;
+		flex-direction: column-reverse;
+		margin-top: 6px;
+		gap: 6px;
+	}
+
+
+/*
+### Changelog
+*/
+	game-changelog {
+		display: flex;
+		padding: 16px;
+	}
+
+/*
+### Credits
+*/
+	game-credits::-webkit-scrollbar	{ margin: 0 }
+
+	game-credits {
+		overflow-y: scroll;
+		padding: 16px;
+		text-align: center;
+	}
+
+	game-credits tr td	{ padding: 0 6px }
+
+
+img	{ image-rendering: pixelated }
 canvas { image-rendering: pixelated }
+
 .floaty-adocubes {
 	position: absolute;
 	top: 50%;
 	left: 50%;
+	pointer-events: auto;
 	transform: translate(-50%, -256px);
-	pointer-events: none
+	transition: transform 3717184s;
+}
+.floaty-adocubes:active {
+	z-index: 1928;
+	transition: transform 192.8s;
+	transform: translate(-50%, -1928px) scale(-1)
 }
 
-input[type='text'], select {
+
+input[type='text'],select {
+	height: 26px;
+	margin: 4px 2px;
+	padding: 0 6px;
+	font-size: var(--font-size);
 	color: #fff;
 	background: #000;
 	border: 1px solid #555a;
 	border-radius: 6px;
 	outline: 2px solid #000;
-	height: 26px;
-	margin: 4px 2px;
-	padding: 0 6px;
-	font-family: 'Unifont';
-	font-size: var(--font-size)
 }
+
 input[type="text"]:hover { background: 0 }
 input[type="text"]:focus, select:focus { background: #000; outline-color: #fff }
-input[type="range"] {
-	background: #000;
-	border: 1px solid #555a;
-	border-radius: 8px;
+input[type='range'] {
 	width: -moz-available;
 	width: -webkit-fill-available;
 	height: 8px;
 	margin: 0;
-	-webkit-appearance: none
-}
-input[type="checkbox"] {
-	width: 16px;
-	height: 16px;
+	background: #000;
+	border: 1px solid #555a;
+	border-radius: 8px;
+	-webkit-appearance: none;
 }
 
-::-webkit-scrollbar			{ background: 0; border-radius: 6px; height: 6px; width: 6px; margin: 6px }
-::-webkit-scrollbar-thumb	{ background: #aaa; border-radius: 6px }
-credits::-webkit-scrollbar	{ margin: 0 }
 
-.credits		{ text-align: center; width: auto }
-.credits tr td	{ padding: 0 6px }
+
+
 
 /*.io-captcha { padding-top: 16px }*/
-
-.winHeader		{ opacity: 100%; padding: 8px; font-size: 0 }
-.winHeader *	{ pointer-events: none; }
 
 .win, #uiCanvas, #esc, #playerlist, #sign
 { display: none }
@@ -169,49 +376,19 @@ credits::-webkit-scrollbar	{ margin: 0 }
 	flex-wrap: wrap
 }
 #palette *		{ width: var(--palette-colors-size); height: var(--palette-colors-size) }
-#palette *:hover{ box-shadow: 0 0 4px 2px #000; transform: scale(1.15) }
+#palette *:hover{ transform: scale(1.15); box-shadow: 0 0 4px 2px #000 }
 .selectedbox	{ z-index: 1; outline: 2px solid #fff }
-#toolbar		{ bottom: 6px; left: 50%; transform: translate(-50%, 0); font-size: 0; gap: 6px }
-#coordinates	{ top: 6px; left: 50%; transform: translate(-50%, 0); width: fit-content }
-#chat			{ top: 6px; left: 6px; flex-direction: column; width: 450px; max-height: 264px; gap: 6px }
+
+#toolbar		{ bottom: 6px; left: 50%; font-size: 0; transform: translate(-50%, 0); gap: 6px }
+#coordinates	{ top: 6px; left: 50%; width: fit-content; transform: translate(-50%, 0) }
+
+
+#chat			{ flex-direction: column; top: 6px; left: 6px; width: 450px; max-height: 264px; gap: 6px }
 #inputChat		{ width: auto; margin: 0; margin-top: var(--box-padding) }
 #messages		{ overflow-y: scroll; overflow-wrap: break-word }
 #messages p		{ width: auto; user-select: text }
-#playerlist		{ top: 46px; left: 50%; transform: translate(-50%, 0) }
 
-#sign			{ bottom: 6px; right: 6px }
-#signContent	{ width: 500px; height: 320px; resize: horizontal }
 
-#settingsContent {
-	display: flex;
-	background: #000a;
-	border-radius: 6px;
-	padding: 12px 24px;
-	overflow: overlay;
-}
-#settingsContent section { width: -moz-available; width: -webkit-fill-available; flex-direction: column }
 
-.set {
-	display: flex;
-	gap: 6px;
-	align-items: center;
-	animation-name: setOutHover;
-	animation-duration: .5s;
-	animation-timing-function: cubic-bezier(0, 1, 0, 1)
-}
-.set:hover {
-	letter-spacing: 6px;
-	text-shadow: var(--highlight);
-	animation-name: setInHover;
-	animation-duration: .25s;
-	animation-fill-mode: both;
-	animation-timing-function: cubic-bezier(0, 1, 0, 1)
-}
-.set-range {
-	margin-bottom: 6px;
-	flex-direction: column-reverse;
-	align-items: flex-start
-}
-@keyframes setInHover  { from { letter-spacing: 0px } to { letter-spacing: 2px } }
-@keyframes setOutHover { from { letter-spacing: 2px } to { letter-spacing: 0px } }
-#customMovement *, #customSecondaryMovement * { width: 80px }
+
+

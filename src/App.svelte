@@ -1,18 +1,12 @@
 <script>
-	import Welcome from './ui/win/Welcome.svelte';
+	import Window from 'lib/Window.svelte';
+
+	import Welcome from './ui/Welcome.svelte';
 
 	import Toolbar from './ui/Toolbar.svelte';
-	import Coords from './ui/Coords.svelte'
 	import Chat from './ui/Chat.svelte';
 
-	import Sign from './ui/misc/Sign.svelte';
-	import Playerlist from './ui/misc/Playerlist.svelte';
-
 	import Esc from './ui/Esc.svelte'
-	import Win from './ui/win/Win.svelte';
-	import Settings from './ui/win/Settings.svelte';
-	import Changelog from './ui/win/Changelog.svelte';
-	import Credits from './ui/win/Credits.svelte'
 </script>
 
 <main>
@@ -23,17 +17,12 @@
 	</div>
 
 	<Welcome/>
-	<Playerlist/>
 	<div id="uiCanvas">
 		<img id="crosshair" class="center" src="./img/crosshair.svg" alt="+">
-		<div id="palette" class="box"></div> <Toolbar/> <Coords/> <Chat/>
-		<Sign/>
+		<b-x id="coordinates"/>
+		<b-x id="palette" style="gap:0"/>
+		<Toolbar/> <Chat/>
 	</div>
 
-	<div>
-		<Esc/>
-		<Win id="settings" title="SETTINGS"><Settings/></Win>
-		<Win id="credits" title="CREDITS"><Credits/></Win>
-		<Win id="changelog" title="CHANGELOG"><Changelog/></Win>
-	</div>
+	<Esc/>
 </main>

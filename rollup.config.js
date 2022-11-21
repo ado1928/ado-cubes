@@ -1,5 +1,7 @@
+import path from 'path'
 import svelte from 'rollup-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
+import alias from '@rollup/plugin-alias';
 import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
@@ -23,8 +25,8 @@ function serve() {
 			process.on('SIGTERM', toExit);
 			process.on('exit', toExit);
 		}
-	};
-}
+	}
+};
 
 export default {
 	input: 'src/main.js',
@@ -39,8 +41,15 @@ export default {
 			compilerOptions: { dev: !production },
 			onwarn: (w, h) => { if (w.code === 'a11y-missing-attribute') return; h(w) }
 		}),
-		css({ output: 'bundle.css' }),
 
+		alias({
+			entries: [
+				{ find: 'lib', replacement: path.resolve(__dirname, "src/lib") },
+				{ find: 'public', replacement: path.resolve(__dirname, "public") }
+			]
+		}),
+
+		css({ output: 'bundle.css' }),
 		resolve({ mainFields: ['browser'], browser: true }),
 		commonjs(),
 

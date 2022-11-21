@@ -7,6 +7,8 @@ const path = require('path');
 const textencoder = new TextEncoder();
 const textdecoder = new TextDecoder();
 const moment = require('moment');
+const DOMPurify = require('isomorphic-dompurify');
+const marked = require('marked');
 
 const toml = require('toml');
 let config = toml.parse(fs.readFileSync('./server.toml', 'utf-8'));
@@ -19,22 +21,33 @@ const hook = new Webhook(config.dsbridge.webhookToken);
 function log(msg) { console.log(`  ${moment().format("HH:mm:ss")}\x1b[90m │ \x1b[0m${msg} \x1b[0m`) };
 console.clear(); console.log();
 
-var lastsaved = Date.now();
+const renderer = {
+	strong(text) {
+		return `<b>${text}</b>`
+	},
+	em(text) {
+		return `<i>${text}</i>`
+	}
+}
 
-let worlds = {};
-let worldslist = [];
-fs.readdir('worlds', (err, crows) => { if (err) throw err;
-	crows.forEach((crow, i) => {
-		crow = crow.substr(0, crow.length - 4);
-		worldslist.push(crow);
-		fs.readFile(`./worlds/${crow}.caw`, 'utf8', (err, data) => { if (err) throw err;
-			worlds[crow] = textencoder.encode(data);
-			// worlds[i] = new Uint8Array(262144).fill(0) // Fills the world with nothing. i don't recommend uncomentting it.
-		})
+marked.use({renderer})
+
+function escapeHTML(unsafe) {
+	return unsafe
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&apos;')
+		.replace(/`/g, '&#96;')
+};
+
+function sanitize(data, escape) {
+	data = (escape) ? escapeHTML(data) : data
+	return DOMPurify.sanitize(data, {
+		ALLOWED_TAGS: ['b', 'i', 'strong', 'em']
 	})
-	worldslist.sort()
-	log(`\x1b[90mloaded ${worldslist}`)
-})
+}
 
 // very unnecessary little indicator
 const osIcon = {
@@ -47,6 +60,25 @@ const osIcon = {
 	android: '🤖',
 	aix: '\x1b[38;5;39mIBM\x1b[0m'
 }
+
+
+
+var lastsaved = Date.now();
+
+let worlds = {};
+let worldslist = [];
+fs.readdir('worlds', (err, crows) => { if (err) throw err;
+	crows.forEach((crow, i) => {
+		crow = crow.substr(0, crow.length - 4);
+		worldslist.push(crow);
+		fs.readFile(`./worlds/${crow}.caw`, 'utf8', (err, data) => { if (err) throw err;
+			worlds[crow] = textencoder.encode(data);
+			// worlds[i] = new Uint8Array(262144).fill(0) // Fills the world with nothing. Debugging purposes.
+		})
+	})
+	worldslist.sort()
+	log(`\x1b[90mloaded ${worldslist}`)
+})
 
 function posValid(pos) {
 	let valid = true;
@@ -102,8 +134,12 @@ io.on('connection', socket => {
 	});
 
 	socket.on('message', data => {
-		io.to(socket.world).emit('message', data);
-		log(`\x1b[1m${data.sender}\x1b[0m: ${data.content}`);
+		io.to(socket.world).emit('message', {
+			'sender': escapeHTML(data.sender),
+			'content': sanitize(marked.parseInline(data.content))
+		});
+		log(`\x1b[1m${data.sender}\x1b[0m: ${sanitize(data.content)}`);
+
 		if (config.dsbridge.enabled) {
 			hook.setUsername(data.sender);
 			hook.setAvatar();
@@ -115,15 +151,16 @@ io.on('connection', socket => {
 	socket.on('join', data => {
 		socket.world = data['world'];
 		socket.player = data;
+
 		loadWorld(socket);
-		io.to(socket.world).emit('joinMessage', { 'player': socket.player.name });
+		io.to(socket.world).emit('joinMessage', { 'player': escapeHTML(socket.player.name) });
 		log(`🤝 ${socket.player.name} joined the server`);
 	});
 
 	// Disconnect message & world saving if no players online
 	socket.on('disconnect', reason => {
 		if (!socket.player) return; // Botch fix for 2 sockets per player
-		io.to(socket.world).emit('leaveMessage', { 'player': socket.player.name });
+		io.to(socket.world).emit('leaveMessage', { 'player': escapeHTML(socket.player.name) });
 		log(`👋 ${socket.player.name} left the server`);
 
 		if (!io.sockets.adapter.rooms.has(socket.world)) {
@@ -132,13 +169,15 @@ io.on('connection', socket => {
 		}
 	});
 
+	/*
 	io.of('/').adapter.once('create-room', room => {
-		log(`\x1b[37mroom ${room} was created`);
+		log(`\x1b[37mroom ${room} was created`)
 	});
 
 	io.of('/').adapter.once('join-room', (room, id) => {
-		log(`\x1b[37msocket ${id} joined room ${room}`);
-	});
+		log(`\x1b[37msocket ${id} joined room ${room}`)
+	})
+	*/
 });
 
 // Discord bot bridging

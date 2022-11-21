@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { PointerLockControls } from "./three/examples/jsm/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from './three/examples/jsm/utils/BufferGeometryUtils.js';
-import { playAudio, escapeHTML, hideWins, usingMobile } from './utils.js'
+import { playAudio, toggleDisplay, escapeHTML, usingMobile } from './utils.js'
 import { executeCommand, flook } from './commands.js'
 let socket = io();
 
@@ -136,7 +136,7 @@ function joinRoom(event) {
 	nick = inputUsername.value;
 	welcome.style.display = 'none';
 	uiCanvas.style.display = 'flex';
-	if (usingMobile() || debugForceMobileControls.checked) {
+	if (usingMobile()) {
 		mobileControls.style.visibility = 'visible';
 	}
 	socket.emit('join', { "name": nick, "world": selectWorld.value })
@@ -157,15 +157,13 @@ inputChat.onkeydown = event => {
 renderer.domElement.addEventListener('click', () => {
 	if (!verified) return;
 	controls.lock();
-	esc.style.display = 'none';
-	hideWins()
 });
 
 export function createMessage(msg, audio) {
 	if (!audio) audio = "ui/msg/default";
 	messages.insertAdjacentHTML('beforeend', `<p>${msg}</p>`)
 	scrollToBottom(messages);
-	playAudio(audio, volumeUi.value, !audioDisableMessage.checked)
+	playAudio(audio)
 }
 
 let nick, verified;
@@ -201,10 +199,10 @@ export function verify(uuid) {
 			for (var i = 0; i < colors.length; i++) initWorld(i)
 		});
 
-		socket.on('joinMessage', data => createMessage(`<b>${escapeHTML(data['player'])}</b> joined the server`, "ui/msg/player join"));
-		socket.on('leaveMessage', data => createMessage(`<b>${escapeHTML(data['player'])}</b> left the server`, "ui/msg/player left"));
+		socket.on('joinMessage', data => createMessage(`<b>${data['player']}</b> joined the server`, "ui/msg/player join"));
+		socket.on('leaveMessage', data => createMessage(`<b>${data['player']}</b> left the server`, "ui/msg/player left"));
 
-		socket.on('message', data => createMessage(`<b title="session id ${data['senderId']}" style="cursor:help">${escapeHTML(data['sender'])}:</b> ${escapeHTML(data['content'])}`));
+		socket.on('message', data => createMessage(`<b title="session id ${data['senderId']}" style="cursor:help">${data['sender']}:</b> ${data['content']}`));
 		socket.on('serverMessage', data => createMessage(`<i>${data['content']}</i>`));
 
 		socket.on('place', data => {
@@ -273,7 +271,7 @@ function colorPicker() {
 	if (intersects[0].object.material.type == 'ShaderMaterial') return;
 	if (intersects.length > 0) { color = world.indexOf(intersects[0].object); updateColor() };
 	//console.log(intersects[0].object.material)
-	playAudio('ui/color picker', volumeUi.value, !audioDisableColorPicker.checked)
+	playAudio('ui/color picker')
 }
 
 function updateColor() {
@@ -289,7 +287,7 @@ window.onwheel = event => {
 		if (event.deltaY > 0) color -= colorSkip;
 		if (event.deltaY < 0) color += colorSkip;
 		updateColor();
-		playAudio('ui/palette scroll', volumeUi.value, !audioDisablePalette.checked)
+		playAudio('ui/palette scroll')
 	}
 };
 
@@ -304,11 +302,11 @@ let raycastPlacement = true;
 let cubeType = 'basic'
 
 // Showing or hiding crosshair depending on what placement method/mode(?) the player is using
-placeAtRaycast.onclick = () => { raycastPlacement = true; crosshair.style.display = "block" };
-placeInCamera.onclick = () => { raycastPlacement = false; crosshair.style.display = "none" };
+// placeAtRaycast.onclick = () => { raycastPlacement = true; crosshair.style.display = "block" };
+// placeInCamera.onclick = () => { raycastPlacement = false; crosshair.style.display = "none" };
 
-placeCubeBasic.onclick = () => cubeType = 'basic';
-placeCubeLight.onclick = () => cubeType = 'light';
+// placeCubeBasic.onclick = () => cubeType = 'basic';
+// placeCubeLight.onclick = () => cubeType = 'light';
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 let geometries = []
@@ -328,7 +326,7 @@ function placeCube(pos) {
 			socket.emit('place', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
 		}
 	} else socket.emit('place', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
-	playAudio('sfx/place', volumeSfx.value, !audioDisablePR.checked)
+	playAudio('sfx/place')
 }
 
 function breakCube(pos) {
@@ -344,7 +342,7 @@ function breakCube(pos) {
 			socket.emit('break', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
 		}
 	} else socket.emit('break', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
-	playAudio('sfx/remove', volumeSfx.value, !audioDisablePR.checked)
+	playAudio('sfx/remove')
 };
 
 function addCube(pos, color) {
@@ -352,7 +350,7 @@ function addCube(pos, color) {
 	const matrix = new THREE.Matrix4();
 	const instanceGeometry = geometry.clone();
 
-	if ((color + 1) > colors.length) { color = 0; console.log(`Illegal color! (at ${pos.x} ${pos.y} ${pos.z})`) };
+	if ((color + 1) > colors.length) { color = 0; console.warn(`Illegal color! (at ${pos.x} ${pos.y} ${pos.z})`) };
 
 	cube.position.set(pos.x, pos.y, pos.z);
 	cube.receiveShadow = true;
@@ -412,12 +410,10 @@ function highlightCube() {
 	}
 };
 
-
-
 let moveForward, moveBackward, moveLeft, moveRight, moveUp, moveDown;
 let cameraSpeed = 64.0;
 
-const onKeyDown = event => {
+document.addEventListener('keydown', event => {
 	if (nick && controls.isLocked) {
 		event.preventDefault();
 		switch (event.code) {
@@ -450,17 +446,17 @@ const onKeyDown = event => {
 
 		// Other
 			case "Enter":	controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
-			case 'Tab':		playerlist.style.display = 'block'; break
-			case 'KeyL':	controls.unlock(); settings.style.display = (settings.style.display == "block") ? "none" : "block"; break
+			case 'Tab':		playerlist.style.display = 'flex'; break
+			case 'KeyL':	controls.unlock(); alert("Sorry, this shortcut doesnt work rn :("); break
 			case 'AltLeft':	colorSkip = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row")) * -1; break
-			case 'F1':		uiCanvas.style.display = (uiCanvas.style.display == "block") ? "none" : "block"; break
+			case 'F1':		toggleDisplay(uiCanvas); break
 			case 'F5':		history.go(); break
 			case 'KeyV':	highlightCube(); break
 		}
 	}
-};
+});
 
-const onKeyUp = event => {
+document.addEventListener('keyup', event => {
 	switch (event.code) {
 		case 'KeyW': moveForward = false; break
 		case 'KeyA': moveLeft = false; break
@@ -471,17 +467,19 @@ const onKeyUp = event => {
 		case 'AltLeft': colorSkip = 1; break
 		case 'Tab': playerlist.style.display = 'none'
 	}
-};
+});
 
-const onMouseDown = event => {
-	if (nick && !inputDisablePR.checked && controls.isLocked) {
+const canvas = document.getElementsByTagName("canvas")[0];
+
+canvas.addEventListener('mousedown', event => {
+	if (nick && controls.isLocked) {
 		switch (event.which) {
 			case 1: breakCube(controls.getObject().position); break
 			case 2: colorPicker(); break
 			case 3: placeCube(controls.getObject().position); break
 		}
 	}
-};
+});
 
 function cameraZoom(zoom) {
 	camera.zoom += zoom;
@@ -491,20 +489,7 @@ function cameraZoom(zoom) {
 	camera.updateProjectionMatrix()
 };
 
-const canvas = document.getElementsByTagName("canvas")[0];
-canvas.addEventListener('mousedown', onMouseDown);
-document.addEventListener('keydown', onKeyDown);
-document.addEventListener('keyup', onKeyUp);
-
 function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
-
-// buttons make clicky sounds
-const buttons = document.getElementsByTagName('button');
-for (let i = 0; i < buttons.length; i++) {
-	buttons[i].onmouseover = () => playAudio('ui/hover', volumeUi.value, !audioDisableButton.checked);
-	buttons[i].onmousedown = () => playAudio('ui/mousedown', volumeUi.value, !audioDisableButton.checked)
-	buttons[i].onmouseup = () => playAudio('ui/mouseup', volumeUi.value, !audioDisableButton.checked)
-};
 
 /* what is this supposed to be for? it's not used as far as i see */
 // function regExp(str) { return /[a-zA-Z]/.test(str) };
@@ -512,6 +497,8 @@ for (let i = 0; i < buttons.length; i++) {
 let joyMovementXZ = new JoyStick('joyMovementXZDiv');
 let joyMovementY = new JoyStick('joyMovementYDiv');
 let joyCamera = new JoyStick('joyCameraDiv');
+
+let lastPos;
 
 function render() {
 	requestAnimationFrame(render);
@@ -564,14 +551,19 @@ function render() {
 		//document.querySelector(":root").style.setProperty("--chat-maxheight", themeChatMaxHeight.value)
 	};
 
-	velocity.multiplyScalar(Math.pow(0.02, delta));
+	velocity.multiplyScalar(Math.pow(0.001, delta));
 
 	controls.moveRight(velocity.x * delta);
 	controls.moveForward(velocity.z * delta);
 	controls.getObject().position.y += velocity.y * delta;
 
 	let pos = controls.getObject().position;
-	coords.innerText = "x: " + ~~(pos.x + 0.5) + " ╱ y: " + ~~(pos.y + 0.5) + " ╱ z: " + ~~(pos.z + 0.5);
+	let ponk = `x: ${Math.round(pos.x + .5)} ╱ y: ${Math.round(pos.y + .5)} ╱ z: ${Math.round(pos.z + .5)}`
+
+	if (ponk !== lastPos) {
+		coordinates.innerText = ponk
+		lastPos = ponk
+	};
 
 	if (flook) camera.lookAt(flook[0], flook[1], flook[2])
 
