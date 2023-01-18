@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 import { PointerLockControls } from "./three/examples/jsm/controls/PointerLockControls.js";
-import * as BufferGeometryUtils from "./three/examples/jsm/utils/BufferGeometryUtils.js";
+import * as BufferGeometryUtils from './three/examples/jsm/utils/BufferGeometryUtils.js';
 import { playAudio, toggleDisplay, escapeHTML, usingMobile } from './utils.js'
 import { executeCommand, flook } from './commands.js'
 let socket = io();
 
 const clock = new THREE.Clock();
-const velocity = new THREE.Vector3()
 const scene = new THREE.Scene();
+const velocity = new THREE.Vector3()
 const renderer = new THREE.WebGLRenderer();
 const loader = new THREE.CubeTextureLoader();
 const skybox = loader.load([
@@ -21,6 +21,17 @@ const skybox = loader.load([
 scene.background = skybox;
 export const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 export const controls = new PointerLockControls(camera, renderer.domElement);
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.autoClear = true;
+document.body.appendChild(renderer.domElement);
+
+// spawn position
+camera.position.set(-16, 96, -16);
+camera.rotation.order = 'YXZ';
+camera.lookAt(48, 0, 48);
 
 let vert = `
 varying vec2 vUv;
@@ -46,18 +57,8 @@ void main(void) {
 	gl_FragColor = vec4(color);
 }`
 
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.autoClear = true;
-document.body.appendChild(renderer.domElement);
-
-// spawn position
-camera.position.set(-16, 96, -16);
-camera.rotation.order = 'YXZ';
-camera.lookAt(48, 0, 48);
-
 let world = [];
+
 let geometry, material, grid, pos;
 
 material = new THREE.ShaderMaterial({
@@ -86,6 +87,17 @@ ground.material.depthWrite = false;
 scene.add(ground);
 
 scene.add(controls.getObject());
+
+function resize() {
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.documentElement.style.setProperty('--innerWidth', document.documentElement.clientWidth + 'px');
+	document.documentElement.style.setProperty('--innerHeight', document.documentElement.clientHeight + 'px')
+};
+window.onresize = () => resize(); resize();
+
+
 
 export var sun = new THREE.DirectionalLight(0xffffff, 0.35);
 sun.position.set(20, 90, 50);
@@ -117,27 +129,128 @@ dlight2.position.set(-0.3, 0.6, -0.2);
 dlight2.castShadow = false;
 scene.add(dlight2);
 
-
-
-function resize() {
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	document.documentElement.style.setProperty('--innerWidth', document.documentElement.clientWidth + 'px');
-	document.documentElement.style.setProperty('--innerHeight', document.documentElement.clientHeight + 'px')
+function joinRoom(event) {
+	if (!verified) { captchaPlease.style.display = 'flex'; return }
+	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value) return;
+	if (inputUsername.value.length > 30) { alert('Your name is too long!'); return };
+	nick = inputUsername.value;
+	welcome.style.display = 'none';
+	uiCanvas.style.display = 'flex';
+	if (usingMobile()) {
+		mobileControls.style.visibility = 'visible';
+	}
+	socket.emit('join', { "name": nick, "world": selectWorld.value })
 };
-window.onresize = () => resize(); resize();
+inputUsername.onkeydown = event => joinRoom(event);
+joinWorld.onclick = event => joinRoom(event)
+
+inputChat.onkeydown = event => {
+	if (event.key == 'Enter' && nick) {
+		if (inputChat.value.startsWith("/")) { executeCommand() } else
+		if (inputChat.value) {
+			socket.emit('message', { "sender": nick, "senderId": socket.id, "content": inputChat.value });
+			inputChat.value = ''
+		} else controls.lock()
+	}
+};
 
 renderer.domElement.addEventListener('click', () => {
-	if (nick) controls.lock()
+	if (verified) controls.lock()
 });
 
+export function createMessage(msg, audio) {
+	if (!audio) audio = "ui/msg/default";
+	messages.insertAdjacentHTML('beforeend', `<p>${msg}</p>`)
+	scrollToBottom(messages);
+	playAudio(audio)
+}
 
+let nick, verified;
 
-let color = 0;
-let colorSkip = 1;
-let colors = palette.children;
-let colorMaterials = [];
+export function verify(uuid) {
+	if (!verified) {
+		verified = true;
+
+		socket = io({ extraHeaders: { "uuid": uuid } });
+
+		socket.on('worldslist', arr => {
+			for (let i = 0; i < arr.length; i++) {
+				let option = document.createElement("option");
+				option.text = arr[i];
+				selectWorld.add(option)
+			}
+		})
+
+		socket.on('connected', arr => {
+			const view = new Uint8Array(arr);
+			console.log(view);
+			window.arr = view;
+			cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
+			for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
+				for (let y = 0; y < 64; y++) {
+					for (let z = 0; z < 64; z++) {
+						if (view[x*4096+y*64+z] > 0) {
+							addCube({ 'x': x, 'y': y, 'z': z }, view[x*4096+y*64+z] - 1);
+						}
+					}
+				}
+			};
+			for (var i = 0; i < colors.length; i++) initWorld(i)
+		});
+
+		socket.on('joinMessage', data => createMessage(`<b>${data['player']}</b> joined the server`, "ui/msg/player join"));
+		socket.on('leaveMessage', data => createMessage(`<b>${data['player']}</b> left the server`, "ui/msg/player left"));
+
+		socket.on('message', data => createMessage(`<b title="session id ${data['senderId']}" style="cursor:help">${data['sender']}:</b> ${data['content']}`));
+		socket.on('serverMessage', data => createMessage(`<i>${data['content']}</i>`));
+
+		socket.on('place', data => {
+			let pos = data.pos;
+			addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
+			updateWorld(data.color)
+
+			if (cubeType == 'light') {
+				const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
+				bl.position.set(pos[0], pos[1], pos[2]);
+				bl.castShadow = false;
+				scene.add(bl)
+			}
+		});
+		socket.on('break', data => {
+			let pos = data.pos;
+			removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
+		})
+	};
+};
+
+window.verify = verify;
+verify(); // bypass captcha in debug
+
+// (1) so that the world updates correctly if initialized twice, (2) merge geometries of color
+function initWorld(color) { // 1
+	if (world[color] instanceof THREE.Mesh) {
+		scene.remove(world[color]);
+		world[color].geometry.dispose();
+		world[color].material.dispose();
+		world[color] = undefined
+	};
+
+	let mergedGeometry;
+	if (geometries[color].length > 0) mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[color]); // 2
+	world[color] = new THREE.Mesh(mergedGeometry, materials[color]);
+	world[color].castShadow = true;
+	world[color].receiveShadow = true;
+	sun.shadow.needsUpdate = true;
+	scene.add(world[color])
+};
+
+function updateWorld(color) {
+	if (geometries[color].length > 0) {
+		world[color].geometry.dispose();
+		world[color].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[color])
+	} else world[color].geometry = new THREE.BufferGeometry()
+};
+
 let paletteColors = [
 	'FFFFFF', 'AAAAAA', '777777', '484848', '000000',
 	'991609', 'F3280C', 'FF5610', 'FF832A', 'FFB885',
@@ -157,7 +270,9 @@ for (let i = 0; i < paletteColors.length; i++) {
 	palette.appendChild(paletteColor)
 };
 
-for (var i = 0; i < colors.length; i++) colorMaterials[i] = new THREE.MeshPhongMaterial({ color: colors[i].style.backgroundColor }) // create colorMaterials for colors in palette
+let colors = palette.children;
+let color = 0;
+let colorSkip = 1;
 
 function colorPicker() {
 	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
@@ -181,127 +296,26 @@ window.onwheel = event => {
 		if (event.deltaY > 0) color -= colorSkip;
 		if (event.deltaY < 0) color += colorSkip;
 		updateColor();
-		playAudio('ui/palette scroll');
+		playAudio('ui/palette scroll')
 	}
 };
 
-
-
-function joinRoom(event) {
-	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value) return;
-	if (inputUsername.value.length > 30) return alert('Your name is too long!');
-	nick = inputUsername.value;
-	welcome.style.display = 'none';
-	uiCanvas.style.display = 'flex';
-	if (usingMobile()) mobileControls.style.visibility = 'visible';
-	socket.emit('join', { "name": nick, "world": selectWorld.value })
-};
-inputUsername.onkeydown = event => joinRoom(event);
-joinWorld.onclick = event => joinRoom(event)
-
-inputChat.onkeydown = event => {
-	if (event.key !== 'Enter' || !nick) return;
-	if (inputChat.value.startsWith("/")) { executeCommand() } else
-	if (inputChat.value) {
-		socket.emit('message', { "sender": nick, "senderId": socket.id, "content": inputChat.value });
-		inputChat.value = ''
-	} else controls.lock()
-};
-
-export function createMessage(msg, audio) {
-	if (!audio) audio = "ui/msg/default";
-	messages.insertAdjacentHTML('beforeend', `<p>${msg}</p>`)
-	scrollToBottom(messages);
-	playAudio(audio)
-}
-
-let nick;
-
-socket.on('worldslist', arr => {
-	for (let i = 0; i < arr.length; i++) {
-		let option = document.createElement("option");
-		option.text = arr[i];
-		selectWorld.add(option)
-	}
-})
-
-socket.on('connected', arr => {
-	const view = new Uint8Array(arr);
-	window.arr = view;
-	cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
-	for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
-		for (let y = 0; y < 64; y++) {
-			for (let z = 0; z < 64; z++) {
-				if (view[x*4096+y*64+z] > 0) {
-					addCube({ 'x': x, 'y': y, 'z': z }, view[x*4096+y*64+z] - 1);
-				}
-			}
-		}
-	};
-	for (var i = 0; i < colors.length; i++) initWorld(i)
-});
-
-socket.on('joinMessage', data => createMessage(`<b>${data['player']}</b> joined the server`, "ui/msg/player join"));
-socket.on('leaveMessage', data => createMessage(`<b>${data['player']}</b> left the server`, "ui/msg/player left"));
-
-socket.on('message', data => createMessage(`<b title="session id ${data['senderId']}" style="cursor:help">${data['sender']}:</b> ${data['content']}`));
-socket.on('serverMessage', data => createMessage(`<i>${data['content']}</i>`));
-
-socket.on('place', data => {
-	let pos = data.pos;
-	addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
-	updateWorld(data.color)
-
-	/*if (cubeType == 'light') {
-		const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
-		bl.position.set(pos[0], pos[1], pos[2]);
-		bl.castShadow = false;
-		scene.add(bl)
-	}*/
-});
-socket.on('break', data => {
-	let pos = data.pos;
-	removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
-})
-
-// (1) so that the world updates correctly if initialized twice, (2) merge geometries of color
-function initWorld(color) { // 1
-	if (world[color] instanceof THREE.Mesh) {
-		scene.remove(world[color]);
-		world[color].geometry.dispose();
-		world[color].material.dispose();
-		world[color] = undefined
-	};
-
-	let mergedGeometry;
-	if (geometries[color].length > 0) mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(geometries[color]); // 2
-	world[color] = new THREE.Mesh(mergedGeometry, colorMaterials[color]);
-	world[color].castShadow = true;
-	world[color].receiveShadow = true;
-	sun.shadow.needsUpdate = true;
-	scene.add(world[color])
-};
-
-function updateWorld(color) {
-	if (geometries[color].length > 0) {
-		world[color].geometry.dispose();
-		world[color].geometry = BufferGeometryUtils.mergeBufferGeometries(geometries[color])
-	} else world[color].geometry = new THREE.BufferGeometry()
-};
-
-
-
+let materials = []
+for (var i = 0; i < colors.length; i++) materials[i] = new THREE.MeshPhongMaterial({ color: colors[i].style.backgroundColor }) // create materials for colors in palette
 
 
 
 let raycaster = new THREE.Raycaster();
 
-// is this ok?
-window.game = {
-	raycastPlacement: true,
-	movementMethod: 'fly',
-	cubeType: 'basic'
-};
+let raycastPlacement = true;
+let cubeType = 'basic'
+
+// Showing or hiding crosshair depending on what placement method/mode(?) the player is using
+// placeAtRaycast.onclick = () => { raycastPlacement = true; crosshair.style.display = "block" };
+// placeInCamera.onclick = () => { raycastPlacement = false; crosshair.style.display = "none" };
+
+// placeCubeBasic.onclick = () => cubeType = 'basic';
+// placeCubeLight.onclick = () => cubeType = 'light';
 
 geometry = new THREE.BoxGeometry(1, 1, 1);
 let geometries = []
@@ -309,7 +323,7 @@ let cubes = [];
 for (var i = 0; i < colors.length; i++) geometries[i] = [];
 
 function placeCube(pos) {
-	if (game.raycastPlacement) {
+	if (raycastPlacement) {
 		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 		const intersects = raycaster.intersectObjects(scene.children);
 		if (intersects.length > 0) {
@@ -325,7 +339,7 @@ function placeCube(pos) {
 }
 
 function breakCube(pos) {
-	if (game.raycastPlacement) {
+	if (raycastPlacement) {
 		raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
 		const intersects = raycaster.intersectObjects(scene.children);
 		if (intersects.length > 0) {
@@ -341,7 +355,7 @@ function breakCube(pos) {
 };
 
 function addCube(pos, color) {
-	let cube = new THREE.Mesh(geometry, colorMaterials[color], 100);
+	let cube = new THREE.Mesh(geometry, materials[color], 100);
 	const matrix = new THREE.Matrix4();
 	const instanceGeometry = geometry.clone();
 
@@ -413,7 +427,7 @@ document.addEventListener('keydown', event => {
 		event.preventDefault();
 		switch (event.code) {
 		// Movement
-			case 'KeyW': case 'ArrowUp':		moveForward = true; break
+			case 'KeyW': case 'ArrowUp':	moveForward = true; break
 			case 'KeyA': case 'ArrowLeft':	moveLeft = true; break
 			case 'KeyS': case 'ArrowDown':	moveBackward = true; break
 			case 'KeyD': case 'ArrowRight':	moveRight = true; break
@@ -422,7 +436,7 @@ document.addEventListener('keydown', event => {
 
 		// Camera
 			/*
-			case 'ArrowUp':		camera.rotation.x += 0.1; camera.updateProjectionMatrix(); break
+			case 'ArrowUp':			camera.rotation.x += 0.1; camera.updateProjectionMatrix(); break
 			case 'ArrowLeft':		camera.rotation.y += 0.1; camera.updateProjectionMatrix(); break
 			case 'ArrowDown':		camera.rotation.x -= 0.1; camera.updateProjectionMatrix(); break
 			case 'ArrowRight':		camera.rotation.y -= 0.1; camera.updateProjectionMatrix(); break
@@ -440,13 +454,13 @@ document.addEventListener('keydown', event => {
 			case 'KeyG': grid.visible = !grid.visible; break
 
 		// Other
-			case "Enter":		controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
+			case "Enter":	controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
 			case 'Tab':		playerlist.style.display = 'flex'; break
-			case 'KeyL':		controls.unlock(); alert("Sorry, this shortcut doesnt work rn :("); break
+			case 'KeyL':	controls.unlock(); alert("Sorry, this shortcut doesnt work rn :("); break
 			case 'AltLeft':	colorSkip = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row")) * -1; break
 			case 'F1':		toggleDisplay(uiCanvas); break
 			case 'F5':		history.go(); break
-			case 'KeyV':		highlightCube(); break
+			case 'KeyV':	highlightCube(); break
 		}
 	}
 });
@@ -486,6 +500,9 @@ function cameraZoom(zoom) {
 
 function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
 
+/* what is this supposed to be for? it's not used as far as i see */
+// function regExp(str) { return /[a-zA-Z]/.test(str) };
+
 let joyMovementXZ = new JoyStick('joyMovementXZDiv');
 let joyMovementY = new JoyStick('joyMovementYDiv');
 let joyCamera = new JoyStick('joyCameraDiv');
@@ -503,7 +520,7 @@ function render() {
 	let joyCamX = joyCamera.GetX();
 	let joyCamY = joyCamera.GetY();
 
-	if (nick) {
+	if (verified) {
 		if (joyMoveXZ.includes("N")) moveForward = true;
 		if (joyMoveXZ.includes("W")) moveLeft = true;
 		if (joyMoveXZ.includes("S")) moveBackward = true;

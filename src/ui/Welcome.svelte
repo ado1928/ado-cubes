@@ -33,9 +33,6 @@
 			World: <select id="selectWorld"></select>
 			<Button id="joinWorld">Join</Button>
 		</div>
-
-		<p id="captchaPlease" style="display:none;"><br>Please take the captcha! If you can't see it, please refresh page.</p>
-		<div class="io-captcha" data-pubkey="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADO" data-theme="dark" data-scale="1.0" data-font="mono" data-callback-solve="solve" data-widgetid="iocaptcha"></div>
 	</b-x>
 
 	<b-x style="gap:6px;bottom:6px;left:50%;transform:translateX(-50%)">

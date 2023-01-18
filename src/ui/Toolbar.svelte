@@ -2,14 +2,10 @@
 	import Button from 'lib/Button.svelte';
 	import { toggleDisplay } from 'public/game/utils.js';
 
-	let placementMethod = 0;
-	let movementMethod = 0;
-
-	function switchPlacementMethod() {
-		placementMethod = (placementMethod == 0) ? 1 : 0
+	function changePlacementMethod() {
 	}
-	function switchMovementMethod() {
-		movementMethod = (movementMethod == 0) ? 1 : 0
+
+	function changeMovementMethod() {
 	}
 </script>
 
@@ -29,8 +25,8 @@
 	<Button type="button-toolbar" on:click={() => toggleDisplay(cubeTypes)}>
 		<img src="./img/icon/cube type/basic.png">
 	</Button>
-	<Button type="button-toolbar" on:click={switchPlacementMethod}>
-		{#if placementMethod == 0}
+	<Button type="button-toolbar" on:click={changePlacementMethod}>
+		{#if true}
 			<img src="./img/icon/placement/on raycast.png" alt="place at raycast">
 		{:else}
 			<img src="./img/icon/placement/in camera.png" alt="place in camera">
@@ -39,9 +35,8 @@
 
 	<line-vertical/>
 
-
-	<Button type="button-toolbar" on:click={switchMovementMethod}>
-		{#if movementMethod == 0}
+	<Button type="button-toolbar" on:click={changeMovementMethod}>
+		{#if true}
 			🕊️
 		{:else}
 			🚶

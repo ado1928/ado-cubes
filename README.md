@@ -4,17 +4,42 @@
 
 
 
-<h2 align=center>Credits</h2>
+<h2 align=center>setup</h2>
 
-<h3 align=center>Developers</h3>
+To get a server up running, make sure you've got these three:
+
+- [Git](https://git-scm.com)
+- [Node.js](https://nodejs.org) *(LTS or Current, doesn't matter)*
+- npm *(or pnpm)*
+
+Then, run the following:
+
+```
+git clone git@github.com:ado1928/ado-cubes.git
+cd ado-cubes
+npm install
+npm run build
+node .
+```
+
+<h2 align=center>contribution</h2>
+
+> idk what to put here yet
+
+
+
+<details>
+<summary><h3>credits</h3></summary>
+
+<h3 align=center>developers</h3>
 
 <p align=center>
-	<a href="https://github.com/ado1928"><img src="https://github.com/ado1928.png" height="64"><img src="./images/ado1928 dev text.png"></a>
-	<a href="https://github.com/ifritdiezel"><img src="https://github.com/ifritdiezel.png" height="64"><img src="./images/ifritdiezel dev text.png"></a>
-	<a href="https://github.com/macimas"><img src="https://github.com/macimas.png" height="64"><img src="./images/macimas dev text.png"></a>
+	<a href="https://github.com/ado1928"><img src="./images/credits/ado1928.png"></a>
+	<a href="https://github.com/ifritdiezel"><img src="./images/credits/ifritdiezel.png"></a>
+	<a href="https://github.com/macimas"><img src="./images/credits/macimas.png"></a>
 </p>
 
-<h3 align=center>Contributors</h3>
+<h3 align=center>contributors</h3>
 
 <table align=center>
 	<tr>
@@ -25,24 +50,7 @@
 </table>
 
 <p align=center>Made with <a href="https://nodejs.org">Node.js</a>, <a href="https://threejs.org">Three.js</a>, and <a href="https://svelte.dev">Svelte</a>. Sounds generated with <a href="https://sfxr.me">jsfxr</a></p>
-
-
-
-
-<h2 align=center>Contribution</h2>
-
-Make sure you've got these two:
-
-- [Node.js](https://nodejs.org) (LTS or Current, doesn't matter)
-- npm
-
-Then, install dependencies with npm. Make sure to run `npm run build` to build front-end.
-
-To start a server, run `node .` in the project folder.
-
-If you make any changes to the front-end in the src folder, make sure to run `npm run build` to view your changes. You can also run `npm run dev` to automatically build it whenever there are changes.
-
-
+</details>
 
 <br><br><br><br><br><br><br>
 
