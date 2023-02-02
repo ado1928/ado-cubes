@@ -1,12 +1,13 @@
 <script>
+	import Box from "lib/Box.svelte";
 	import Window from 'lib/Window.svelte';
 
-	import Welcome from './ui/Welcome.svelte';
+	import Welcome from './Welcome.svelte';
 
-	import Toolbar from './ui/Toolbar.svelte';
-	import Chat from './ui/Chat.svelte';
+	import Toolbar from './canvas/Toolbar.svelte';
+	import Chat from './canvas/Chat.svelte';
 
-	import Esc from './ui/Esc.svelte'
+	import Esc from './esc/Esc.svelte'
 </script>
 
 <main>
@@ -19,8 +20,8 @@
 	<Welcome/>
 	<div id="uiCanvas">
 		<img id="crosshair" class="center" src="./img/crosshair.svg" alt="+">
-		<b-x id="coordinates"/>
-		<b-x id="palette" style="gap:0"/>
+		<div id="coordinates" class="coordinates"/>
+		<Box id="palette" style="gap:0"/>
 		<Toolbar/> <Chat/>
 	</div>
 

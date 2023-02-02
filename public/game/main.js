@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { PointerLockControls } from "./three/examples/jsm/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from "./three/examples/jsm/utils/BufferGeometryUtils.js";
-import { playAudio, toggleDisplay, escapeHTML, usingMobile } from './utils.js'
-import { executeCommand, flook } from './commands.js'
-let socket = io();
+import { playAudio, toggleDisplay, usingMobile } from './utils.js';
+import { config } from './config.js';
 
+let socket = io();
 const clock = new THREE.Clock();
-const velocity = new THREE.Vector3()
+const velocity = new THREE.Vector3();
+const raycaster = new THREE.Raycaster();
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer();
 const loader = new THREE.CubeTextureLoader();
@@ -17,10 +18,11 @@ const skybox = loader.load([
 	'/game/sky/skybox_bottom.png',
 	'/game/sky/skybox_front.png',
 	'/game/sky/skybox_back.png'
-]);
-scene.background = skybox;
+]); scene.background = skybox
+
 export const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 export const controls = new PointerLockControls(camera, renderer.domElement);
+
 
 let vert = `
 varying vec2 vUv;
@@ -52,7 +54,6 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.autoClear = true;
 document.body.appendChild(renderer.domElement);
 
-// spawn position
 camera.position.set(-16, 96, -16);
 camera.rotation.order = 'YXZ';
 camera.lookAt(48, 0, 48);
@@ -66,7 +67,6 @@ material = new THREE.ShaderMaterial({
 	fragmentShader: frag,
 	side: THREE.BackSide
 });
-
 material.transparent = true;
 geometry = new THREE.BoxGeometry(64, 64, 64);
 grid = new THREE.Mesh(geometry, material);
@@ -119,18 +119,169 @@ scene.add(dlight2);
 
 
 
+window.addEventListener("resize", (resize(), resize))
 function resize() {
+	renderer.setSize(window.innerWidth, window.innerHeight);
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	document.documentElement.style.setProperty('--innerWidth', document.documentElement.clientWidth + 'px');
-	document.documentElement.style.setProperty('--innerHeight', document.documentElement.clientHeight + 'px')
-};
-window.onresize = () => resize(); resize();
 
-renderer.domElement.addEventListener('click', () => {
-	if (nick) controls.lock()
+	let docEl = document.documentElement;
+	docEl.style.setProperty('--innerWidth', docEl.clientWidth + 'px');
+	docEl.style.setProperty('--innerHeight', docEl.clientHeight + 'px')
+};
+
+renderer.domElement.addEventListener('click', () => { if (nick) controls.lock() });
+
+
+
+let nick;
+
+function joinRoom(event) {
+	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value) return;
+	if (inputUsername.value.length > 30) return alert('Your name is too long!');
+	nick = inputUsername.value;
+	welcome.style.display = 'none';
+	uiCanvas.style.display = 'flex';
+	socket.emit('join', { "name": nick, "world": selectWorld.value })
+};
+inputUsername.onkeydown = event => joinRoom(event);
+joinWorld.onclick = event => joinRoom(event)
+
+inputChat.onkeydown = event => {
+	if (event.key !== 'Enter' || !nick) return;
+	if (inputChat.value) {
+		socket.emit('message', { "sender": nick, "senderId": socket.id, "content": inputChat.value });
+		inputChat.value = ''
+	} else controls.lock()
+};
+
+export function createMessage(msg, audio) {
+	if (!audio) audio = "ui/msg/default";
+	messages.insertAdjacentHTML('afterbegin', `<p>${msg}</p>`)
+	playAudio(audio, config.uiVolume)
+}
+
+socket.on('worldslist', arr => {
+	if (selectWorld.length > 0) return;
+	for (let i = 0; i < arr.length; i++) {
+		let option = document.createElement("option");
+		option.text = arr[i];
+		selectWorld.add(option)
+	}
+})
+
+socket.on('connected', arr => {
+	const view = new Uint8Array(arr);
+	window.arr = view;
+	cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
+	for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
+		for (let y = 0; y < 64; y++) {
+			for (let z = 0; z < 64; z++) {
+				if (view[x*4096+y*64+z] > 0) {
+					createCube({ 'x': x, 'y': y, 'z': z }, view[x*4096+y*64+z] - 1);
+				}
+			}
+		}
+	};
+	for (var i = 0; i < colors.length; i++) initWorld(i)
 });
+
+socket.on('joinMessage', data => createMessage(`<b>${data.player}</b> joined the server`, "ui/msg/player join"));
+socket.on('leaveMessage', data => createMessage(`<b>${data.player}</b> left the server`, "ui/msg/player left"));
+
+socket.on('message', data => {console.log(data); createMessage(`<b title="session id ${data.sender.id}" style="cursor:help">${data.sender.name}:</b> ${data.content}`)});
+socket.on('serverMessage', data => createMessage(`<i>${data.content}</i>`));
+
+socket.on('place', data => {
+	let pos = data.pos;
+	createCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
+	updateWorld(data.color)
+
+	/*if (cubeType == 'light') {
+		const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
+		bl.position.set(pos[0], pos[1], pos[2]);
+		bl.castShadow = false;
+		scene.add(bl)
+	}*/
+});
+socket.on('break', data => {
+	let pos = data.pos;
+	destroyCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
+});
+
+
+
+
+let moveForward, moveBackward, moveLeft, moveRight, moveUp, moveDown;
+let cameraSpeed = 64.0;
+
+document.addEventListener('keydown', event => {
+	if (!nick || !controls.isLocked) return;
+	event.preventDefault();
+	switch (event.code) {
+	// Movement
+		case 'KeyW': case 'ArrowUp':	moveForward = true; break
+		case 'KeyA': case 'ArrowLeft':	moveLeft = true; break
+		case 'KeyS': case 'ArrowDown':	moveBackward = true; break
+		case 'KeyD': case 'ArrowRight':	moveRight = true; break
+		case 'Space':					moveUp = true; break
+		case 'ShiftLeft':				moveDown = true; break
+
+	// Camera
+		/*
+		case 'ArrowUp':			camera.rotation.x += 0.1; camera.updateProjectionMatrix(); break
+		case 'ArrowLeft':		camera.rotation.y += 0.1; camera.updateProjectionMatrix(); break
+		case 'ArrowDown':		camera.rotation.x -= 0.1; camera.updateProjectionMatrix(); break
+		case 'ArrowRight':		camera.rotation.y -= 0.1; camera.updateProjectionMatrix(); break
+		//*/
+		case config.decreaseCameraSpeed:	cameraSpeed -= (event.altKey) ? 32 : 8; break
+		case config.increaseCameraSpeed:	cameraSpeed += (event.altKey) ? 32 : 8; break
+		case config.resetCameraZoom:		cameraSpeed = 64.0; break
+		case config.increaseCameraZoom:		cameraZoom((event.altKey) ? -.3 : -.1); break
+		case config.decreaseCameraZoom:		cameraZoom((event.altKey) ? +.3 : +.1); break
+		case config.resetCameraZoom:		cameraZoom(); break
+
+	// Placement
+		case config.placeCubes:	placeCube(controls.getObject().position); break
+		case config.breakCubes:	breakCube(controls.getObject().position); break
+		case config.toggleGrid:	grid.visible = !grid.visible; break
+
+	// Other
+		case "Enter":	controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
+		case 'Tab':		playerlist.style.display = 'flex'; break
+		case config.settingsShortcut: controls.unlock(); settings.style.display = 'flex'; break
+		case 'AltLeft':	colorSkip = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--palette-rows")) * -1; break
+		case 'F1':		toggleDisplay(uiCanvas); break
+		case 'F5':		history.go(); break
+		case 'KeyV':	highlightCube(); break
+	}
+});
+
+document.addEventListener('keyup', event => {
+	switch (event.code) {
+		case 'KeyW': moveForward = false; break
+		case 'KeyA': moveLeft = false; break
+		case 'KeyS': moveBackward = false; break
+		case 'KeyD': moveRight = false; break
+		case 'Space': moveUp = false; break
+		case 'ShiftLeft': moveDown = false; break
+		case 'AltLeft': colorSkip = 1; break
+		//case 'Tab': playerlist.style.display = 'none'
+	}
+});
+
+document.getElementsByTagName("canvas")[0].addEventListener('mousedown', event => {
+	if (!nick || !controls.isLocked) return;
+	switch (event.which) {
+		case 1: breakCube(controls.getObject().position); break
+		case 2: colorPicker(); break
+		case 3: placeCube(controls.getObject().position);
+	}
+});
+
+
+
+
 
 
 
@@ -151,6 +302,8 @@ let paletteColors = [
 	'FF7384', '49230A', '814A17', 'D17A2B', 'FFB470'
 ];
 
+
+
 for (let i = 0; i < paletteColors.length; i++) {
 	let paletteColor = document.createElement('div');
 	paletteColor.style.background = '#' + paletteColors[i];
@@ -165,104 +318,130 @@ function colorPicker() {
 	if (intersects[0].object.material.type == 'ShaderMaterial') return;
 	if (intersects.length > 0) { color = world.indexOf(intersects[0].object); updateColor() };
 	//console.log(intersects[0].object.material)
-	playAudio('ui/color picker')
+	playAudio('ui/color picker', config.uiVolume)
 }
 
 function updateColor() {
 	color = (color % colors.length + colors.length) % colors.length;
 	for (let i = 0; i < colors.length; i++) colors[i].className = '';
-	colors[color].className = "selectedbox"
+	colors[color].className = "selected-color"
 };
 for (let i = 0; i < colors.length; i++) colors[i].onclick = () => { color = i; updateColor() };
 updateColor();
 
 window.onwheel = event => {
 	if (controls.isLocked) {
-		if (event.deltaY > 0) color -= colorSkip;
-		if (event.deltaY < 0) color += colorSkip;
+		color += (event.deltaY < 0) ? colorSkip : colorSkip * -1
 		updateColor();
-		playAudio('ui/palette scroll');
+		playAudio('ui/palette scroll', config.uiVolume);
 	}
 };
 
+geometry = new THREE.BoxGeometry(1, 1, 1);
+let geometries = []
+let cubes = [];
+for (var i = 0; i < colors.length; i++) geometries[i] = [];
 
 
-function joinRoom(event) {
-	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value) return;
-	if (inputUsername.value.length > 30) return alert('Your name is too long!');
-	nick = inputUsername.value;
-	welcome.style.display = 'none';
-	uiCanvas.style.display = 'flex';
-	if (usingMobile()) mobileControls.style.visibility = 'visible';
-	socket.emit('join', { "name": nick, "world": selectWorld.value })
-};
-inputUsername.onkeydown = event => joinRoom(event);
-joinWorld.onclick = event => joinRoom(event)
 
-inputChat.onkeydown = event => {
-	if (event.key !== 'Enter' || !nick) return;
-	if (inputChat.value.startsWith("/")) { executeCommand() } else
-	if (inputChat.value) {
-		socket.emit('message', { "sender": nick, "senderId": socket.id, "content": inputChat.value });
-		inputChat.value = ''
-	} else controls.lock()
-};
 
-export function createMessage(msg, audio) {
-	if (!audio) audio = "ui/msg/default";
-	messages.insertAdjacentHTML('beforeend', `<p>${msg}</p>`)
-	scrollToBottom(messages);
-	playAudio(audio)
+export function cameraZoom(zoom) {
+	camera.zoom = Math.min(Math.max(camera.zoom + zoom, 1), 8);
+	camera.updateProjectionMatrix()
 }
 
-let nick;
+let hcube, hcube2;
 
-socket.on('worldslist', arr => {
-	for (let i = 0; i < arr.length; i++) {
-		let option = document.createElement("option");
-		option.text = arr[i];
-		selectWorld.add(option)
+function highlightCube() {
+	scene.remove(hcube);
+	scene.remove(hcube2);
+	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
+	const intersects = raycaster.intersectObjects(scene.children);
+	if (intersects[0].object.material.type == 'ShaderMaterial') return;
+
+	let hgeometry = new THREE.BoxGeometry(1.1, 1.1, 1.1);
+	if (intersects.length > 0) {
+		let pos = new THREE.Vector3();
+		pos.sub(intersects[0].face.normal);
+		pos.multiplyScalar(0.5);
+		pos.add(intersects[0].point);
+		pos = new THREE.Vector3(~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5));
+
+		hcube = new THREE.Mesh(hgeometry, new THREE.MeshToonMaterial({ color: intersects[0].object.material.color.r + intersects[0].object.material.color.g + intersects[0].object.material.color.b < 0.1 ? 0xffffffff : 0x000000, depthTest: false }));
+		hcube2 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: intersects[0].object.material.color, depthTest: false }));
+		hcube.position.set(pos.x, pos.y, pos.z);
+		hcube2.position.set(pos.x, pos.y, pos.z);
+		scene.add(hcube);
+		scene.add(hcube2)
 	}
-})
+};
 
-socket.on('connected', arr => {
-	const view = new Uint8Array(arr);
-	window.arr = view;
-	cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
-	for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
-		for (let y = 0; y < 64; y++) {
-			for (let z = 0; z < 64; z++) {
-				if (view[x*4096+y*64+z] > 0) {
-					addCube({ 'x': x, 'y': y, 'z': z }, view[x*4096+y*64+z] - 1);
+function placeCube(pos) {
+	if (true) {
+		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
+		const intersects = raycaster.intersectObjects(scene.children);
+		if (intersects.length > 0) {
+			pos = new THREE.Vector3();
+			(intersects[0].object == grid) ? pos.sub(intersects[0].face.normal) : pos.add(intersects[0].face.normal);
+			pos.multiplyScalar(0.5);
+			pos.add(intersects[0].point);
+		}
+	}
+	socket.emit("place", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
+	playAudio('sfx/place', config.sfxVolume)
+}
+
+function breakCube(pos) {
+	if (true) {
+		raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
+		const intersects = raycaster.intersectObjects(scene.children);
+		if (intersects.length > 0) {
+			pos = new THREE.Vector3();
+			pos.sub(intersects[0].face.normal);
+			pos.multiplyScalar(0.5);
+			pos.add(intersects[0].point);
+		}
+	}
+	socket.emit("break", { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
+	playAudio('sfx/remove', config.sfxVolume)
+};
+
+function createCube(pos, color) {
+	let cube = new THREE.Mesh(geometry, colorMaterials[color], 100);
+	const matrix = new THREE.Matrix4();
+	const instanceGeometry = geometry.clone();
+
+	if ((color + 1) > colors.length) { color = 0; console.warn(`Illegal color at ${pos.x} ${pos.y} ${pos.z})`) };
+
+	cube.position.set(pos.x, pos.y, pos.z);
+	cube.receiveShadow = true;
+	cube.castShadow = true;
+	cube.color = color;
+	cubes.push(cube);
+
+	matrix.compose(pos, new THREE.Quaternion(1, 0, 0, 0), new THREE.Vector3(1, 1, 1));
+	instanceGeometry.applyMatrix4(matrix);
+	cube.igeometry = instanceGeometry;
+	geometries[color].push(instanceGeometry);
+	sun.shadow.needsUpdate = true
+};
+
+function destroyCube(pos) {
+	for (let i = 0; i < cubes.length; i++) {
+		let e = cubes[i];
+		if (~~e.position.x == ~~(pos.x + 0.5) && ~~e.position.y == ~~(pos.y + 0.5) && ~~e.position.z == ~~(pos.z + 0.5)) {
+			let c = cubes.splice(i, 1)[0];
+			for (let j = 0; j < geometries[e.color].length; j++) {
+				if (c.igeometry.id == geometries[e.color][j].id) {
+					geometries[e.color].splice(j, 1);
+					sun.shadow.needsUpdate = true;
+					updateWorld(e.color);
+					return
 				}
 			}
 		}
-	};
-	for (var i = 0; i < colors.length; i++) initWorld(i)
-});
-
-socket.on('joinMessage', data => createMessage(`<b>${data['player']}</b> joined the server`, "ui/msg/player join"));
-socket.on('leaveMessage', data => createMessage(`<b>${data['player']}</b> left the server`, "ui/msg/player left"));
-
-socket.on('message', data => createMessage(`<b title="session id ${data['senderId']}" style="cursor:help">${data['sender']}:</b> ${data['content']}`));
-socket.on('serverMessage', data => createMessage(`<i>${data['content']}</i>`));
-
-socket.on('place', data => {
-	let pos = data.pos;
-	addCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
-	updateWorld(data.color)
-
-	/*if (cubeType == 'light') {
-		const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
-		bl.position.set(pos[0], pos[1], pos[2]);
-		bl.castShadow = false;
-		scene.add(bl)
-	}*/
-});
-socket.on('break', data => {
-	let pos = data.pos;
-	removeCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
-})
+	}
+};
 
 // (1) so that the world updates correctly if initialized twice, (2) merge geometries of color
 function initWorld(color) { // 1
@@ -289,206 +468,11 @@ function updateWorld(color) {
 	} else world[color].geometry = new THREE.BufferGeometry()
 };
 
-
-
-
-
-
-let raycaster = new THREE.Raycaster();
-
-// is this ok?
-window.game = {
-	raycastPlacement: true,
-	movementMethod: 'fly',
-	cubeType: 'basic'
-};
-
-geometry = new THREE.BoxGeometry(1, 1, 1);
-let geometries = []
-let cubes = [];
-for (var i = 0; i < colors.length; i++) geometries[i] = [];
-
-function placeCube(pos) {
-	if (game.raycastPlacement) {
-		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
-		const intersects = raycaster.intersectObjects(scene.children);
-		if (intersects.length > 0) {
-			let pos = new THREE.Vector3();
-			(intersects[0].object == grid) ? pos.sub(intersects[0].face.normal) : pos.add(intersects[0].face.normal);
-			pos.multiplyScalar(0.5);
-			pos.add(intersects[0].point);
-			//console.log(pos);
-			socket.emit('place', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color })
-		}
-	} else socket.emit('place', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)], "color": color });
-	playAudio('sfx/place')
-}
-
-function breakCube(pos) {
-	if (game.raycastPlacement) {
-		raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
-		const intersects = raycaster.intersectObjects(scene.children);
-		if (intersects.length > 0) {
-			let pos = new THREE.Vector3();
-			pos.sub(intersects[0].face.normal);
-			pos.multiplyScalar(0.5);
-			pos.add(intersects[0].point);
-			// console.log(pos);
-			socket.emit('break', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] })
-		}
-	} else socket.emit('break', { "pos": [~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5)] });
-	playAudio('sfx/remove')
-};
-
-function addCube(pos, color) {
-	let cube = new THREE.Mesh(geometry, colorMaterials[color], 100);
-	const matrix = new THREE.Matrix4();
-	const instanceGeometry = geometry.clone();
-
-	if ((color + 1) > colors.length) { color = 0; console.warn(`Illegal color! (at ${pos.x} ${pos.y} ${pos.z})`) };
-
-	cube.position.set(pos.x, pos.y, pos.z);
-	cube.receiveShadow = true;
-	cube.castShadow = true;
-	cube.color = color;
-	cubes.push(cube);
-
-	matrix.compose(pos, new THREE.Quaternion(1, 0, 0, 0), new THREE.Vector3(1, 1, 1));
-	instanceGeometry.applyMatrix4(matrix);
-	cube.igeometry = instanceGeometry;
-	geometries[color].push(instanceGeometry);
-	sun.shadow.needsUpdate = true
-};
-
-function removeCube(pos) {
-	for (let i = 0; i < cubes.length; i++) {
-		let e = cubes[i];
-		if (~~e.position.x == ~~(pos.x + 0.5) && ~~e.position.y == ~~(pos.y + 0.5) && ~~e.position.z == ~~(pos.z + 0.5)) {
-			let c = cubes.splice(i, 1)[0];
-			for (let j = 0; j < geometries[e.color].length; j++) {
-				if (c.igeometry.id == geometries[e.color][j].id) {
-					geometries[e.color].splice(j, 1);
-					sun.shadow.needsUpdate = true;
-					updateWorld(e.color);
-					return
-				}
-			}
-		}
-	}
-};
-
-
-
-let hcube = new THREE.Mesh();
-let hcube2 = new THREE.Mesh();
-function highlightCube() {
-	scene.remove(hcube); scene.remove(hcube2);
-	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
-	const intersects = raycaster.intersectObjects(scene.children);
-	if (intersects[0].object.material.type == 'ShaderMaterial') { sign.style.display = "none"; return };
-	sign.style.display = "block";
-
-	let hgeometry = new THREE.BoxGeometry(1.1, 1.1, 1.1);
-	if (intersects.length > 0) {
-		let pos = new THREE.Vector3();
-		pos.sub(intersects[0].face.normal);
-		pos.multiplyScalar(0.5);
-		pos.add(intersects[0].point);
-		pos = new THREE.Vector3(~~(pos.x + 0.5), ~~(pos.y + 0.5), ~~(pos.z + 0.5));
-
-		hcube = new THREE.Mesh(hgeometry, new THREE.MeshToonMaterial({ color: intersects[0].object.material.color.r + intersects[0].object.material.color.g + intersects[0].object.material.color.b < 0.1 ? 0xffffffff : 0x000000, depthTest: false }));
-		hcube.position.set(pos.x, pos.y, pos.z);
-		scene.add(hcube);
-		hcube2 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: intersects[0].object.material.color, depthTest: false }));
-		hcube2.position.set(pos.x, pos.y, pos.z);
-		scene.add(hcube2)
-	}
-};
-
-let moveForward, moveBackward, moveLeft, moveRight, moveUp, moveDown;
-let cameraSpeed = 64.0;
-
-document.addEventListener('keydown', event => {
-	if (nick && controls.isLocked) {
-		event.preventDefault();
-		switch (event.code) {
-		// Movement
-			case 'KeyW': case 'ArrowUp':		moveForward = true; break
-			case 'KeyA': case 'ArrowLeft':	moveLeft = true; break
-			case 'KeyS': case 'ArrowDown':	moveBackward = true; break
-			case 'KeyD': case 'ArrowRight':	moveRight = true; break
-			case 'Space':					moveUp = true; break
-			case 'ShiftLeft':				moveDown = true; break
-
-		// Camera
-			/*
-			case 'ArrowUp':		camera.rotation.x += 0.1; camera.updateProjectionMatrix(); break
-			case 'ArrowLeft':		camera.rotation.y += 0.1; camera.updateProjectionMatrix(); break
-			case 'ArrowDown':		camera.rotation.x -= 0.1; camera.updateProjectionMatrix(); break
-			case 'ArrowRight':		camera.rotation.y -= 0.1; camera.updateProjectionMatrix(); break
-			*/
-			case 'BracketLeft':		cameraSpeed -= (event.altKey) ? 32 : 8; break
-			case 'BracketRight':	cameraSpeed += (event.altKey) ? 32 : 8; break
-			case 'Backslash':		cameraSpeed = 64.0; break
-			case 'Minus':			cameraZoom((event.altKey) ? -.3 : -.1); break
-			case 'Equal':			cameraZoom((event.altKey) ? +.3 : +.1); break
-			case 'Quote':			cameraZoom(); break
-
-		// Placement
-			case 'KeyX': placeCube(controls.getObject().position); break
-			case 'KeyC': breakCube(controls.getObject().position); break
-			case 'KeyG': grid.visible = !grid.visible; break
-
-		// Other
-			case "Enter":		controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
-			case 'Tab':		playerlist.style.display = 'flex'; break
-			case 'KeyL':		controls.unlock(); alert("Sorry, this shortcut doesnt work rn :("); break
-			case 'AltLeft':	colorSkip = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--palette-colors-in-row")) * -1; break
-			case 'F1':		toggleDisplay(uiCanvas); break
-			case 'F5':		history.go(); break
-			case 'KeyV':		highlightCube(); break
-		}
-	}
-});
-
-document.addEventListener('keyup', event => {
-	switch (event.code) {
-		case 'KeyW': moveForward = false; break
-		case 'KeyA': moveLeft = false; break
-		case 'KeyS': moveBackward = false; break
-		case 'KeyD': moveRight = false; break
-		case 'Space': moveUp = false; break
-		case 'ShiftLeft': moveDown = false; break
-		case 'AltLeft': colorSkip = 1; break
-		case 'Tab': playerlist.style.display = 'none'
-	}
-});
-
-const canvas = document.getElementsByTagName("canvas")[0];
-
-canvas.addEventListener('mousedown', event => {
-	if (nick && controls.isLocked) {
-		switch (event.which) {
-			case 1: breakCube(controls.getObject().position); break
-			case 2: colorPicker(); break
-			case 3: placeCube(controls.getObject().position); break
-		}
-	}
-});
-
-function cameraZoom(zoom) {
-	camera.zoom += zoom;
-	if (!zoom) camera.zoom = 0;
-	if (camera.zoom < 1) camera.zoom = 1;
-	if (camera.zoom > 8) camera.zoom = 8;
-	camera.updateProjectionMatrix()
-};
-
-function scrollToBottom(element) { element.scroll({ top: element.scrollHeight, behavior: 'smooth' }) };
-
+/*
 let joyMovementXZ = new JoyStick('joyMovementXZDiv');
 let joyMovementY = new JoyStick('joyMovementYDiv');
 let joyCamera = new JoyStick('joyCameraDiv');
+//*/
 
 let lastPos;
 
@@ -497,13 +481,16 @@ function render() {
 
 	const delta = clock.getDelta();
 
+	/*
 	let joyMoveXZ = joyMovementXZ.GetDir();
 	let joyMoveY = joyMovementY.GetDir();
 	let joyCam = joyCamera.GetDir();
 	let joyCamX = joyCamera.GetX();
 	let joyCamY = joyCamera.GetY();
+	//*/
 
 	if (nick) {
+		/* 
 		if (joyMoveXZ.includes("N")) moveForward = true;
 		if (joyMoveXZ.includes("W")) moveLeft = true;
 		if (joyMoveXZ.includes("S")) moveBackward = true;
@@ -515,6 +502,7 @@ function render() {
 		if (joyCamX < 0) camera.rotation.y -= (joyCamX / 48) * delta;
 		if (joyCamY < 0) camera.rotation.x += (joyCamY / 48) * delta;
 		if (joyCamX > 0) camera.rotation.y -= (joyCamX / 48) * delta;
+		//*/
 
 		camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x)); // Enfore limit for mobile controls
 		
@@ -523,7 +511,7 @@ function render() {
 		if (moveBackward) velocity.z -= cameraSpeed * delta;
 		if (moveRight) velocity.x += cameraSpeed * delta;
 		if (moveUp) velocity.y += cameraSpeed * delta;
-		if (moveDown) velocity.y -= cameraSpeed * delta
+		if (moveDown) velocity.y -= cameraSpeed * delta;
 
 		if (!controls.isLocked) {
 			moveForward = false;
@@ -531,16 +519,8 @@ function render() {
 			moveBackward = false;
 			moveRight = false;
 			moveUp = false;
-			moveDown = false
+			moveDown = false;
 		}
-	};
-
-	if (controls.isLocked) {
-		inputChat.style.display = "none";
-		//document.querySelector(":root").style.setProperty("--chat-maxheight", "200px")
-	} else {
-		inputChat.style.display = "flex";
-		//document.querySelector(":root").style.setProperty("--chat-maxheight", themeChatMaxHeight.value)
 	};
 
 	velocity.multiplyScalar(Math.pow(0.001, delta));
@@ -550,14 +530,12 @@ function render() {
 	controls.getObject().position.y += velocity.y * delta;
 
 	let pos = controls.getObject().position;
-	let ponk = `x: ${Math.round(pos.x + .5)} ╱ y: ${Math.round(pos.y + .5)} ╱ z: ${Math.round(pos.z + .5)}`
+	let ponk = `x ${Math.round(pos.x)} / y ${Math.round(pos.y )} / z ${Math.round(pos.z)}`
 
 	if (ponk !== lastPos) {
-		coordinates.innerText = ponk
-		lastPos = ponk
+		coordinates.innerText = ponk;
+		lastPos = ponk;
 	};
-
-	if (flook) camera.lookAt(flook[0], flook[1], flook[2])
 
 	renderer.render(scene, camera)
 };

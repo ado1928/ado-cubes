@@ -11,26 +11,24 @@ const DOMPurify = require('isomorphic-dompurify');
 const marked = require('marked');
 
 const toml = require('toml');
-let config = toml.parse(fs.readFileSync('./server.toml', 'utf-8'));
+let config = toml.parse(fs.readFileSync('./config.toml', 'utf-8'));
 
 const { Client, Intents } = require('discord.js');
 const { Webhook } = require('discord-webhook-node');
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES + Intents.FLAGS.GUILDS ] });
 const hook = new Webhook(config.dsbridge.webhookToken);
 
-function log(msg) { console.log(`  ${moment().format("HH:mm:ss")}\x1b[90m │ \x1b[0m${msg} \x1b[0m`) };
-console.clear(); console.log();
+console.clear();
+console.log();
 
-const renderer = {
-	strong(text) {
-		return `<b>${text}</b>`
-	},
-	em(text) {
-		return `<i>${text}</i>`
-	}
-}
+function log(msg) {
+	console.log(`  ${moment().format("HH:mm:ss")}\x1b[90m │ \x1b[0m${msg} \x1b[0m`)
+};
 
-marked.use({renderer})
+marked.use({
+	strong(text) { return `<b>${text}</b>` },
+	em(text) { return `<i>${text}</i>` }
+})
 
 function escapeHTML(unsafe) {
 	return unsafe
@@ -45,7 +43,7 @@ function escapeHTML(unsafe) {
 function sanitize(data, escape) {
 	data = (escape) ? escapeHTML(data) : data
 	return DOMPurify.sanitize(data, {
-		ALLOWED_TAGS: ['b', 'i', 'strong', 'em']
+		ALLOWED_TAGS: ['a', 'b', 'i', 'strong', 'em']
 	})
 }
 
@@ -81,9 +79,8 @@ fs.readdir('worlds', (err, crows) => { if (err) throw err;
 })
 
 function posValid(pos) {
-	let valid = true;
-	for (const coord of pos) if (0 > coord || coord > 63) valid = false;
-	return(valid)
+	for (const coord of pos) if (0 > coord || coord > 63) return false;
+	return true
 }
 
 function serverMessage(msg) {
@@ -97,8 +94,8 @@ function serverMessage(msg) {
 }
 
 function loadWorld(socket) {
-	socket.join(socket.world);
-	fs.readFile(`./worlds/${socket.world}.caw`, 'utf8', (err, data) => { if (err) throw err;
+	socket.join(socket.player.world);
+	fs.readFile(`./worlds/${socket.player.world}.caw`, 'utf8', (err, data) => { if (err) throw err;
 		world = textencoder.encode(data);
 		io.to(socket.id).emit('connected', world);
 	})
@@ -111,16 +108,14 @@ function saveWorld(i) {
 }
 
 io.on('connection', socket => {
-	socket.world = 'world';
-
 	io.emit('worldslist', worldslist)
 
 	socket.on('place', data => {
 		pos = data.pos;
 		if (posValid(pos)) {
-			if (worlds[socket.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] !== 0) return;
-			worlds[socket.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = data.color + 1;
-			io.to(socket.world).emit('place', data);
+			if (worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] !== 0) return;
+			worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = data.color + 1;
+			io.to(socket.player.world).emit('place', data);
 			if (Date.now() - lastsaved > 30000) saveWorld()
 		}
 	});
@@ -128,15 +123,19 @@ io.on('connection', socket => {
 	socket.on('break', data => {
 		pos = data.pos;
 		if (posValid(pos)) {
-			worlds[socket.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = 0;
-			io.to(socket.world).emit('break', data)
+			worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = 0;
+			io.to(socket.player.world).emit('break', data)
 		}
 	});
 
 	socket.on('message', data => {
-		io.to(socket.world).emit('message', {
-			'sender': escapeHTML(data.sender),
-			'content': sanitize(marked.parseInline(data.content))
+		io.to(socket.player.world).emit('message', {
+			'sender': {
+				'name': escapeHTML(data.sender),
+				'id': socket.id,
+			},
+			'content': sanitize(marked.parseInline(data.content)),
+			'timestamp': Date.now()
 		});
 		log(`\x1b[1m${data.sender}\x1b[0m: ${sanitize(data.content)}`);
 
@@ -147,24 +146,21 @@ io.on('connection', socket => {
 		}
 	});
 
-	// Join message
 	socket.on('join', data => {
-		socket.world = data['world'];
 		socket.player = data;
 
 		loadWorld(socket);
-		io.to(socket.world).emit('joinMessage', { 'player': escapeHTML(socket.player.name) });
+		io.to(socket.player.world).emit('joinMessage', { 'player': escapeHTML(socket.player.name) });
 		log(`🤝 ${socket.player.name} joined the server`);
 	});
 
-	// Disconnect message & world saving if no players online
 	socket.on('disconnect', reason => {
 		if (!socket.player) return; // Botch fix for 2 sockets per player
-		io.to(socket.world).emit('leaveMessage', { 'player': escapeHTML(socket.player.name) });
+		io.to(socket.player.world).emit('leaveMessage', { 'player': escapeHTML(socket.player.name) });
 		log(`👋 ${socket.player.name} left the server`);
 
-		if (!io.sockets.adapter.rooms.has(socket.world)) {
-			saveWorld(socket.world);
+		if (!io.sockets.adapter.rooms.has(socket.player.world)) {
+			saveWorld(socket.player.world);
 			lastsaved = Date.now();
 		}
 	});

@@ -28,20 +28,19 @@ node .
 
 
 
-<details>
-<summary><h3>credits</h3></summary>
+<h2 align="center">credits</h2>
 
-<h3 align=center>developers</h3>
+<h3 align="center">developers</h3>
 
 <p align=center>
-	<a href="https://github.com/ado1928"><img src="./images/credits/ado1928.png"></a>
-	<a href="https://github.com/ifritdiezel"><img src="./images/credits/ifritdiezel.png"></a>
-	<a href="https://github.com/macimas"><img src="./images/credits/macimas.png"></a>
+	<a href="https://github.com/ado1928"><img src="./GITHUB/ado1928.png"></a>
+	<a href="https://github.com/ifritdiezel"><img src="./GITHUB/ifritdiezel.png"></a>
+	<a href="https://github.com/macimas"><img src="./GITHUB/macimas.png"></a>
 </p>
 
 <h3 align=center>contributors</h3>
 
-<table align=center>
+<table align="center">
 	<tr>
 		<td>hyxud</td>
 		<td><img src="https://github.com/hyxud.png" height=24></td>
@@ -49,9 +48,9 @@ node .
 	</tr>
 </table>
 
-<p align=center>Made with <a href="https://nodejs.org">Node.js</a>, <a href="https://threejs.org">Three.js</a>, and <a href="https://svelte.dev">Svelte</a>. Sounds generated with <a href="https://sfxr.me">jsfxr</a></p>
-</details>
+<p align="center">Made with <a href="https://nodejs.org">Node.js</a>, <a href="https://threejs.org">Three.js</a>, and <a href="https://svelte.dev">Svelte</a>. Sounds generated with <a href="https://sfxr.me">jsfxr</a></p>
+
 
 <br><br><br><br><br><br><br>
 
-<p align=center><i>have a frog</i><img src="https://cdn.discordapp.com/attachments/968866349633896488/972592866943701082/the_frog.png" height=100></p>
+<p align="center""center"><i>have a frog</i><img src="https://cdn.discordapp.com/attachments/968866349633896488/972592866943701082/the_frog.png" height=100></p>

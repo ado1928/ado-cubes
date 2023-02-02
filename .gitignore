@@ -3,5 +3,7 @@
 /public/build
 /worlds
 
+README.md.backup
+
 pnpm-lock.yaml*
 server.toml

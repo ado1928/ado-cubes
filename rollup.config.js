@@ -4,7 +4,8 @@ import commonjs from '@rollup/plugin-commonjs';
 import alias from '@rollup/plugin-alias';
 import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
+import json from '@rollup/plugin-json';
 import css from 'rollup-plugin-css-only';
 
 const production = !process.env.ROLLUP_WATCH;
@@ -44,6 +45,7 @@ export default {
 
 		alias({
 			entries: [
+				{ find: 'src', replacement: path.resolve(__dirname, "src") },
 				{ find: 'lib', replacement: path.resolve(__dirname, "src/lib") },
 				{ find: 'public', replacement: path.resolve(__dirname, "public") }
 			]
@@ -51,6 +53,7 @@ export default {
 
 		css({ output: 'bundle.css' }),
 		resolve({ mainFields: ['browser'], browser: true }),
+		json(),
 		commonjs(),
 
 		!production && livereload('public'),
