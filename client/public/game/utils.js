@@ -1,4 +1,5 @@
 import { config } from "./config.js";
+import { paletteColors } from "./palette.js";
 
 export function playAudio(name, volume, condition) {
 	if (!condition && condition !== undefined) return;
@@ -29,10 +30,9 @@ export function toggleShow(elements, force) {
 }
 
 export function coloride(text) {
-	return text
-    /*return text
+    return text
         .replace(/:#([0-9]+):/g, (_, color) => `<span style="color:#${paletteColors[color] ?? "f00"}">`)
-        .replaceAll(":#:", `</span>`)*/
+        .replaceAll(":#:", `</span>`)
 }
 
 export function coordsValid(coords) {

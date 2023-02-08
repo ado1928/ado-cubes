@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import 'io';
+import { PointerLockControls } from "../node_modules/three/examples/jsm/controls/PointerLockControls.js";
+import * as BufferGeometryUtils from "../node_modules/three/examples/jsm/utils/BufferGeometryUtils.js";
 import JoystickController from 'joystick-controller';
-import { PointerLockControls } from "./three/examples/jsm/controls/PointerLockControls.js";
-import * as BufferGeometryUtils from "./three/examples/jsm/utils/BufferGeometryUtils.js";
 import { playAudio, escapeHTML, coloride, toggleShow, usingMobile } from "./utils.js";
 import { config } from "./config.js";
-import { commands } from "./commands.js"
+import { commands } from "./commands.js";
+import { paletteColors } from "./palette.js";
 
 let socket = io();
 const clock = new THREE.Clock();
@@ -353,20 +354,6 @@ let color = 0;
 let colorSkip = 1;
 let colors = palette.children;
 let colorMaterials = [];
-export let paletteColors = [
-	'FFFFFF', 'AAAAAA', '777777', '484848', '000000',
-	'991609', 'F3280C', 'FF5610', 'FF832A', 'FFB885',
-	'936100', 'E29705', 'FFD223', 'FFF280', '47561E',
-	'71892B', '94BE1A', 'DCFF77', '124B36', '0F8158',
-	'03C07C', '90FFCA', '024851', '0D7A89', '01A6BD',
-	'34E7FF', '013462', '0D569A', '066ECE', '4CA9FF',
-	'181691', '2A25F5', '4E55FF', '9DB8FF', '58196B',
-	'AC01E0', 'C82EF7', 'DC91FF', '650036', 'B0114B',
-	'EA3477', 'FF95BC', '62071D', '9B0834', 'CB003D',
-	'FF7384', '49230A', '814A17', 'D17A2B', 'FFB470'
-];
-
-
 
 for (let i = 0; i < paletteColors.length; i++) {
 	let paletteColor = document.createElement('div');
@@ -375,7 +362,9 @@ for (let i = 0; i < paletteColors.length; i++) {
 	palette.appendChild(paletteColor)
 };
 
-for (var i = 0; i < colors.length; i++) colorMaterials[i] = new THREE.MeshPhongMaterial({ color: colors[i].style.backgroundColor }) // create colorMaterials for colors in palette
+for (var i = 0; i < colors.length; i++) {
+	colorMaterials[i] = new THREE.MeshPhongMaterial({ color: colors[i].style.backgroundColor })
+} 
 
 function colorPicker() {
 	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
@@ -391,7 +380,9 @@ function updateColor() {
 	for (let i = 0; i < colors.length; i++) colors[i].className = '';
 	colors[color].className = "selected-color"
 };
+
 for (let i = 0; i < colors.length; i++) colors[i].onclick = () => { color = i; updateColor() };
+
 updateColor();
 
 window.onwheel = event => {

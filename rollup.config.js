@@ -47,7 +47,8 @@ export default {
 			entries: [
 				{ find: 'src', replacement: path.resolve(__dirname, "client/src") },
 				{ find: 'lib', replacement: path.resolve(__dirname, "client/src/lib") },
-				{ find: 'public', replacement: path.resolve(__dirname, "client/public") }
+				{ find: 'public', replacement: path.resolve(__dirname, "client/public") },
+				{ find: '../node_modules', replacement: path.resolve(__dirname, "node_modules") }
 			]
 		}),
 

@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import Button from "lib/Button.svelte";
-	import { toggleShow } from "public/game/utils.js";
+	import { toggleShow, coloride } from "public/game/utils.js";
 
 	import { marked } from 'marked';
 	import changelogs from "public/changelog/index.json";
@@ -56,7 +56,7 @@
 		{#await promise}
 			Loading...
 		{:then changelog}
-			{@html marked.parse(changelog)}
+			{@html coloride(marked.parse(changelog))}
 		{/await}
 	</article>
 </main>
