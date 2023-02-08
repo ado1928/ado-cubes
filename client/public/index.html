@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0">
+	<meta charset='utf-8'>
+
+	<title>adocubes</title>
+	<link rel='icon' type='image/svg' href='./favicon.png'>
+	<link rel='stylesheet' href='/global.css'>
+
+	<meta property='og:title' content="adocubes">
+	<meta property='og:description' content="editable 3D canvas">
+	<meta property='og:image' content="./favicon.png">
+	<meta property='theme-color' content="#FFFFFF">
+
+	<base target="_blank">
+</head>
+<body>
+	<script type="module" src="./game/es-module-shims/dist/es-module-shims.js"></script>
+
+	<script type="importmap" crossorigin="anonymous" referrerpolicy="no-referrer" defer>
+		{
+			"imports": {
+				"three": "/game/three/build/three.module.js",
+				"io": "/game/socket.io/client-dist/socket.io.min.js",
+				"joystick-controller": "/game/joystick-controller/dist/es/joystick-controller.js"
+			}
+		}
+	</script>
+
+	<script type="module" src="./game/main.js"></script>
+	<script src="./build/bundle.js"></script>
+</body>
+</html>

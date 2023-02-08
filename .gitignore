@@ -1,9 +1,6 @@
 /node_modules
 
-/public/build
-/worlds
+/client/public/build
 
-README.md.backup
-
-pnpm-lock.yaml*
-server.toml
+/server/worlds
+/server/config.toml

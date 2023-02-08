@@ -30,12 +30,12 @@ function serve() {
 };
 
 export default {
-	input: 'src/main.js',
+	input: 'client/src/main.js',
 	output: {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'public/build/bundle.js'
+		file: 'client/public/build/bundle.js'
 	},
 	plugins: [
 		svelte({
@@ -45,18 +45,18 @@ export default {
 
 		alias({
 			entries: [
-				{ find: 'src', replacement: path.resolve(__dirname, "src") },
-				{ find: 'lib', replacement: path.resolve(__dirname, "src/lib") },
-				{ find: 'public', replacement: path.resolve(__dirname, "public") }
+				{ find: 'src', replacement: path.resolve(__dirname, "client/src") },
+				{ find: 'lib', replacement: path.resolve(__dirname, "client/src/lib") },
+				{ find: 'public', replacement: path.resolve(__dirname, "client/public") }
 			]
 		}),
 
 		css({ output: 'bundle.css' }),
 		resolve({ mainFields: ['browser'], browser: true }),
-		json(),
 		commonjs(),
+		json(),
 
-		!production && livereload('public'),
+		!production && livereload('client/public'),
 		production && terser()
 	],
 	watch: { clearScreen: false }
