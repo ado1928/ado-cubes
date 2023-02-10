@@ -390,6 +390,8 @@ kbd {
 	backdrop-filter: blur(6px);
 }
 
+
+
 #palette {
 	top: 6px; right: 6px;
 	width: calc(var(--palette-color-size) * var(--palette-rows));
@@ -397,8 +399,12 @@ kbd {
 	flex-wrap: wrap;
 	transform-origin: top right;
 }
-#palette *			{ width: var(--palette-color-size); height: var(--palette-color-size) }
+#palette * {
+	width: var(--palette-color-size);
+	height: var(--palette-color-size);
+}
 #palette *:hover	{ transform: scale(1.15); box-shadow: 0 0 4px 2px #000 }
+
 .selected-color	{
 	z-index: 1;
 	outline: 2px solid #fff;
@@ -447,7 +453,7 @@ kbd {
 	max-height: var(--chat-maxheight);
 	transition: all 0.4s cubic-bezier(0, 1, 0, 1);
 }
-.chat > div p {
+.chat > div > p {
 	width: auto;
 	user-select: text;
 	animation-name: new-player-message;
@@ -464,6 +470,7 @@ kbd {
 	outline: none;
 }
 .chat.compact > div	{ max-height: calc(var(--chat-maxheight) / 2) }
+.chat.compact > p { height: 0; overflow: hidden }
 
 @keyframes new-player-message {
 	from { line-height: 0; opacity: 0% }

@@ -56,7 +56,7 @@
 		{#await promise}
 			Loading...
 		{:then changelog}
-			{@html coloride(marked.parse(changelog))}
+			{@html coloride(marked.parse(changelog), true)}
 		{/await}
 	</article>
 </main>

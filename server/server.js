@@ -50,7 +50,6 @@ let renderer = {
 
 marked.use({renderer});
 
-// very unnecessary little indicator
 const osIcon = {
 	linux: '🐧',
 	win32: '🟦',
@@ -76,20 +75,29 @@ fs.readdir("server/worlds", (err, crows) => { if (err) throw err;
 			worlds[crow] = textencoder.encode(data);
 			// worlds[i] = new Uint8Array(262144).fill(0) // Fills the world with nothing. Debugging purposes.
 		})
-	})
-	worldslist.sort()
+	});
+	worldslist.sort();
 	log(`\x1b[90mloaded ${worldslist}`)
 })
 
-function socketValid(socket) {
-	let valid = true;
-	if (!socket.player || !socket.player.world) valid = false;
-	if (!valid) io.to(socket.id).emit('ohno');
-	return valid;
+function socketValid(socket) { // this looks wonky :P
+	if (!socket.player || !socket.player.name || !socket.player.world
+		|| !worldslist.includes(socket.player.world)
+		|| !socket.player.name.length > 30
+	) return killSocket(socket);
+
+	return true;
 }
 
-function posValid(pos) {
-	for (const coord of pos) if (0 > coord || coord > 63) return false;
+function killSocket(socket) {
+	socket.emit('ohno');
+	socket.disconnect();
+	return false
+}
+
+function cubeValid(pos, color) {
+	if (pos) for (const coord of pos) if (0 > coord || coord > 63) return false;
+	if (color) if ((color + 1) > config.defaults.world.palette.length) return false;
 	return true
 }
 
@@ -99,7 +107,7 @@ function serverMessage(msg) {
 	if (config.dsbridge.enabled) {
 		hook.setUsername("Server");
 		hook.setAvatar("https://cdn.discordapp.com/attachments/968866349633896488/968866464150978620/favicon.png");
-		hook.send(msg.replace(/\x1b\[[0-9;]*m/g, ''))
+		hook.send(msg.replace(/\x1b\[[0-9;]*m/g, ''));
 	}
 }
 
@@ -107,14 +115,17 @@ function loadWorld(socket) {
 	socket.join(socket.player.world);
 	fs.readFile(`./server/worlds/${socket.player.world}.caw`, 'utf8', (err, data) => { if (err) throw err;
 		world = textencoder.encode(data);
-		io.to(socket.id).emit('connected', world);
+		io.to(socket.id).emit('connected', {
+			world: world,
+			palette: config.defaults.world.palette
+		})
 	})
 }
 
 function saveWorld(i) {
 	fs.writeFile(`./server/worlds/${i}.caw`, textdecoder.decode(worlds[i]), err => { if (err) throw err });
 	lastsaved = Date.now();
-	log(`🌍 Saved world ${bold(i)}`)
+	log(`🌍 Saved world ${bold(i)}`);
 }
 
 function playerlist(socket) {
@@ -125,58 +136,62 @@ function playerlist(socket) {
 	io.to(socket.player.world).emit('playerlist', players);
 }
 
-function bold(text) {
-	return `\x1b[1m${text}\x1b[0m`;
-}
+function bold(text) { return `\x1b[1m${text}\x1b[0m` }
 
 io.on('connection', socket => {
-	function disconnect() {
-		if (!socket.player) return;
-		io.to(socket.player.world).emit('leaveMessage', { 'player': escapeHTML(socket.player.name) });
-		log(`👋 ${bold(socket.player.name)} left world ${bold(socket.player.world)}`);
+	let ratelimit = 0;
+	let ratelimitLastDate = Date.now();
 
-		if (io.sockets.adapter.rooms.has(socket.player.world)) {
-			playerlist(socket);
-		} else {
-			saveWorld(socket.player.world);
-			lastsaved = Date.now();
+	function ratelimitted() {
+		if (ratelimit > 32) {
+			killSocket(socket);
+			return true
 		}
 
-		socket.player = undefined;
+		if (Date.now() - ratelimitLastDate > 1000) {
+			ratelimit = 1;
+			ratelimitLastDate = Date.now();
+		} else {
+			ratelimit++;
+			//log(`${socket.player.name} ratelimit is ${ratelimit}`);
+		}
+
+		return false
 	}
 
 	io.emit('worldslist', worldslist);
 
 	socket.on('place', data => {
 		pos = data.pos;
-		if (!posValid(pos) || !socketValid(socket)) return;
+		color = data.color;
+		if (!socketValid(socket) || ratelimitted() || !cubeValid(pos, color)) return;
 		if (worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] !== 0) return;
-		worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = data.color + 1;
+		worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = color + 1;
 		io.to(socket.player.world).emit('place', data);
-		if (Date.now() - lastsaved > 30000) saveWorld(socket.player.world)
+		if (Date.now() - lastsaved > 30000) saveWorld(socket.player.world);
 	});
 
 	socket.on('break', data => {
 		pos = data.pos;
-		if (!posValid(pos) || !socketValid(socket)) return;
+		if (!socketValid(socket) || ratelimitted() || !cubeValid(pos)) return;
 		worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = 0;
 		io.to(socket.player.world).emit('break', data);
 	});
 
-	socket.on('message', data => {
-		if (!socketValid(socket)) return;
+	socket.on('message', content => {
+		if (!socketValid(socket) || ratelimitted() || content.length > 1600) return;
 		io.to(socket.player.world).emit('message', {
 			'sender': {
 				'name': socket.player.name,
 				'id': socket.id,
 			},
-			'content': sanitize(marked.parseInline(data.content)),
+			'content': sanitize(marked.parseInline(content)),
 			'timestamp': Date.now()
 		});
-		log(`🌍 ${bold(socket.player.world)} > ${bold(socket.player.name)}: ${sanitize(data.content)}`);
+		log(`🌍 ${bold(socket.player.world)} > ${bold(socket.player.name)}: ${sanitize(content)}`);
 
 		if (config.dsbridge.enabled) {
-			hook.setUsername(data.sender);
+			hook.setUsername(`${socket.player.world} ~ ${socket.player.name}`);
 			hook.setAvatar();
 			hook.send(data.content.replace(/\x1b\[[0-9;]*m/g,""))
 		}
@@ -186,6 +201,8 @@ io.on('connection', socket => {
 		socket.player = data;
 		socket.player.name = escapeHTML(data.name);
 		socket.player.id = socket.id;
+
+		if (!socketValid(socket)) return;
 
 		loadWorld(socket);
 		playerlist(socket);
@@ -201,6 +218,21 @@ io.on('connection', socket => {
 	});
 
 	socket.on('disconnect', () => disconnect());
+
+	function disconnect() {
+		if (!socketValid(socket)) return;
+		io.to(socket.player.world).emit('leaveMessage', { 'player': escapeHTML(socket.player.name) });
+		log(`👋 ${bold(socket.player.name)} left world ${bold(socket.player.world)}`);
+
+		if (io.sockets.adapter.rooms.has(socket.player.world)) {
+			playerlist(socket);
+		} else {
+			saveWorld(socket.player.world);
+			lastsaved = Date.now();
+		}
+
+		socket.player = undefined;
+	}
 });
 
 // Discord bot bridging. likely broken

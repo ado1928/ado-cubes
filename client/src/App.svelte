@@ -19,8 +19,10 @@
 		<img id="crosshair" class="center hide" src="./img/crosshair.svg" alt="+">
 		<div id="coordinates" class="hide"/>
 		<Box id="palette" style="gap:0"/>
-		<Toolbar/> <Chat/> <Playerlist/>
+		<Toolbar/> <Chat/>
 	</div>
+
+	<Playerlist/>
 
 	<Esc/>
 </main>

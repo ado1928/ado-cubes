@@ -33,7 +33,7 @@
 			<img src="/img/icon/esc/return.png"> Return
 		</Button>
 		<Button id="leaveWorldButton" type="esc">
-			<img src="/img/icon/esc/return.png"> Leave world<br>(do not click)<br>(it is broken)
+			<img src="/img/icon/esc/return.png"> Leave world
 		</Button>
 		<p><br></p>
 		<Button type="esc" on:click={() => escChange(false, 'settings')}>

@@ -45,10 +45,13 @@
 				<td><a href="https://svelte.dev">Svelte</a><br>Front-End</td>
 			</tr>
 		</table>
+
+		<br>
+		
 		<p>Sounds generated with <a href="https://sfxr.me">jsfxr</a></p>
-		<p>Music by Kevin MacLeod (from <a href="https://incompetech.com">incompetech.com</a>)</p>
+		<!--<p>Music by Kevin MacLeod (from <a href="https://incompetech.com">incompetech.com</a>)</p>
 		<p>"Chill", "Ether Vox", "Look Busy",<br>"Northen Glade", "Pixel Peeker Polka - faster"</p>
 		<p>Licensed under Creative Commons: By Attribution 4.0 License</p>
-		<p>http://creativecommons.org/licenses/by/4.0/</p>
+		<p>http://creativecommons.org/licenses/by/4.0/</p>-->
 	</section>
 </main>

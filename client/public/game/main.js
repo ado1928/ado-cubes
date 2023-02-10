@@ -6,7 +6,6 @@ import JoystickController from 'joystick-controller';
 import { playAudio, escapeHTML, coloride, toggleShow, usingMobile } from "./utils.js";
 import { config } from "./config.js";
 import { commands } from "./commands.js";
-import { paletteColors } from "./palette.js";
 
 let socket = io();
 const clock = new THREE.Clock();
@@ -148,25 +147,21 @@ let nickname, worldslist;
 
 function joinWorld(event) {
 	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value || nickname) return;
-	if (inputUsername.value.length > 30) return alert('Your name is too long!');
-	if (!worldslist.includes(selectWorld.value)) return ohno();
 	nickname = inputUsername.value;
 	toggleShow(welcome.children);
 	toggleShow(uiCanvas.children);
-	toggleShow(playerlist, false);
 	if (usingMobile()) toggleShow(document.querySelectorAll('.joystick'));
-	socket.emit('joinWorld', { "name": nickname, "world": selectWorld.value });
-	window.commands = commands;
+	socket.emit('joinWorld', { "name": nickname, "id": socket.id, "world": selectWorld.value });
 }
 
 function leaveWorld() {
-	nickname = undefined;
+	nickname = null;
+	messages.innerHTML = null;
+	window.worldPalette = undefined;
 	toggleShow(uiCanvas.children, false);
 	toggleShow(welcome.children, true);
-	window.commands = undefined;
+	toggleShow(esc, false);
 }
-
-
 
 inputUsername.onkeydown = event => joinWorld(event);
 joinWorldButton.onclick = event => joinWorld(event);
@@ -174,9 +169,64 @@ leaveWorldButton.onclick = () => socket.emit('leaveWorld');
 
 
 
+let color = 0;
+let colorSkip = 1;
+let colors;
+let colorMaterials = [];
+let cubes = [];
+let geometries = [];
+
+function updateColor() {
+	color = (color % colors.length + colors.length) % colors.length;
+	for (let i = 0; i < colors.length; i++) colors[i].className = '';
+	colors[color].className = "selected-color"
+}
+
+function colorPicker() {
+	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
+	const intersects = raycaster.intersectObjects(scene.children);
+	if (intersects[0].object.material.type == 'ShaderMaterial') return;
+	if (intersects.length > 0) { color = world.indexOf(intersects[0].object); updateColor() };
+	//console.log(intersects[0].object.material)
+	playAudio('ui/color picker', config.uiVolume, !config.disableColorPickerSound)
+}
+
+function initPalette(worldPalette) {
+	palette.innerHTML = ''
+
+	for (let i = 0; i < worldPalette.length; i++) {
+		let paletteColor = document.createElement('div');
+		paletteColor.style.background = `#${worldPalette[i]}`;
+		paletteColor.title = i;
+		palette.appendChild(paletteColor)
+	}
+
+	colors = palette.children;
+
+	for (var i = 0; i < colors.length; i++) {
+		colorMaterials[i] = new THREE.MeshPhongMaterial({ color: colors[i].style.backgroundColor })
+	} 
+
+	for (let i = 0; i < colors.length; i++) colors[i].onclick = () => { color = i; updateColor() };
+
+	updateColor();
+
+	window.onwheel = event => {
+		if (controls.isLocked) {
+			color += (event.deltaY < 0) ? colorSkip : colorSkip * -1
+			updateColor();
+			playAudio('ui/palette scroll', config.uiVolume, !config.disablePaletteScrollSound);
+		}
+	};
+
+	geometry = new THREE.BoxGeometry(1, 1, 1);
+	for (var i = 0; i < colors.length; i++) geometries[i] = [];
+}
+
+
 
 export function createMessage(content, audio) {
-	messages.insertAdjacentHTML('afterbegin', `<p>${coloride(content)}</p>`)
+	messages.insertAdjacentHTML('afterbegin', `<p>${content}</p>`)
 	playAudio(audio ?? "ui/msg/default", config.uiVolume, !config.disableMessageSounds)
 }
 
@@ -197,7 +247,7 @@ inputChat.onkeydown = event => {
 
 		commands[command].args(args);
 	} else (inputChat.value)
-		? socket.emit('message', { "content": inputChat.value })
+		? socket.emit('message', inputChat.value)
 		: controls.lock();
 	inputChat.value = ''
 };
@@ -206,15 +256,15 @@ inputChat.onkeydown = event => {
 
 function ohno() {
 	document.body.innerHTML = `<p class="socket-error">oh no, something has gone wrong! please refresh page!</p>`;
-	socket.disconnect();
 	nickname = undefined;
 }
 
 socket.on('ohno', () => ohno())
 
-socket.on('connected', arr => {
-	const view = new Uint8Array(arr);
-	window.arr = view;
+socket.on('connected', data => {
+	const view = new Uint8Array(data.world);
+	window.worldPalette = data.palette;
+	initPalette(data.palette);
 	cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
 	for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
 		for (let y = 0; y < 64; y++) {
@@ -247,10 +297,13 @@ socket.on('playerlist', arr => {
 
 socket.on('leaveWorld', () => leaveWorld());
 
-socket.on('joinMessage', data => createMessage(`<b>${data.player}</b> joined the world`, "ui/msg/player join"));
-socket.on('leaveMessage', data => createMessage(`<b>${data.player}</b> left the world`, "ui/msg/player left"));
+socket.on('joinMessage', data => createMessage(`<b>${coloride(data.player, true)}</b> joined the world`, "ui/msg/player join"));
+socket.on('leaveMessage', data => createMessage(`<b>${coloride(data.player, true)}</b> left the world`, "ui/msg/player left"));
 
-socket.on('message', data => {console.log(data); createMessage(`<b title="session id ${data.sender.id}" style="cursor:help">${data.sender.name}:</b> ${data.content}`)});
+socket.on('message', data => {
+	console.log(data);
+	createMessage(`<b title="session id ${data.sender.id}" style="cursor:help">${coloride(data.sender.name, true)}:</b> ${coloride(data.content)}`)
+});
 socket.on('serverMessage', data => createMessage(`<i>${data.content}</i>`));
 
 socket.on('place', data => {
@@ -311,7 +364,7 @@ document.addEventListener('keydown', event => {
 		case "Enter":	controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
 		case 'Tab':		toggleShow(playerlist, true); break
 		case config.settingsShortcut: controls.unlock(); toggleShow(settings); break
-		case 'AltLeft':	colorSkip = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--palette-rows")) * -1; break
+		case 'AltLeft':	colorSkip = Number(getComputedStyle(document.documentElement).getPropertyValue("--palette-rows")) * -1; break
 		case 'F1':		toggleShow(uiCanvas.children); break
 		case 'KeyV':	highlightCube(); break
 	}
@@ -344,67 +397,12 @@ document.querySelector('canvas').addEventListener('mousedown', event => {
 	}
 });
 
-
-
-
-
-
-
-let color = 0;
-let colorSkip = 1;
-let colors = palette.children;
-let colorMaterials = [];
-
-for (let i = 0; i < paletteColors.length; i++) {
-	let paletteColor = document.createElement('div');
-	paletteColor.style.background = `#${paletteColors[i]}`;
-	paletteColor.title = i;
-	palette.appendChild(paletteColor)
-};
-
-for (var i = 0; i < colors.length; i++) {
-	colorMaterials[i] = new THREE.MeshPhongMaterial({ color: colors[i].style.backgroundColor })
-} 
-
-function colorPicker() {
-	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
-	const intersects = raycaster.intersectObjects(scene.children);
-	if (intersects[0].object.material.type == 'ShaderMaterial') return;
-	if (intersects.length > 0) { color = world.indexOf(intersects[0].object); updateColor() };
-	//console.log(intersects[0].object.material)
-	playAudio('ui/color picker', config.uiVolume, !config.disableColorPickerSound)
-}
-
-function updateColor() {
-	color = (color % colors.length + colors.length) % colors.length;
-	for (let i = 0; i < colors.length; i++) colors[i].className = '';
-	colors[color].className = "selected-color"
-};
-
-for (let i = 0; i < colors.length; i++) colors[i].onclick = () => { color = i; updateColor() };
-
-updateColor();
-
-window.onwheel = event => {
-	if (controls.isLocked) {
-		color += (event.deltaY < 0) ? colorSkip : colorSkip * -1
-		updateColor();
-		playAudio('ui/palette scroll', config.uiVolume, !config.disablePaletteScrollSound);
-	}
-};
-
-geometry = new THREE.BoxGeometry(1, 1, 1);
-let geometries = []
-let cubes = [];
-for (var i = 0; i < colors.length; i++) geometries[i] = [];
-
-
-
-
 export function cameraZoom(zoom) {
 	camera.zoom = Math.min(Math.max(camera.zoom + zoom, 1), 8);
 	camera.updateProjectionMatrix()
 }
+
+
 
 let hcube, hcube2;
 
@@ -467,7 +465,7 @@ function createCube(pos, color) {
 	const matrix = new THREE.Matrix4();
 	const instanceGeometry = geometry.clone();
 
-	if ((color + 1) > colors.length) { color = 0; console.warn(`Illegal color at ${pos.x} ${pos.y} ${pos.z})`) };
+	if ((color + 1) > colors.length) { color = 6; console.warn(`Illegal color at ${pos.x} ${pos.y} ${pos.z})`) };
 
 	cube.position.set(pos.x, pos.y, pos.z);
 	cube.receiveShadow = true;

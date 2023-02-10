@@ -1,5 +1,17 @@
 import { config } from "./config.js";
-import { paletteColors } from "./palette.js";
+
+const paletteColors = [
+	'FFFFFF', 'AAAAAA', '777777', '484848', '000000',
+	'991609', 'F3280C', 'FF5610', 'FF832A', 'FFB885',
+	'936100', 'E29705', 'FFD223', 'FFF280', '47561E',
+	'71892B', '94BE1A', 'DCFF77', '124B36', '0F8158',
+	'03C07C', '90FFCA', '024851', '0D7A89', '01A6BD',
+	'34E7FF', '013462', '0D569A', '066ECE', '4CA9FF',
+	'181691', '2A25F5', '4E55FF', '9DB8FF', '58196B',
+	'AC01E0', 'C82EF7', 'DC91FF', '650036', 'B0114B',
+	'EA3477', 'FF95BC', '62071D', '9B0834', 'CB003D',
+	'FF7384', '49230A', '814A17', 'D17A2B', 'FFB470'
+];
 
 export function playAudio(name, volume, condition) {
 	if (!condition && condition !== undefined) return;
@@ -29,9 +41,10 @@ export function toggleShow(elements, force) {
 	for (let i = 0; i < elements.length; i++) changeClass(elements[i]);
 }
 
-export function coloride(text) {
+export function coloride(text, useDefault) {
+	let colors = (useDefault) ? paletteColors : window.worldPalette;
     return text
-        .replace(/:#([0-9]+):/g, (_, color) => `<span style="color:#${paletteColors[color] ?? "f00"}">`)
+        .replace(/:#([0-9]+):/g, (_, color) => `</span><span style="color:#${colors[color] ?? "f00"}">`)
         .replaceAll(":#:", `</span>`)
 }
 

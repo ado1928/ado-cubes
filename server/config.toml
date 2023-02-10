@@ -16,7 +16,7 @@ maxPlayers = 100
 
 [defaults.world]
 	size = [ 64, 64, 64 ]
-	palette = [ 'FFFFFF', 'AAAAAA', '777777', '484848', '000000',
+	palette = [	'FFFFFF', 'AAAAAA', '777777', '484848', '000000',
 				'991609', 'F3280C', 'FF5610', 'FF832A', 'FFB885',
 				'936100', 'E29705', 'FFD223', 'FFF280', '47561E',
 				'71892B', '94BE1A', 'DCFF77', '124B36', '0F8158',

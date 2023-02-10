@@ -65,10 +65,14 @@ export const commands = {
 	},
 	formatting: {
 		help: [
-			"use colors in your messages. :#30:c:#20:o:#25:l:#39:o:#35:r:#49:m:#1:a:#2:t:#29:i:#17:c",
+			"use colors in your messages",
+			"very :#32:c:#20:o:#25:l:#39:o:#35:r:#49:m:#1:a:#2:t:#29:i:#17:c",
+			"",
 			"syntax is :<span>#</span>1: with 1 being the color number",
 			"use :<span>#</span>: with no color to reset",
-			"colors are takens from the palette. hover on a palette color to show its color number"
+			"",
+			"colors are taken from the world palette. hover on a palette color to show its color number",
+			"you can also use colors in your nicknames, but colors are taken from an already-defined palette",
 		],
 		args: () => commands.help.args('formatting')
 	},
@@ -85,7 +89,7 @@ export const commands = {
 					createMessage(`<b>${command}</b> - ${commands[command].help[0]}`)
 				})
 			}
-			commands[command].help.forEach(text => { createMessage(text) });
+			commands[command].help.forEach(text => { createMessage(coloride(text), true) });
 		}
 	}
 }
