@@ -1,6 +1,6 @@
-<p align=center><img src="./public/img/logo/adocubes.svg"></p>
+<p align=center><img src="./client/public/img/logo/adocubes.svg"></p>
 
-<p align=center>3D sandbox game where you place and remove cubes</p>
+<p align=center>3D sandbox game where you place and break cubes</p>
 
 
 
@@ -42,13 +42,42 @@ node .
 
 <table align="center">
 	<tr>
-		<td>hyxud</td>
-		<td><img src="https://github.com/hyxud.png" height=24></td>
-		<td align="center">Block placing with mouse</td>
+		<td align="center">
+			<a href="https://github.com/hyxud.png">hyxud</a><br>
+			Block placing with mouse
+		</td>
+		<td align="center">
+			<a href="https://github.com/QmelZ.png">QmelZ</a><br>
+			Settings
+		</td>
 	</tr>
 </table>
 
-<p align="center">Made with <a href="https://nodejs.org">Node.js</a>, <a href="https://threejs.org">Three.js</a>, and <a href="https://svelte.dev">Svelte</a>. Sounds generated with <a href="https://sfxr.me">jsfxr</a></p>
+<h3 align="center">made with</h3>
+<table>
+	<tr>
+		<td align="center">
+			<img src="./client/public/img/icon/credits/three.js.png"><br>
+			<a href="https://threejs.org">Three.js</a><br>
+			Game
+		</td>
+		<td align="center">
+			<img src="./client/public/img/icon/credits/node.js.png"><br>
+			<a href="https://nodejs.org">Node.js</a><br>
+			Back-End
+		</td>
+		<td align="center">
+			<img src="./client/public/img/icon/credits/svelte.png"><br>
+			<a href="https://svelte.dev">Svelte</a><br>
+			Front-End
+		</td>
+	</tr>
+</table>
+
+<br>
+
+Sounds generated with <a href="https://sfxr.me">jsfxr</a></p>
+
 
 
 <br><br><br><br><br><br><br>

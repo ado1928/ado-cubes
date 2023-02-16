@@ -28,21 +28,26 @@ export const config = new Config({
 	// General
 	language: 'among-us',
 	uiScale: 1,
-	enableRandomAndSpecialLogos: true,
+	rendererPixelRatio: 1,
 	chatWidth: 440,
 	chatMaxLines: 24,
+	enableRandomAndSpecialLogos: true,
 
 	// Input
 	placeCubes: 'KeyX',
 	breakCubes: 'KeyC',
+	highlightCube: 'KeyV',
 	increaseCameraSpeed: 'BracketRight',
 	decreaseCameraSpeed: 'BracketLeft',
 	resetCameraSpeed: 'Backslash',
 	increaseCameraZoom: 'Equal',
 	decreaseCameraZoom: 'Minus',
 	resetCameraZoom: 'Quote',
+	toggleUi: 'F1',
 	toggleGrid: 'KeyG',
 	settingsShortcut: 'KeyL',
+	keyModifier: (navigator.userAgent.match(/Firefox/i)) ? 'KeyZ' : 'LeftAlt',
+	keyModifierFirefox: 'KeyZ',
 	invertMouseControlsForCubePlacement: false,
 
 	// Audio

@@ -12,8 +12,9 @@
 </script>
 
 <Box id="chat" classes="chat">
-	<div id="messages">
+	<div class="chatbox">
+		<input class="width-fill-available" id="inputChat" type="text" maxlength="1600" bind:value={input}>
+		<!--<p>{input.length}/1600</p>-->
 	</div>
-	<input id="inputChat" type="text" maxlength="1600" bind:value={input}>
-	<p>{input.length}/1600</p>
+	<div id="messages"/>
 </Box>

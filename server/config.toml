@@ -2,17 +2,14 @@ name = "a adocubes server"
 description = "this is the description i guess?"
 
 port = 1928
-maxPlayers = 100
 
 [language]
 	server = "english"
 	client = "english"
 
-[dsbridge]
-	enabled = false
-	webhookToken = "Webhook token here"
-	botToken = "Bot token here"
-	channelId = "Channel ID here"
+[ratelimit]
+	cubes = 24
+	chat = 8
 
 [defaults.world]
 	size = [ 64, 64, 64 ]
@@ -25,4 +22,10 @@ maxPlayers = 100
 				'181691', '2A25F5', '4E55FF', '9DB8FF', '58196B',
 				'AC01E0', 'C82EF7', 'DC91FF', '650036', 'B0114B',
 				'EA3477', 'FF95BC', '62071D', '9B0834', 'CB003D',
-				'FF7384', '49230A', '814A17', 'D17A2B', 'FFB470' ]
+				'FF7384', '49230A', '814A17', 'D17A2B', 'FF9D59' ]
+
+[dsbridge]
+	enabled = false
+	webhookToken = "Webhook token here"
+	botToken = "Bot token here"
+	channelId = "Channel ID here"

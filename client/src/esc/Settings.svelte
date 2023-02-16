@@ -10,6 +10,7 @@
 <main class="settings">
 	<section>
 		<h2>General</h2>
+		<Setting label="Renderer pixel ratio" set="rendererPixelRatio" type="range" min="1" max="4" step="0.25"/>
 		<Setting label="Chat width" set="chatWidth" type="range" min="100" max="1280" step="10"/>
 		<Setting label="Chat max lines visible" set="chatMaxLines" type="range" min="12" max="32"/>
 		<Setting label="Enable random and special logos" set="enableRandomAndSpecialLogos" type="checkbox"/>
@@ -17,17 +18,22 @@
 	<section>
 		<h2>Input</h2>
 		{#if !usingMobile()}
+			<h3>Cubes</h3>
 			<Setting label="Place cubes" set="placeCubes" type="keybind"/>
 			<Setting label="Break cubes" set="breakCubes" type="keybind"/>
+			<Setting label="Invert mouse controls for cube placement" set="invertMouseControlsForCubePlacement" type="checkbox"/>
+			<h3>Camera</h3>
 			<Setting label="Increase camera speed" set="increaseCameraSpeed" type="keybind"/>
 			<Setting label="Decrease camera speed" set="decreaseCameraSpeed" type="keybind"/>
 			<Setting label="Reset camera speed" set="resetCameraSpeed" type="keybind"/>
 			<Setting label="Increase camera zoom" set="increaseCameraZoom" type="keybind"/>
 			<Setting label="Decrease camera zoom" set="decreaseCameraZoom" type="keybind"/>
 			<Setting label="Reset camera zoom" set="resetCameraZoom" type="keybind"/>
+			<h3>Other</h3>
+			<Setting label="Toggle UI" set="toggleUi" type="keybind"/>
 			<Setting label="Toggle grid" set="toggleGrid" type="keybind"/>
+			<Setting label="Key modifier" set="keyModifier" type="keybind"/>
 			<Setting label="Settings shortcut" set="settingsShortcut" type="keybind"/>
-			<Setting label="Invert mouse controls for cube placement" set="invertMouseControlsForCubePlacement" type="checkbox"/>
 		{:else}
 			sorry, no settings for mobile rn
 		{/if}

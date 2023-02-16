@@ -10,7 +10,7 @@ const paletteColors = [
 	'181691', '2A25F5', '4E55FF', '9DB8FF', '58196B',
 	'AC01E0', 'C82EF7', 'DC91FF', '650036', 'B0114B',
 	'EA3477', 'FF95BC', '62071D', '9B0834', 'CB003D',
-	'FF7384', '49230A', '814A17', 'D17A2B', 'FFB470'
+	'FF7384', '49230A', '814A17', 'D17A2B', 'FF9D59'
 ];
 
 export function playAudio(name, volume, condition) {

@@ -124,13 +124,10 @@ scene.add(dlight2);
 
 
 function resize() {
+	renderer.setPixelRatio(window.devicePixelRatio / config.rendererPixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-
-	let docEl = document.documentElement;
-	docEl.style.setProperty('--innerWidth', `${docEl.clientWidth}px`);
-	docEl.style.setProperty('--innerHeight', `${docEl.clientHeight}px`)
 };
 
 window.addEventListener("resize", (resize(), resize))
@@ -246,20 +243,20 @@ inputChat.onkeydown = event => {
 		if (args.length <= 1) args = args[0];
 
 		commands[command].args(args);
-	} else (inputChat.value)
-		? socket.emit('message', inputChat.value)
-		: controls.lock();
+	} else if (inputChat.value) {
+		socket.emit('message', inputChat.value)
+	} else {
+		inputChat.blur();
+		controls.lock();
+	}
 	inputChat.value = ''
 };
 
 
 
-function ohno() {
-	document.body.innerHTML = `<p class="socket-error">oh no, something has gone wrong! please refresh page!</p>`;
-	nickname = undefined;
-}
-
-socket.on('ohno', () => ohno())
+socket.on('ohno', reason => {
+	document.body.innerHTML = `<p class="socket-error">${reason ?? "oh no, something has gone wrong! please refresh page!"}</p>`
+})
 
 socket.on('connected', data => {
 	const view = new Uint8Array(data.world);
@@ -361,12 +358,14 @@ document.addEventListener('keydown', event => {
 		case config.toggleGrid:	grid.visible = !grid.visible; break
 
 	// Other
-		case "Enter":	controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
+		case 'Enter':	controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
 		case 'Tab':		toggleShow(playerlist, true); break
 		case config.settingsShortcut: controls.unlock(); toggleShow(settings); break
-		case 'AltLeft':	colorSkip = Number(getComputedStyle(document.documentElement).getPropertyValue("--palette-rows")) * -1; break
-		case 'F1':		toggleShow(uiCanvas.children); break
-		case 'KeyV':	highlightCube(); break
+		case config.toggleUi: toggleShow(uiCanvas.children); break
+		case config.highlightCube: highlightCube(); break
+
+		case config.keyModifier:
+		case config.keyModifierFirefox: colorSkip = Number(getComputedStyle(document.documentElement).getPropertyValue("--palette-rows")) * -1;
 	}
 });
 
@@ -378,8 +377,11 @@ document.addEventListener('keyup', event => {
 		case 'KeyD': moveRight = false; break
 		case 'Space': moveUp = false; break
 		case 'ShiftLeft': moveDown = false; break
-		case 'AltLeft': colorSkip = 1; break
-		case 'Tab': toggleShow(playerlist, false)
+		case 'Tab': toggleShow(playerlist, false); break
+
+		case config.keyModifier:
+		case config.keyModifierFirefox: colorSkip = 1;
+
 	}
 });
 
@@ -411,9 +413,13 @@ function highlightCube() {
 	scene.remove(hcube2);
 	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
 	const intersects = raycaster.intersectObjects(scene.children);
-	if (intersects[0].object.material.type == 'ShaderMaterial') return;
-
-	let hgeometry = new THREE.BoxGeometry(1.1, 1.1, 1.1);
+	if (intersects[0].object.material.type == 'ShaderMaterial') {
+		return;
+	} else {
+		controls.unlock();
+		toggleShow(sign, true);
+	}
+	let hgeometry = new THREE.BoxGeometry(1.125, 1.125, 1.125);
 	if (intersects.length > 0) {
 		let pos = new THREE.Vector3();
 		pos.sub(intersects[0].face.normal);

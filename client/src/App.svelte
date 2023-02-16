@@ -7,6 +7,7 @@
 
 	import Toolbar from "./canvas/Toolbar.svelte";
 	import Chat from "./canvas/Chat.svelte";
+	import Sign from "./canvas/Sign.svelte";
 	import Playerlist from "./canvas/Playerlist.svelte";
 
 	import { toggleShow } from "public/game/utils.js";
@@ -15,12 +16,17 @@
 
 <main>
 	<Welcome/>
+	
 	<div id="uiCanvas">
-		<img id="crosshair" class="center hide" src="./img/crosshair.svg" alt="+">
+		<img id="crosshair" class="hide center" src="./img/crosshair.svg" alt="+">
 		<div id="coordinates" class="hide"/>
 		<Box id="palette" style="gap:0"/>
 		<Toolbar/> <Chat/>
 	</div>
+
+	<Window id="sign" title="SIGN" nav="exit" on:exit={() => toggleShow(sign)}>
+		<Sign/>
+	</Window>
 
 	<Playerlist/>
 

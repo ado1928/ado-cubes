@@ -13,7 +13,7 @@
 	--box-border: 1px solid var(--light-1);
 	--box-outline: 2px solid #0e0e0e;
 
-	--window-height: 600px;
+	--window-max-height: 600px;
 
 }
 
@@ -24,6 +24,10 @@
 @font-face	{ font-family: "adocoords"; src: url("./font/adocoords.ttf") }
 
 html body	{ background: #f2f2ff; margin: 0; overflow: hidden }
+
+::-webkit-scrollbar				{ width: 6px; height: 6px; background: 0; margin: 6px; background-clip: padding-box }
+::-webkit-scrollbar-thumb		{ background: #aaa; margin: 6px; background-clip: padding-box }
+::-webkit-scrollbar-thumb:hover	{ background: #fff }
 
 *
 	{ cursor: url("./cursor/auto.png"), auto }
@@ -67,8 +71,8 @@ kbd {
 }
 
 .socket-error {
-	width: calc(var(--innerWidth) - 128px);
-	height: calc(var(--innerHeight) - 128px);
+	width: calc(100vw - 128px);
+	height: calc(100vh - 128px);
 	padding: 64px;
 	background: url("./img/oh no background.png") #000;
 	color: #f00;
@@ -118,13 +122,11 @@ kbd {
 	line-height: 1;
 }
 
-
-
 .window {
 	overflow: hidden;
 	width: 600px;
-	height: calc(var(--innerHeight) - 16px);
-	max-height: var(--window-height);
+	height: calc(100vh - 16px);
+	max-height: var(--window-max-height);
 	padding: 0;
 	flex-direction: column;
 	gap: 0;
@@ -133,14 +135,6 @@ kbd {
 	animation-name: window-open;
 	animation-duration: 0.25s;
 	animation-timing-function: cubic-bezier(0, 1, 0, 1);
-}
-.window > header {
-	display: flex;
-	padding: 8px 16px;
-	background: #00000080;
-	border-bottom: var(--box-border);
-	align-items: center;
-	justify-content: space-between;
 }
 .window > main {
 	display: flex;
@@ -151,7 +145,7 @@ kbd {
 .window > header {
 	display: flex;
 	flex-direction: row;
-	padding: 8px 16px;
+	padding: 6px 16px;
 	background: #00000080;
 	border-bottom: var(--box-border);
 	justify-content: space-between;
@@ -162,14 +156,10 @@ kbd {
 .window > header > span { position: absolute; left: 50%; transform: translateX(-50%) }
 @keyframes window-open {
 	from { opacity: 0; width: 500px; max-height: 0 }
-	to { opacity: 1; width: 600px; max-height: var(--window-height) }
+	to { opacity: 1; width: 600px; max-height: var(--window-max-height) }
 }
 
 
-
-::-webkit-scrollbar				{ width: 6px; height: 6px; background: 0; margin: 6px; background-clip: padding-box }
-::-webkit-scrollbar-thumb		{ background: #aaa; margin: 6px; background-clip: padding-box }
-::-webkit-scrollbar-thumb:hover	{ background: #fff }
 
 .line-x {
 	width: 2px;
@@ -190,34 +180,40 @@ kbd {
 	Buttons
 */
 	button {
-		padding: 2px 6px 4px;
+		margin: 2px;
+		padding: 4px 12px 6px;
 		color: #fff;
-		background: #0E0E0E;
+		background: #0006;
 		border: var(--box-border);
 		outline: 2px solid #0e0e0e;
-		border-radius: 6px;
+		border-radius: 16px;
 		font-size: var(--font-size);
 	}
-	button *			{ pointer-events: none }
-	button:hover		{ background: #fff3; border: 1px solid #fff6; text-shadow: var(--highlight) }
-	button:active		{ color: #000; background: #fff; border: 1px solid #0e0e0e; outline: 2px solid #eaeaea}
-	button[disabled]	{ opacity: 32% }
+	button:hover { 
+		background: #fff3;
+		border: 1px solid #fff6;
+		text-shadow: var(--highlight)
+	}
+	button:active { opacity: 32% }
+	button:active, button:focus {
+		background: #fff3;
+		outline: 1px solid #fff6;
+		text-shadow: var(--highlight);
+	}
+	button[disabled]	{ opacity: 24% }
 	button:focus:not(:active) { border: 1px solid #fff8; text-shadow: var(--highlight) }
+	button *			{ pointer-events: none }
 
 	button.nav	{ padding: 8px; line-height: 0 }
 	button.icon	{ padding: 4px; line-height: 0 }
 
-	button.nav:hover, button.icon:hover, button.nav:focus, button.icon:focus
-	{ background: #fff3; outline: 1px solid #fff6; text-shadow: var(--highlight) }
-
-	button.nav:active, button.icon:active
-	{ opacity: 50% }
+	button.nav, button.icon {
+		border-radius: 6px;
+	}
 
 	button.esc {
 		min-height: 32px;
 		padding: 6px;
-		background: #0006;
-		border: var(--box-border);
 		border-radius: 16px;
 		outline: 0;
 		letter-spacing: 0px;
@@ -251,12 +247,6 @@ kbd {
 	@keyframes inHover  { from { letter-spacing: 0px } to { letter-spacing: 8px } }
 	@keyframes outHover { from { letter-spacing: 8px } to { letter-spacing: 0px } }
 
-	button.esc span {
-		position: absolute;
-		left: 16px;
-		transform: rotateX(-360deg);
-		transition: left 0.5s cubic-bezier(0, 1, 0, 1), transform 0.2s cubic-bezier(0, 0.64, 0, 0.64);
-	}
 	button.esc img {
 		position: absolute;
 		left: 16px;
@@ -271,7 +261,7 @@ kbd {
 */
 	input[type='text'], select {
 		min-height: 26px;
-		margin: 4px 2px;
+		margin: 2px;
 		padding: 0 6px;
 		font-size: var(--font-size);
 		color: #fff;
@@ -298,7 +288,7 @@ kbd {
 /*
 	Esc
 */
-	.esc-menu { display: flex; top: 72%; flex-direction: column; gap: 6px; width: 320px }
+	.esc-menu { display: flex; top: 72%; flex-direction: column; gap: 2px; width: 320px }
 
 
 /*
@@ -307,9 +297,9 @@ kbd {
 	.settings					{ display: flex; justify-content: space-between }
 	.settings > section			{ padding: 16px; border-bottom: var(--box-border) }
 	.settings > section:hover	{ background: #fff1 }
-	.settings > section > h3	{ margin: 0 }
+	.settings > section > h3	{ margin-top: 16px }
 
-	.setting		{ display: flex; justify-content: flex-end; align-items: baseline; flex-direction: row-reverse; gap: 6px }
+	.setting		{ display: flex; justify-content: flex-end; align-items: baseline; flex-direction: row-reverse; margin: 6px 0; gap: 6px }
 	.setting.range	{ flex-direction: column; margin: 6px 0 12px 0 }
 
 /*
@@ -337,7 +327,10 @@ kbd {
 
 
 
-
+.width-fill-available {
+	width: -moz-available;
+	width: -webkit-fill-available;
+}
 
 .center { position: absolute; top: 50%; left: 50%; translate: -50% -50% }
 
@@ -350,7 +343,6 @@ kbd {
 	padding: 16px;
 	translate: -50% 0;
 }
-#inputUsername	{ width: -moz-available; width: -webkit-fill-available; margin: 6px 0 }
 
 .floaty-adocubes {
 	position: absolute;
@@ -385,8 +377,8 @@ kbd {
 
 .blur-background {
 	position: absolute;
-	width: var(--innerWidth);
-	height: var(--innerHeight);
+	width: 100vw;
+	height: 100vh;
 	backdrop-filter: blur(6px);
 }
 
@@ -421,7 +413,14 @@ kbd {
 
 
 #crosshair { user-select: none }
-#toolbar { bottom: 6px; left: 50%; translate: -50% 0; gap: 6px; transform-origin: bottom }
+#toolbar {
+	bottom: 6px;
+	left: 50%;
+	padding: 4px;
+	translate: -50% 0;
+	gap: 4px;
+	transform-origin: bottom
+}
 #coordinates {
 	position: absolute;
 	bottom: 70px;
@@ -443,37 +442,67 @@ kbd {
 }
 
 .chat { flex-direction: column; top: 6px; left: 6px; gap: 6px; transform-origin: top left }
-.chat > input { width: auto; margin-top: var(--box-padding); transition: all 0.25s cubic-bezier(0, 1, 0.75, 1) }
-.chat > div {
+.chat.compact { gap: 0px }
+
+.chat > .chatbox {
+	display: flex;
+	flex-direction: row-reverse;
+	height: 32px;
+	width: auto;
+	overflow: hidden;
+	transition: all 0.25s cubic-bezier(0, 1, 0.75, 1)
+}
+.chat.compact > .chatbox {
+	height: 0;
+}
+
+.chat > #messages {
 	display: flex;
 	overflow-y: scroll;
 	overflow-wrap: break-word;
-	flex-direction: column-reverse;
+	flex-direction: column;
 	width: var(--chat-width);
 	max-height: var(--chat-maxheight);
 	transition: all 0.4s cubic-bezier(0, 1, 0, 1);
 }
-.chat > div > p {
+.chat.compact > #messages { max-height: calc(var(--chat-maxheight) / 2) }
+
+.chat > #messages > p {
 	width: auto;
 	user-select: text;
 	animation-name: new-player-message;
 	animation-timing-function: cubic-bezier(0, 0, 0, 1);
 	animation-duration: 0.25s;
 }
-.chat.compact { gap: 0px }
-.chat.compact > input {
-	min-height: 0;
-	margin: 0;
-	height: 0;
-	background: #0000;
-	border: none;
-	outline: none;
-}
-.chat.compact > div	{ max-height: calc(var(--chat-maxheight) / 2) }
-.chat.compact > p { height: 0; overflow: hidden }
 
 @keyframes new-player-message {
 	from { line-height: 0; opacity: 0% }
 	to { line-height: 1; opacity: 100% }
 }
 
+
+
+#signEditContent {
+	overflow: hidden;
+}
+
+main.sign {
+	display: flex;
+	flex-direction: row;
+	padding: 16px;
+}
+
+.sign-content {
+	min-height: 432px;
+	min-width: 480px;
+	max-height: 432px;
+	max-width: 480px;
+	padding: 6px;
+	color: #fff;
+	background: #000;
+	border: var(--box-border);
+	font-size: 16px;
+	white-space: pre;
+    word-break: break-all;
+    resize: none;
+}

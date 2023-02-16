@@ -1,6 +1,7 @@
 <script>
 	import Box from "lib/Box.svelte";
 	import Button from "lib/Button.svelte";
+	import Input from "lib/Input.svelte";
 	import splashTexts from "public/game/splash texts.json";
 	import { toggleShow, usingMobile } from "public/game/utils.js";
 	import { config } from "public/game/config.js";
@@ -28,12 +29,11 @@
 	<Box classes="login hide show">
 		<h2>LOGIN</h2>
 		<div>
-			Nickname (<b>{nickname.length}</b>/30)
-			<input id="inputUsername" type="text" maxlength="30" oninput="localStorage.setItem('lastUsedNickname', inputUsername.value)" bind:value={nickname}>
+			<Input label="Nickname" classes="width-fill-available" id="inputUsername" type="text" maxlength="30" oninput="localStorage.setItem('lastUsedNickname', inputUsername.value)" value={nickname}/>
 		</div>
 
 		<div>
-			World: <select id="selectWorld"></select>
+			World: <select class="width-fill-available" id="selectWorld"></select>
 			<Button id="joinWorldButton">Join</Button>
 		</div>
 

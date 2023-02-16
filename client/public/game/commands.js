@@ -89,7 +89,7 @@ export const commands = {
 					createMessage(`<b>${command}</b> - ${commands[command].help[0]}`)
 				})
 			}
-			commands[command].help.forEach(text => { createMessage(coloride(text), true) });
+			commands[command].help.reverse().forEach(text => { createMessage(coloride(text), true) });
 		}
 	}
 }

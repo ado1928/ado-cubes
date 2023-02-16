@@ -84,13 +84,13 @@ function socketValid(socket) { // this looks wonky :P
 	if (!socket.player || !socket.player.name || !socket.player.world
 		|| !worldslist.includes(socket.player.world)
 		|| !socket.player.name.length > 30
-	) return killSocket(socket);
+	) return kickSocket(socket);
 
 	return true;
 }
 
-function killSocket(socket) {
-	socket.emit('ohno');
+function kickSocket(socket, reason) {
+	socket.emit('ohno', reason);
 	socket.disconnect();
 	return false
 }
@@ -136,35 +136,49 @@ function playerlist(socket) {
 	io.to(socket.player.world).emit('playerlist', players);
 }
 
+class Ratelimit {
+	constructor([socket, ratelimits]) {
+		this.caps = ratelimits;
+		this.count = {};
+		this.lastChecked = {};
+		Object.entries(ratelimits).forEach(([key, value]) => {
+			this.count[key] = 0;
+			this.lastChecked[key] = Date.now();
+			Object.defineProperty(this, key, {
+				get() {
+					if (Date.now() - this.lastChecked[key] > 1000) {
+						this.count[key] = 1;
+						this.lastChecked[key] = Date.now();
+					} else {
+						this.count[key]++;
+					}
+
+					if (this.count[key] > this.caps[key]) {
+						kickSocket(socket);
+						return true;
+					}
+					
+					return false;
+				}
+			})
+		})
+	}
+}
+
 function bold(text) { return `\x1b[1m${text}\x1b[0m` }
 
 io.on('connection', socket => {
-	let ratelimit = 0;
-	let ratelimitLastDate = Date.now();
-
-	function ratelimitted() {
-		if (ratelimit > 32) {
-			killSocket(socket);
-			return true
-		}
-
-		if (Date.now() - ratelimitLastDate > 1000) {
-			ratelimit = 1;
-			ratelimitLastDate = Date.now();
-		} else {
-			ratelimit++;
-			//log(`${socket.player.name} ratelimit is ${ratelimit}`);
-		}
-
-		return false
-	}
+	let ratelimit = new Ratelimit([socket, {
+		cubes: config.ratelimit.cubes,
+		chat: config.ratelimit.chat
+	}]);
 
 	io.emit('worldslist', worldslist);
 
 	socket.on('place', data => {
 		pos = data.pos;
 		color = data.color;
-		if (!socketValid(socket) || ratelimitted() || !cubeValid(pos, color)) return;
+		if (!socketValid(socket) || ratelimit.cubes || !cubeValid(pos, color)) return;
 		if (worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] !== 0) return;
 		worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = color + 1;
 		io.to(socket.player.world).emit('place', data);
@@ -173,13 +187,13 @@ io.on('connection', socket => {
 
 	socket.on('break', data => {
 		pos = data.pos;
-		if (!socketValid(socket) || ratelimitted() || !cubeValid(pos)) return;
+		if (!socketValid(socket) || ratelimit.cubes || !cubeValid(pos)) return;
 		worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = 0;
 		io.to(socket.player.world).emit('break', data);
 	});
 
 	socket.on('message', content => {
-		if (!socketValid(socket) || ratelimitted() || content.length > 1600) return;
+		if (!socketValid(socket) || ratelimit.chat || content.length > 1600) return;
 		io.to(socket.player.world).emit('message', {
 			'sender': {
 				'name': socket.player.name,

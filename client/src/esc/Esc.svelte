@@ -14,10 +14,10 @@
 		if (event.key !== "Escape" && document.activeElement.tagName !== "input") return;
 		let windows = document.getElementsByClassName("window");
 		for (let i = 0; i < windows.length; i++) windows[i].classList.remove('show');
-		escChange(true);
+		changeEsc(true);
 	});
 
-	function escChange(toggle, win) {
+	function changeEsc(toggle, win) {
 		let windows = document.getElementsByClassName("window");
 		if (toggle) toggleShow('esc');
 		if (win) {
@@ -29,31 +29,31 @@
 
 <div>
 	<Box id="esc" classes="center esc-menu">
-		<Button type="esc" on:click={() => escChange(true)}>
+		<Button type="esc" on:click={() => changeEsc(true)}>
 			<img src="/img/icon/esc/return.png"> Return
 		</Button>
 		<Button id="leaveWorldButton" type="esc">
 			<img src="/img/icon/esc/return.png"> Leave world
 		</Button>
 		<p><br></p>
-		<Button type="esc" on:click={() => escChange(false, 'settings')}>
+		<Button type="esc" on:click={() => changeEsc(false, 'settings')}>
 			<img src="/img/icon/esc/settings.png"> Settings
 		</Button>
-		<Button type="esc" on:click={() => escChange(false, 'changelog')}>
+		<Button type="esc" on:click={() => changeEsc(false, 'changelog')}>
 			<img src="/img/icon/esc/changelog.png"> Changelog
 		</Button>
-		<Button type="esc" on:click={() => escChange(false, 'credits')}>
+		<Button type="esc" on:click={() => changeEsc(false, 'credits')}>
 			<img src="/img/icon/esc/credits.png"> Credits
 		</Button>
 	</Box>
 </div>
 
-<Window id="settings" title="SETTINGS" on:back={() => escChange(false, 'settings')} on:exit={() => escChange(true, 'settings')}>
+<Window id="settings" title="SETTINGS" on:back={() => changeEsc(false, 'settings')} on:exit={() => changeEsc(true, 'settings')}>
 	<Settings/>
 </Window>
-<Window id="changelog" title="CHANGELOG" on:back={() => escChange(false, 'changelog')} on:exit={() => escChange(true, 'changelog')}>
+<Window id="changelog" title="CHANGELOG" on:back={() => changeEsc(false, 'changelog')} on:exit={() => changeEsc(true, 'changelog')}>
 	<Changelog/>
 </Window>
-<Window id="credits" title="CREDITS" on:back={() => escChange(false, 'credits')} on:exit={() => escChange(true, 'credits')}>
+<Window id="credits" title="CREDITS" on:back={() => changeEsc(false, 'credits')} on:exit={() => changeEsc(true, 'credits')}>
 	<Credits/>
 </Window>
