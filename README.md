@@ -24,7 +24,9 @@ node .
 
 <h2 align=center>contribution</h2>
 
-> idk what to put here yet
+> idk what to put here atm
+
+If you make changes in the `./client/src` folder, make sure to run `npm run build`. If you make rapid changes to it, run `npm run dev` instead.
 
 
 
@@ -54,7 +56,7 @@ node .
 </table>
 
 <h3 align="center">made with</h3>
-<table>
+<table align="center">
 	<tr>
 		<td align="center">
 			<img src="./client/public/img/icon/credits/three.js.png"><br>
@@ -76,10 +78,10 @@ node .
 
 <br>
 
-Sounds generated with <a href="https://sfxr.me">jsfxr</a></p>
+<p align="center">Sounds generated with <a href="https://sfxr.me">jsfxr</a></p>
 
 
 
 <br><br><br><br><br><br><br>
 
-<p align="center""center"><i>have a frog</i><img src="https://cdn.discordapp.com/attachments/968866349633896488/972592866943701082/the_frog.png" height=100></p>
+<p align="center"><i>have a frog :D</i><br><br><img src="https://cdn.discordapp.com/attachments/968866349633896488/972592866943701082/the_frog.png" height=100></p>
