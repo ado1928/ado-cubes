@@ -1,11 +1,13 @@
 <script context="module">
 	import Button from "lib/Button.svelte";
+	import Checkbox from "lib/Checkbox.svelte";
 	import Setting from "lib/Setting.svelte";
 	import { usingMobile } from "public/game/utils.js";
 </script>
 
 <header>
 	Your changes are automatically saved and applied.
+	<Checkbox>test</Checkbox>
 </header>
 <main class="settings">
 	<section>

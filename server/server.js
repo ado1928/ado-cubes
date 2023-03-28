@@ -7,12 +7,12 @@ const path = require('path');
 const moment = require('moment');
 const DOMPurify = require('isomorphic-dompurify');
 const marked = require('marked');
-
 const textencoder = new TextEncoder();
 const textdecoder = new TextDecoder();
 const toml = require('toml');
-let config = toml.parse(fs.readFileSync('./server/config.toml', 'utf-8'));
+const Ratelimit = require('./ratelimit.js');
 
+let config = toml.parse(fs.readFileSync('./server/config.toml', 'utf-8'));
 const { Client, Intents } = require('discord.js');
 const { Webhook } = require('discord-webhook-node');
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES + Intents.FLAGS.GUILDS ] });
@@ -136,42 +136,10 @@ function playerlist(socket) {
 	io.to(socket.player.world).emit('playerlist', players);
 }
 
-class Ratelimit {
-	constructor([socket, ratelimits]) {
-		this.caps = ratelimits;
-		this.count = {};
-		this.lastChecked = {};
-		Object.entries(ratelimits).forEach(([key, value]) => {
-			this.count[key] = 0;
-			this.lastChecked[key] = Date.now();
-			Object.defineProperty(this, key, {
-				get() {
-					if (Date.now() - this.lastChecked[key] > 1000) {
-						this.count[key] = 1;
-						this.lastChecked[key] = Date.now();
-					} else {
-						this.count[key]++;
-					}
-
-					if (this.count[key] > this.caps[key]) {
-						kickSocket(socket);
-						return true;
-					}
-					
-					return false;
-				}
-			})
-		})
-	}
-}
-
 function bold(text) { return `\x1b[1m${text}\x1b[0m` }
 
 io.on('connection', socket => {
-	let ratelimit = new Ratelimit([socket, {
-		cubes: config.ratelimit.cubes,
-		chat: config.ratelimit.chat
-	}]);
+	let ratelimit = new Ratelimit([socket, config.ratelimit]);
 
 	io.emit('worldslist', worldslist);
 

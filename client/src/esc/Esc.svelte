@@ -1,5 +1,5 @@
 <script>
-	import { toggleShow } from 'public/game/utils.js';
+	import { setHide } from 'public/game/utils.js';
 
 	import Box from "lib/Box.svelte";
 	import Button from 'lib/Button.svelte';
@@ -13,16 +13,16 @@
 		if (event.key == 'F1') event.preventDefault();
 		if (event.key !== "Escape" && document.activeElement.tagName !== "input") return;
 		let windows = document.getElementsByClassName("window");
-		for (let i = 0; i < windows.length; i++) windows[i].classList.remove('show');
+		for (let i = 0; i < windows.length; i++) windows[i].classList.add('hide');
 		changeEsc(true);
 	});
 
 	function changeEsc(toggle, win) {
 		let windows = document.getElementsByClassName("window");
-		if (toggle) toggleShow('esc');
+		if (toggle) setHide(esc);
 		if (win) {
-			toggleShow(document.getElementById(win));
-			toggleShow('esc');
+			setHide(document.getElementById(win));
+			setHide(esc);
 		}
 	}
 </script>

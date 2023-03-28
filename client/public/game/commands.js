@@ -1,5 +1,5 @@
-import { createMessage, camera, sun } from './main.js';
-import { escapeHTML, coloride, coordsValid } from './utils.js';
+import { camera, sun } from './main.js';
+import { escapeHTML, createMessage, coloride, coordsValid } from './utils.js';
 
 export const commands = {
 	cmsg: {

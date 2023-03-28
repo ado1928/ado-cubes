@@ -3,7 +3,7 @@
 	import Button from "lib/Button.svelte";
 	import Input from "lib/Input.svelte";
 	import splashTexts from "public/game/splash texts.json";
-	import { toggleShow, usingMobile } from "public/game/utils.js";
+	import { setHide, usingMobile } from "public/game/utils.js";
 	import { config } from "public/game/config.js";
 
 	let logo = "./img/logo/adocubes.svg";
@@ -24,9 +24,9 @@
 </script>
 
 <div id="welcome">
-	<div class="blur-background hide show"/>
+	<div class="blur-background"/>
 
-	<Box classes="login hide show">
+	<Box classes="login" show>
 		<h2>LOGIN</h2>
 		<div>
 			<Input label="Nickname" classes="width-fill-available" id="inputUsername" type="text" maxlength="30" oninput="localStorage.setItem('lastUsedNickname', inputUsername.value)" value={nickname}/>
@@ -42,6 +42,6 @@
 		<p><strong>IMPORTANT:</strong> Check controls by pressing Escape, click on Settings, and look at Input category.</p>
 	</Box>
 
-	<img src={logo} class="floaty-adocubes hide show">
-	<p class="splash-text hide show" style={splashTextPosition}>{splashTexts['default'][Math.floor(Math.random() * splashTexts['default'].length)]}</p>
+	<img src={logo} class="floaty-adocubes">
+	<p class="splash-text" style={splashTextPosition}>{splashTexts['default'][Math.floor(Math.random() * splashTexts['default'].length)]}</p>
 </div>

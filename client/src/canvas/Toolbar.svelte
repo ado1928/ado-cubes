@@ -1,14 +1,10 @@
 <script>
 	import Box from "lib/Box.svelte";
 	import Button from "lib/Button.svelte";
-	import { toggleShow, usingMobile } from "public/game/utils.js";
-	import { config } from "public/game/config.js";
+	import { setHide, usingMobile } from "public/game/utils.js";
 
+	let game = window.game;
 	let fullscreen = false;
-	let update = [];
-
-	config.reset('buildingMethod');
-	config.reset('movementMethod');
 
 	function switchFullscreen() { // h
 		if (document.fullscreen) {
@@ -22,14 +18,18 @@
 	}
 
 	function switchBuildingMethod() {
-		config.buildingMethod = (config.buildingMethod == 'raycast') ? 'camera' : 'raycast';
-		(config.buildingMethod == 'raycast')
+		game.buildingMethod = (game.buildingMethod == 'raycast') ? 'camera' : 'raycast';
+		(game.buildingMethod == 'raycast')
 			? crosshair.classList.remove('no-raycast')
 			: crosshair.classList.add('no-raycast')
 	}
 
 	function switchMovementMethod() {
-		config.movementMethod = (config.movementMethod == 'fly') ? 'walk' : 'fly';
+		game.movementMethod = (game.movementMethod == 'fly') ? 'walk' : 'fly';
+	}
+
+	function toggleGrid() {
+		game.showGrid = !game.showGrid
 	}
 </script>
 
@@ -41,7 +41,7 @@
 </Box>
 
 <Box id="toolbar">
-	<Button type="icon" on:click={() => toggleShow('esc')}>
+	<Button type="icon" on:click={() => setHide(esc)}>
 		<img src="./img/icon/esc/esc.png">
 	</Button>
 	{#if usingMobile()}
@@ -56,11 +56,11 @@
 		<img src="./img/icon/cube type/basic.png">
 	</Button>-->
 	<Button type="icon" on:click={switchBuildingMethod}>
-		<img src={`./img/icon/placement/${config.buildingMethod}.png`}>
+		<img src={`./img/icon/placement/${game.buildingMethod}.png`}>
 	</Button>
 
-	<Button type="icon" on:click>
-		{#key update}<img src={`./img/icon/grid/on.png`}>{/key}
+	<Button type="icon" on:click={toggleGrid}>
+		<img src={`./img/icon/grid/${game.showGrid}.png`}>
 	</Button>
 
 	<!--<div class="line-x"/>

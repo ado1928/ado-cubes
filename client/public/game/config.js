@@ -15,16 +15,12 @@ class Config {
 	}
 
 	reset(key) {
-		if (this.defaults[key] === undefined) return console.error(`config "${key}" does not exist`);
+		if (!this.defaults[key]) return console.error(`config "${key}" does not exist`);
 		return localStorage.setItem(key, JSON.stringify(this.defaults[key]));
 	}
 }
 
 export const config = new Config({
-	cubeType: 'basic',
-	buildingMethod: 'raycast',
-	movementMethod: 'fly',
-
 	// General
 	language: 'among-us',
 	uiScale: 1,
@@ -47,7 +43,6 @@ export const config = new Config({
 	toggleGrid: 'KeyG',
 	settingsShortcut: 'KeyL',
 	keyModifier: (navigator.userAgent.match(/Firefox/i)) ? 'KeyZ' : 'LeftAlt',
-	keyModifierFirefox: 'KeyZ',
 	invertMouseControlsForCubePlacement: false,
 
 	// Audio

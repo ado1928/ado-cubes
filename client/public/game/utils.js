@@ -23,22 +23,27 @@ export function playAudio(name, volume, condition) {
 	i.play()
 }
 
-export function toggleShow(elements, force) {
-	function changeClass(element) {
-		element = (typeof element == 'string')
-			? document.querySelector(`#${element}`).classList
-			: element.classList;
-		if (force !== undefined) {
-			(force)
-				? element.add('show')
-				: element.remove('show')
+export function setHide(objects, value) {
+	function changeClass(object) {
+		if (object instanceof NodeList || object instanceof HTMLCollection) return setHide(object, value);
+		
+		object = object.classList;
+		if (value !== undefined) {
+			(value)
+				? object.add('hide')
+				: object.remove('hide')
 		} else {
-			element.toggle('show');
+			object.toggle('hide');
 		}
 	}
 
-	if (typeof elements == 'string' || elements.length === undefined) return changeClass(elements);
-	for (let i = 0; i < elements.length; i++) changeClass(elements[i]);
+	if (objects.length === undefined) return changeClass(objects);
+	for (let i = 0; i < objects.length; i++) changeClass(objects[i]);
+}
+
+export function createMessage(content, audio) {
+	messages.insertAdjacentHTML('afterbegin', `<p>${content}</p>`)
+	playAudio(audio ?? "ui/msg/default", config.uiVolume, !config.disableMessageSounds)
 }
 
 export function coloride(text, useDefault) {
@@ -55,7 +60,7 @@ export function coordsValid(coords) {
 }
 
 export function usingMobile() {
-	return (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) !== null || config.forceMobileAgent) ? true : false
+	return (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) !== null || config.valueMobileAgent) ? true : false
 }
 
 export function escapeHTML(unsafe) {

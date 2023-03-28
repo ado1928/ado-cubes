@@ -16,11 +16,11 @@
 <Box classes="window center" {id}>
 	<header>
 		{#if nav.includes('back')}
-			<Button type="nav" on:click={back}><img src="./img/icon/esc/back.png" alt="<="></Button>
+			<Button type="icon nav" on:click={back}><img src="./img/icon/esc/back.png" alt="<="></Button>
 		{/if}
 		<h1>{title}</h1>
 		{#if nav.includes('exit')}
-			<Button type="nav" on:click={exit}><img src="./img/icon/esc/exit.png" alt="X"></Button>
+			<Button type="icon nav" on:click={exit}><img src="./img/icon/esc/exit.png" alt="X"></Button>
 		{/if}
 	</header>
 	<slot/>

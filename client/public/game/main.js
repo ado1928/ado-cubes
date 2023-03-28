@@ -1,19 +1,22 @@
 import * as THREE from 'three';
-import 'io';
-import { PointerLockControls } from "../node_modules/three/examples/jsm/controls/PointerLockControls.js";
-import * as BufferGeometryUtils from "../node_modules/three/examples/jsm/utils/BufferGeometryUtils.js";
+import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
+import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 import JoystickController from 'joystick-controller';
-import { playAudio, escapeHTML, coloride, toggleShow, usingMobile } from "./utils.js";
+import { playAudio, escapeHTML, coloride, setHide, usingMobile } from "./utils.js";
 import { config } from "./config.js";
 import { commands } from "./commands.js";
 
-let socket = io();
+let socket = window.socket;
+let game = window.game;
+
 const clock = new THREE.Clock();
 const velocity = new THREE.Vector3();
 const raycaster = new THREE.Raycaster();
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer();
 const loader = new THREE.CubeTextureLoader();
+export const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10000);
+export const controls = new PointerLockControls(camera, renderer.domElement);
 const skybox = loader.load([
 	'/game/sky/skybox_right.png',
 	'/game/sky/skybox_left.png',
@@ -21,11 +24,8 @@ const skybox = loader.load([
 	'/game/sky/skybox_bottom.png',
 	'/game/sky/skybox_front.png',
 	'/game/sky/skybox_back.png'
-]); scene.background = skybox
-
-export const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10000);
-export const controls = new PointerLockControls(camera, renderer.domElement);
-
+]);
+scene.background = skybox;
 
 let vert = `
 varying vec2 vUv;
@@ -130,12 +130,11 @@ function resize() {
 	camera.updateProjectionMatrix();
 };
 
-window.addEventListener("resize", (resize(), resize))
+window.addEventListener("resize", (resize(), resize));
 
 renderer.domElement.addEventListener('click', () => {
 	if (nickname) controls.lock();
-	toggleShow(document.querySelectorAll('.window'), false);
-	toggleShow(esc, false);
+	setHide([document.querySelectorAll('.window'), esc], true);
 });
 
 
@@ -145,9 +144,9 @@ let nickname, worldslist;
 function joinWorld(event) {
 	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value || nickname) return;
 	nickname = inputUsername.value;
-	toggleShow(welcome.children);
-	toggleShow(uiCanvas.children);
-	if (usingMobile()) toggleShow(document.querySelectorAll('.joystick'));
+	setHide(welcome.children);
+	setHide(uiCanvas.children);
+	if (usingMobile()) setHide(document.querySelectorAll('.joystick'));
 	socket.emit('joinWorld', { "name": nickname, "id": socket.id, "world": selectWorld.value });
 }
 
@@ -155,9 +154,8 @@ function leaveWorld() {
 	nickname = null;
 	messages.innerHTML = null;
 	window.worldPalette = undefined;
-	toggleShow(uiCanvas.children, false);
-	toggleShow(welcome.children, true);
-	toggleShow(esc, false);
+	setHide([uiCanvas.children, esc], true);
+	setHide(welcome.children, false);
 }
 
 inputUsername.onkeydown = event => joinWorld(event);
@@ -222,11 +220,6 @@ function initPalette(worldPalette) {
 
 
 
-export function createMessage(content, audio) {
-	messages.insertAdjacentHTML('afterbegin', `<p>${content}</p>`)
-	playAudio(audio ?? "ui/msg/default", config.uiVolume, !config.disableMessageSounds)
-}
-
 inputChat.onkeydown = event => {
 	if (event.key !== 'Enter' || !nickname) return;
 	if (inputChat.value.startsWith('/')) {
@@ -251,75 +244,6 @@ inputChat.onkeydown = event => {
 	}
 	inputChat.value = ''
 };
-
-
-
-socket.on('ohno', reason => {
-	document.body.innerHTML = `<p class="socket-error">${reason ?? "oh no, something has gone wrong! please refresh page!"}</p>`
-})
-
-socket.on('connected', data => {
-	const view = new Uint8Array(data.world);
-	window.worldPalette = data.palette;
-	initPalette(data.palette);
-	cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
-	for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
-		for (let y = 0; y < 64; y++) {
-			for (let z = 0; z < 64; z++) {
-				if (view[x*4096+y*64+z] > 0) {
-					createCube({ 'x': x, 'y': y, 'z': z }, view[x*4096+y*64+z] - 1);
-				}
-			}
-		}
-	};
-	for (var i = 0; i < colors.length; i++) initWorld(i)
-});
-
-socket.on('worldslist', arr => {
-	selectWorld.innerHTML = '';
-	worldslist = arr;
-	for (let i = 0; i < arr.length; i++) {
-		let option = document.createElement("option");
-		option.text = arr[i];
-		selectWorld.add(option);
-	}
-})
-
-socket.on('playerlist', arr => {
-	playerlist.innerHTML = `<strong>playerlist</strong>`;
-	arr.forEach(player => {
-		playerlist.insertAdjacentHTML('beforeend', `<b title="${player.id}">${player.name}</b>`)
-	})
-})
-
-socket.on('leaveWorld', () => leaveWorld());
-
-socket.on('joinMessage', data => createMessage(`<b>${coloride(data.player, true)}</b> joined the world`, "ui/msg/player join"));
-socket.on('leaveMessage', data => createMessage(`<b>${coloride(data.player, true)}</b> left the world`, "ui/msg/player left"));
-
-socket.on('message', data => {
-	console.log(data);
-	createMessage(`<b title="session id ${data.sender.id}" style="cursor:help">${coloride(data.sender.name, true)}:</b> ${coloride(data.content)}`)
-});
-socket.on('serverMessage', data => createMessage(`<i>${data.content}</i>`));
-
-socket.on('place', data => {
-	let pos = data.pos;
-	createCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
-	updateWorld(data.color)
-
-	/*if (cubeType == 'light') {
-		const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
-		bl.position.set(pos[0], pos[1], pos[2]);
-		bl.castShadow = false;
-		scene.add(bl)
-	}*/
-});
-socket.on('break', data => {
-	let pos = data.pos;
-	destroyCube(new THREE.Vector3(pos[0], pos[1], pos[2]))
-});
-
 
 
 
@@ -359,13 +283,12 @@ document.addEventListener('keydown', event => {
 
 	// Other
 		case 'Enter':	controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
-		case 'Tab':		toggleShow(playerlist, true); break
-		case config.settingsShortcut: controls.unlock(); toggleShow(settings); break
-		case config.toggleUi: toggleShow(uiCanvas.children); break
+		case 'Tab':		setHide(playerlist, true); break
+		case config.settingsShortcut: controls.unlock(); setHide(settings); break
+		case config.toggleUi: setHide(uiCanvas.children); break
 		case config.highlightCube: highlightCube(); break
 
-		case config.keyModifier:
-		case config.keyModifierFirefox: colorSkip = Number(getComputedStyle(document.documentElement).getPropertyValue("--palette-rows")) * -1;
+		case config.keyModifier: colorSkip = Number(getComputedStyle(document.documentElement).getPropertyValue("--palette-rows")) * -1;
 	}
 });
 
@@ -377,10 +300,9 @@ document.addEventListener('keyup', event => {
 		case 'KeyD': moveRight = false; break
 		case 'Space': moveUp = false; break
 		case 'ShiftLeft': moveDown = false; break
-		case 'Tab': toggleShow(playerlist, false); break
+		case 'Tab': setHide(playerlist, false); break
 
-		case config.keyModifier:
-		case config.keyModifierFirefox: colorSkip = 1;
+		case config.keyModifier: colorSkip = 1;
 
 	}
 });
@@ -417,7 +339,7 @@ function highlightCube() {
 		return;
 	} else {
 		controls.unlock();
-		toggleShow(sign, true);
+		setHide(sign, false);
 	}
 	let hgeometry = new THREE.BoxGeometry(1.125, 1.125, 1.125);
 	if (intersects.length > 0) {
@@ -437,7 +359,7 @@ function highlightCube() {
 };
 
 function placeCube(pos) {
-	if (config.buildingMethod == 'raycast') {
+	if (game.buildingMethod == 'raycast') {
 		raycaster.setFromCamera({ "x": 0.0, "y": 0.0 }, camera);
 		const intersects = raycaster.intersectObjects(scene.children);
 		if (intersects.length > 0) {
@@ -452,7 +374,7 @@ function placeCube(pos) {
 }
 
 function breakCube(pos) {
-	if (config.buildingMethod == 'raycast') {
+	if (game.buildingMethod == 'raycast') {
 		raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
 		const intersects = raycaster.intersectObjects(scene.children);
 		if (intersects.length > 0) {
@@ -551,7 +473,72 @@ if (usingMobile()) {
 	});
 }
 
-window.joystickMoveX = joystickMoveX;
+
+
+document.addEventListener('game', () => {
+	grid.visible = game.showGrid
+})
+
+
+
+socket.on('ohno', reason => {
+	document.body.innerHTML = `<p class="socket-error">${reason ?? "oh no, something has gone wrong! please refresh page!"}</p>`
+})
+
+socket.on('connected', data => {
+	const view = new Uint8Array(data.world);
+	window.worldPalette = data.palette;
+	initPalette(data.palette);
+	cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
+	for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
+		for (let y = 0; y < 64; y++) {
+			for (let z = 0; z < 64; z++) {
+				if (view[x*4096+y*64+z] > 0) {
+					createCube({ 'x': x, 'y': y, 'z': z }, view[x*4096+y*64+z] - 1);
+				}
+			}
+		}
+	};
+	for (var i = 0; i < colors.length; i++) initWorld(i)
+});
+
+socket.on('worldslist', arr => {
+	selectWorld.innerHTML = '';
+	worldslist = arr;
+	for (let i = 0; i < arr.length; i++) {
+		let option = document.createElement("option");
+		option.text = arr[i];
+		selectWorld.add(option);
+	}
+});
+
+socket.on('playerlist', arr => {
+	playerlist.innerHTML = `<strong>playerlist</strong>`;
+	arr.forEach(player => {
+		playerlist.insertAdjacentHTML('beforeend', `<b title="${player.id}">${player.name}</b>`);
+	});
+});
+
+socket.on('leaveWorld', () => leaveWorld());
+
+socket.on('place', data => {
+	let pos = data.pos;
+	createCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
+	updateWorld(data.color);
+
+	/*if (cubeType == 'light') {
+		const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
+		bl.position.set(pos[0], pos[1], pos[2]);
+		bl.castShadow = false;
+		scene.add(bl)
+	}*/
+});
+socket.on('break', data => {
+	let pos = data.pos;
+	destroyCube(new THREE.Vector3(pos[0], pos[1], pos[2]));
+});
+
+
 
 function render() {
 	requestAnimationFrame(render);
@@ -606,4 +593,5 @@ function render() {
 	renderer.render(scene, camera)
 };
 
-render()
+render();
+socket.connect();

@@ -17,18 +17,18 @@
 </head>
 <body>
 	<script type="module" src="./node_modules/es-module-shims/dist/es-module-shims.js"></script>
-
+	<script src="/node_modules/socket.io/client-dist/socket.io.min.js"></script>
 	<script type="importmap" crossorigin="anonymous" referrerpolicy="no-referrer" defer>
 		{
 			"imports": {
 				"three": "/node_modules/three/build/three.module.js",
-				"io": "/node_modules/socket.io/client-dist/socket.io.min.js",
+				"three/addons/": "/node_modules/three/examples/jsm/",
 				"joystick-controller": "/node_modules/joystick-controller/dist/es/joystick-controller.js"
 			}
 		}
 	</script>
 
-	<script type="module" src="./game/main.js"></script>
+	<script src="./game/init.js"></script>
 	<script src="./build/bundle.js"></script>
-</body>
+	<script type="module" src="./game/main.js"></script>
 </html>

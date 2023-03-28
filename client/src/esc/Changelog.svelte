@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import Button from "lib/Button.svelte";
-	import { toggleShow, coloride } from "public/game/utils.js";
+	import { coloride } from "public/game/utils.js";
 
 	import { marked } from 'marked';
 	import changelogs from "public/changelog/index.json";
@@ -19,14 +19,6 @@
 		let text = await data.text();
 		return text;
 	}
-
-	/*onMount(() => {
-		if (localStorage.lastPlayedVersion !== changelogs[0]) {
-			setTimeout(() => toggleShow(changelog, true), 200);
-		}
-
-		localStorage.lastPlayedVersion = changelogs[0];
-	})*/
 
 	marked.setOptions({ headerIds: false })
 

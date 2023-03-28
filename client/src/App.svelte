@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from 'svelte';
+
 	import Box from "lib/Box.svelte";
 	import Window from "lib/Window.svelte";
 
@@ -10,7 +12,7 @@
 	import Sign from "./canvas/Sign.svelte";
 	import Playerlist from "./canvas/Playerlist.svelte";
 
-	import { toggleShow } from "public/game/utils.js";
+	import { setHide } from "public/game/utils.js";
 	import { config } from "public/game/config.js";
 </script>
 
@@ -24,7 +26,7 @@
 		<Toolbar/> <Chat/>
 	</div>
 
-	<Window id="sign" title="SIGN" nav="exit" on:exit={() => toggleShow(sign)}>
+	<Window id="sign" title="SIGN" nav="exit" on:exit={() => setHide(sign)}>
 		<Sign/>
 	</Window>
 

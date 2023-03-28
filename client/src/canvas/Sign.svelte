@@ -1,7 +1,7 @@
 <script>
 	import Box from "lib/Box.svelte";
 	import Button from "lib/Button.svelte";
-	import { toggleShow, coloride } from "public/game/utils.js";
+	import { coloride } from "public/game/utils.js";
 
 	let tab = 'display';
 
