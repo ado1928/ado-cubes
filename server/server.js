@@ -80,6 +80,20 @@ fs.readdir("server/worlds", (err, crows) => { if (err) throw err;
 	log(`\x1b[90mloaded ${worldslist}`)
 })
 
+function loadWorld(socket) {
+	socket.join(socket.player.world);
+	io.to(socket.id).emit('connected', {
+		world: worlds[socket.player.world],
+		palette: config.defaults.world.palette
+	})
+}
+
+function saveWorld(i) {
+	fs.writeFile(`./server/worlds/${i}.caw`, textdecoder.decode(worlds[i]), err => { if (err) throw err });
+	lastsaved = Date.now();
+	log(`🌍 Saved world ${bold(i)}`);
+}
+
 function socketValid(socket) { // this looks wonky :P
 	if (!socket.player || !socket.player.name || !socket.player.world
 		|| !worldslist.includes(socket.player.world)
@@ -109,23 +123,6 @@ function serverMessage(msg) {
 		hook.setAvatar("https://cdn.discordapp.com/attachments/968866349633896488/968866464150978620/favicon.png");
 		hook.send(msg.replace(/\x1b\[[0-9;]*m/g, ''));
 	}
-}
-
-function loadWorld(socket) {
-	socket.join(socket.player.world);
-	fs.readFile(`./server/worlds/${socket.player.world}.caw`, 'utf8', (err, data) => { if (err) throw err;
-		world = textencoder.encode(data);
-		io.to(socket.id).emit('connected', {
-			world: world,
-			palette: config.defaults.world.palette
-		})
-	})
-}
-
-function saveWorld(i) {
-	fs.writeFile(`./server/worlds/${i}.caw`, textdecoder.decode(worlds[i]), err => { if (err) throw err });
-	lastsaved = Date.now();
-	log(`🌍 Saved world ${bold(i)}`);
 }
 
 function playerlist(socket) {

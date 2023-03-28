@@ -47,7 +47,7 @@ export function createMessage(content, audio) {
 }
 
 export function coloride(text, useDefault) {
-	let colors = (useDefault) ? paletteColors : window.worldPalette;
+	let colors = (useDefault) ? paletteColors : window.game.world.palette;
     return text
         .replace(/:#([0-9]+):/g, (_, color) => `</span><span style="color:#${colors[color] ?? "f00"}">`)
         .replaceAll(":#:", `</span>`)

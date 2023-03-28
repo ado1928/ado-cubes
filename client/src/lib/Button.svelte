@@ -5,6 +5,7 @@
 	export let type = null;
 	export let id = null;
 	export let disabled = false;
+	export let style = '';
 </script>
 
 <!-- this looks wrong -->
@@ -16,6 +17,7 @@
 	on:mouseup={() => playAudio('ui/mouseup', config.uiVolume, !config.disableButtonSounds)}
 	{id}
 	class={type}
+	{style}
 	>
 	<slot/>
 </button>

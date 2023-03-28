@@ -291,7 +291,7 @@ kbd {
 	Esc
 */
 	.esc-menu { display: flex; top: 72%; flex-direction: column; gap: 2px; width: 320px }
-
+	#leaveWorldButton { display: none };
 
 /*
 	Settings

@@ -139,28 +139,7 @@ renderer.domElement.addEventListener('click', () => {
 
 
 
-let nickname, worldslist;
 
-function joinWorld(event) {
-	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value || nickname) return;
-	nickname = inputUsername.value;
-	setHide(welcome.children);
-	setHide(uiCanvas.children);
-	if (usingMobile()) setHide(document.querySelectorAll('.joystick'));
-	socket.emit('joinWorld', { "name": nickname, "id": socket.id, "world": selectWorld.value });
-}
-
-function leaveWorld() {
-	nickname = null;
-	messages.innerHTML = null;
-	window.worldPalette = undefined;
-	setHide([uiCanvas.children, esc], true);
-	setHide(welcome.children, false);
-}
-
-inputUsername.onkeydown = event => joinWorld(event);
-joinWorldButton.onclick = event => joinWorld(event);
-leaveWorldButton.onclick = () => socket.emit('leaveWorld');
 
 
 
@@ -475,11 +454,38 @@ if (usingMobile()) {
 
 
 
-document.addEventListener('game', () => {
-	grid.visible = game.showGrid
-})
+// is there a better way to do this?
+document.addEventListener('game', () => { 
+	grid.visible = game.showGrid;
+	console.log(game.world);
+	leaveWorldButton.style.display = (Object.entries(game.world).length == 0) ? 'none' : 'block';
+});
 
 
+
+
+let nickname, worldslist;
+
+function joinWorld(event) {
+	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value || nickname) return;
+	nickname = inputUsername.value;
+	setHide(welcome.children);
+	setHide(uiCanvas.children);
+	if (usingMobile()) setHide(document.querySelectorAll('.joystick'));
+	socket.emit('joinWorld', { "name": nickname, "id": socket.id, "world": selectWorld.value });
+}
+
+function leaveWorld() {
+	nickname = null;
+	messages.innerHTML = null;
+	game.world = {};
+	setHide([uiCanvas.children, esc], true);
+	setHide(welcome.children, false);
+}
+
+inputUsername.onkeydown = event => joinWorld(event);
+joinWorldButton.onclick = event => joinWorld(event);
+leaveWorldButton.onclick = () => socket.emit('leaveWorld');
 
 socket.on('ohno', reason => {
 	document.body.innerHTML = `<p class="socket-error">${reason ?? "oh no, something has gone wrong! please refresh page!"}</p>`
@@ -487,7 +493,9 @@ socket.on('ohno', reason => {
 
 socket.on('connected', data => {
 	const view = new Uint8Array(data.world);
-	window.worldPalette = data.palette;
+	game.world = {
+		palette: data.palette
+	};
 	initPalette(data.palette);
 	cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
 	for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
