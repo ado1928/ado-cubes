@@ -6,7 +6,7 @@
 
 <h2 align=center>setup</h2>
 
-Make sure you've got these three:
+Make sure you've got these four:
 
 - A [computer](https://en.wikipedia.org/wiki/Computer)
 - [Git](https://git-scm.com)
