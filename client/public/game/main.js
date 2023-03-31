@@ -166,16 +166,15 @@ function colorPicker() {
 }
 
 function initPalette(worldPalette) {
-	palette.innerHTML = ''
+	palette.innerHTML = '';
+	colors = palette.children;
 
 	for (let i = 0; i < worldPalette.length; i++) {
 		let paletteColor = document.createElement('div');
 		paletteColor.style.background = `#${worldPalette[i]}`;
 		paletteColor.title = i;
-		palette.appendChild(paletteColor)
+		palette.appendChild(paletteColor);
 	}
-
-	colors = palette.children;
 
 	for (var i = 0; i < colors.length; i++) {
 		colorMaterials[i] = new THREE.MeshPhongMaterial({ color: colors[i].style.backgroundColor })
@@ -230,44 +229,59 @@ let moveForward, moveBackward, moveLeft, moveRight, moveUp, moveDown;
 let cameraSpeed = 72;
 
 document.addEventListener('keydown', event => {
-	if (!nickname || !controls.isLocked) return;
-	if (event.code !== 'F5') event.preventDefault();
-	switch (event.code) {
-	// Movement
-		case 'KeyW': case 'ArrowUp':	moveForward = true; break
-		case 'KeyA': case 'ArrowLeft':	moveLeft = true; break
-		case 'KeyS': case 'ArrowDown':	moveBackward = true; break
-		case 'KeyD': case 'ArrowRight':	moveRight = true; break
-		case 'Space':					moveUp = true; break
-		case 'ShiftLeft':				moveDown = true; break
+	if (!nickname) return;
+	if (!['F5', 'F11', 'F12'].includes(event.code)) event.preventDefault();
+	if (controls.isLocked) {
+		switch (event.code) {
+		// Movement
+			case 'KeyW': case 'ArrowUp':	moveForward = true; break
+			case 'KeyA': case 'ArrowLeft':	moveLeft = true; break
+			case 'KeyS': case 'ArrowDown':	moveBackward = true; break
+			case 'KeyD': case 'ArrowRight':	moveRight = true; break
+			case 'Space':					moveUp = true; break
+			case 'ShiftLeft':				moveDown = true; break
 
-	// Camera
-		/*
-		case 'ArrowUp':			camera.rotation.x += 0.1; camera.updateProjectionMatrix(); break
-		case 'ArrowLeft':		camera.rotation.y += 0.1; camera.updateProjectionMatrix(); break
-		case 'ArrowDown':		camera.rotation.x -= 0.1; camera.updateProjectionMatrix(); break
-		case 'ArrowRight':		camera.rotation.y -= 0.1; camera.updateProjectionMatrix(); break
-		//*/
-		case config.decreaseCameraSpeed:	cameraSpeed -= (event.altKey) ? 32 : 8; break
-		case config.increaseCameraSpeed:	cameraSpeed += (event.altKey) ? 32 : 8; break
-		case config.resetCameraZoom:		cameraSpeed = 64.0; break
-		case config.decreaseCameraZoom:		cameraZoom((event.altKey) ? -.3 : -.1); break
-		case config.increaseCameraZoom:		cameraZoom((event.altKey) ? .3 : .1); break
-		case config.resetCameraZoom:		cameraZoom(); break
+		// Camera
+			/*
+			case 'ArrowUp':			camera.rotation.x += 0.1; camera.updateProjectionMatrix(); break
+			case 'ArrowLeft':		camera.rotation.y += 0.1; camera.updateProjectionMatrix(); break
+			case 'ArrowDown':		camera.rotation.x -= 0.1; camera.updateProjectionMatrix(); break
+			case 'ArrowRight':		camera.rotation.y -= 0.1; camera.updateProjectionMatrix(); break
+			//*/
+			case config.decreaseCameraSpeed:	cameraSpeed -= (event.altKey) ? 32 : 8; break
+			case config.increaseCameraSpeed:	cameraSpeed += (event.altKey) ? 32 : 8; break
+			case config.resetCameraZoom:		cameraSpeed = 64.0; break
+			case config.decreaseCameraZoom:		cameraZoom((event.altKey) ? -.3 : -.1); break
+			case config.increaseCameraZoom:		cameraZoom((event.altKey) ? .3 : .1); break
+			case config.resetCameraZoom:		cameraZoom(); break
 
-	// Placement
-		case config.placeCubes:	placeCube(controls.getObject().position); break
-		case config.breakCubes:	breakCube(controls.getObject().position); break
-		case config.toggleGrid:	grid.visible = !grid.visible; break
+		// Placement
+			case config.placeCubes:	placeCube(controls.getObject().position); break
+			case config.breakCubes:	breakCube(controls.getObject().position); break
+			case config.toggleGrid:	grid.visible = !grid.visible; break
 
-	// Other
-		case 'Enter':	controls.unlock(); inputChat.style.display = "flex"; inputChat.focus(); break
-		case 'Tab':		setHide(playerlist, true); break
-		case config.settingsShortcut: controls.unlock(); setHide(settings); break
-		case config.toggleUi: setHide(uiCanvas.children); break
-		case config.highlightCube: highlightCube(); break
+		// Other
+			case 'Enter':
+				controls.unlock(); inputChat.style.display = "flex";
+				inputChat.focus();
+				break
 
-		case config.keyModifier: colorSkip = Number(getComputedStyle(document.documentElement).getPropertyValue("--palette-rows")) * -1;
+			case config.settingsShortcut:
+				controls.unlock();
+				setHide(settings);
+				break
+
+			case 'Tab':					setHide(playerlist, true); break
+			case config.toggleUi:		setHide(uiCanvas.children); break
+			case config.highlightCube:	highlightCube(); break
+
+			case config.keyModifier:
+				colorSkip = Number(getComputedStyle(document.documentElement).getPropertyValue("--palette-rows")) * -1;
+		}
+	} else {
+		switch (event.code) {
+			case 'F1': alert("No Help Available (so leave me alone)"); break
+		}
 	}
 });
 
@@ -282,7 +296,6 @@ document.addEventListener('keyup', event => {
 		case 'Tab': setHide(playerlist, false); break
 
 		case config.keyModifier: colorSkip = 1;
-
 	}
 });
 
@@ -457,7 +470,6 @@ if (usingMobile()) {
 // is there a better way to do this?
 document.addEventListener('game', () => { 
 	grid.visible = game.showGrid;
-	console.log(game.world);
 	leaveWorldButton.style.display = (Object.entries(game.world).length == 0) ? 'none' : 'block';
 });
 
@@ -541,6 +553,7 @@ socket.on('place', data => {
 		scene.add(bl)
 	}*/
 });
+
 socket.on('break', data => {
 	let pos = data.pos;
 	destroyCube(new THREE.Vector3(pos[0], pos[1], pos[2]));

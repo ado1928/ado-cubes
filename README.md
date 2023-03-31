@@ -6,27 +6,36 @@
 
 <h2 align=center>setup</h2>
 
-To get a server up running, make sure you've got these three:
+Make sure you've got these three:
 
+- A [computer](https://en.wikipedia.org/wiki/Computer)
 - [Git](https://git-scm.com)
 - [Node.js](https://nodejs.org) *(LTS or Current, doesn't matter)*
 - npm *(or pnpm)*
 
-Then, run the following:
+Then, open up your terminal and run `git clone git@github.com:ado1928/ado-cubes.git` somewhere in your computer.
+
+After it's done cloning the project, go into the `ado-cubes` folder and run the following:
 
 ```
-git clone git@github.com:ado1928/ado-cubes.git
-cd ado-cubes
-npm install
-npm run build
-node .
+npm install      # installs dependencies
+npm run build    # builds the front-end
+node .           # starts server
 ```
+
+After starting the server, you should see something in your terminal similar to this:
+
+![image](https://user-images.githubusercontent.com/42163944/229006615-36feb33d-970d-443f-ac48-0f4390bbe0cd.png)
+
+Open up http://localhost:1928/ and check if it's working.
+
+If it's all good, then congrats! You've earned it. :)
 
 <h2 align=center>contribution</h2>
 
 > idk what to put here atm
 
-If you make changes in the `./client/src` folder, make sure to run `npm run build`. If you make rapid changes to it, run `npm run dev` instead.
+If you make changes in the `src` folder for client, make sure to run `npm run build`. If you need to make changes in a rapid pace, run `npm run dev` instead.
 
 
 

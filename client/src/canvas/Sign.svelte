@@ -54,6 +54,7 @@
 		<div>
 			<p class="sign-content" id="signDisplayContent">{@html coloride(value, true)}</p>
 		</div>
+	{:else if tab == 'edit'}
 		<textarea class="sign-content" id="signEditContent" bind:value={value} on:keypress={e => moderate(e)} wrap="hard" rows="30" cols="15"/>
 	{:else}
 		<div class="sign-info">

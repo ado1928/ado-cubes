@@ -42,7 +42,7 @@ export const config = new Config({
 	toggleUi: 'F1',
 	toggleGrid: 'KeyG',
 	settingsShortcut: 'KeyL',
-	keyModifier: (navigator.userAgent.match(/Firefox/i)) ? 'KeyZ' : 'LeftAlt',
+	keyModifier: (navigator.userAgent.match(/Firefox/i)) ? 'KeyZ' : 'AltLeft',
 	invertMouseControlsForCubePlacement: false,
 
 	// Audio
