@@ -1,4 +1,4 @@
-<script context="module">
+<script>
 	import Button from "lib/Button.svelte";
 	import Setting from "lib/Setting.svelte";
 	import { usingMobile } from "public/game/utils.js";
@@ -43,6 +43,7 @@
 		<Setting label="Music" set="musicVolume" type="range" min="0" max="100"/>
 		<Setting label="SFX" set="sfxVolume" type="range" min="0" max="100"/>
 		<Setting label="UI" set="uiVolume" type="range" min="0" max="100"/>
+		<Setting label="<a href='https://www.youtube.com/watch?v=_zTzkWnKrKc'>Electronic coughing</a> cube placement sounds" set="coughingCubePlacementSounds" type="checkbox"/>
 		<Setting label="Disable cube placement sounds" set="disableCubePlacementSounds" type="checkbox"/>
 		<Setting label="Disable palette scroll sound" set="disablePaletteScrollSound" type="checkbox"/>
 		<Setting label="Disable color picker sound" set="disableColorPickerSound" type="checkbox"/>

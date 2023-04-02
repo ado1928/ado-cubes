@@ -10,10 +10,9 @@
 	import Credits from './Credits.svelte';
 
 	document.addEventListener('keydown', event => {
-		if (event.key == 'F1') event.preventDefault();
 		if (event.key !== "Escape" && document.activeElement.tagName !== "input") return;
 		let windows = document.getElementsByClassName("window");
-		for (let i = 0; i < windows.length; i++) windows[i].classList.add('hide');
+		for (let i = 0; i < windows.length; i++) setHide(windows[i], true);
 		changeEsc(true);
 	});
 
@@ -22,7 +21,7 @@
 		if (toggle) setHide(esc);
 		if (win) {
 			setHide(document.getElementById(win));
-			setHide(esc);
+			setHide(esc, true);
 		}
 	}
 </script>

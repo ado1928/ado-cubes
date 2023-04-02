@@ -1,6 +1,5 @@
 <script>
 	import Button from "lib/Button.svelte";
-	import { config } from "public/game/config.js";
 
 	export let set;
 	if (config[set] == undefined) throw console.error(`setting ${set} does not exist`);
@@ -64,11 +63,11 @@
 
 <div class={classes} on:change={changeSetting}>
 	{#if type == 'range'}
-		<p><b>{value}</b> {label}</p>
+		<p><b>{value}</b> {@html label}</p>
 		<input type="range" {max} {min} {step} bind:value={value}>
-	{:else if type == 'checkbox'} <p>{label}</p> <input type="checkbox" bind:checked={checked}>
-	{:else if type == 'dropdown'} <p>{label}</p> <select bind:value={value}><slot/></select>
-	{:else if type == 'keybind'} <p>{label}</p> <input type="text" on:keydown={e => changeKeybind(e)} bind:value={value}>
+	{:else if type == 'checkbox'} <p>{@html label}</p> <input type="checkbox" bind:checked={checked}>
+	{:else if type == 'dropdown'} <p>{@html label}</p> <select bind:value={value}><slot/></select>
+	{:else if type == 'keybind'} <p>{@html label}</p> <input type="text" on:keydown={e => changeKeybind(e)} bind:value={value}>
 	{:else} invalid type {type}
 	{/if}
 	<Button on:click={resetSetting}>Reset</Button>

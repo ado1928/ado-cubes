@@ -1,5 +1,4 @@
 <script>
-	import { config } from 'public/game/config.js';
 	import { playAudio } from 'public/game/utils.js';
 
 	export let type = null;

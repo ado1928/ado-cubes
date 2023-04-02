@@ -15,8 +15,8 @@ const Ratelimit = require('./ratelimit.js');
 let config = toml.parse(fs.readFileSync('./server/config.toml', 'utf-8'));
 const { Client, Intents } = require('discord.js');
 const { Webhook } = require('discord-webhook-node');
-const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES + Intents.FLAGS.GUILDS ] });
-const hook = new Webhook(config.dsbridge.webhookToken);
+const dsbridge = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES + Intents.FLAGS.GUILDS ] });
+const dshook = new Webhook(config.dsbridge.webhookUrl);
 
 console.clear();
 console.log();
@@ -58,7 +58,7 @@ const osIcon = {
 	freebsd: '🔴',
 	openbsd: '🟡',
 	android: '🤖',
-	aix: '\x1b[38;5;39mIBM\x1b[0m'
+	aix: '🟢'
 }
 
 
@@ -119,9 +119,8 @@ function serverMessage(msg) {
 	io.emit('serverMessage', { "content": msg });
 	log(msg);
 	if (config.dsbridge.enabled) {
-		hook.setUsername("Server");
-		hook.setAvatar("https://cdn.discordapp.com/attachments/968866349633896488/968866464150978620/favicon.png");
-		hook.send(msg.replace(/\x1b\[[0-9;]*m/g, ''));
+		dshook.setUsername("Server");
+		dshook.send(msg.replace(/\x1b\[[0-9;]*m/g, ''));
 	}
 }
 
@@ -138,7 +137,46 @@ function bold(text) { return `\x1b[1m${text}\x1b[0m` }
 io.on('connection', socket => {
 	let ratelimit = new Ratelimit([socket, config.ratelimit]);
 
+	function disconnect() {
+		if (!socketValid(socket)) return;
+		io.to(socket.player.world).emit('leaveMessage', { 'player': escapeHTML(socket.player.name) });
+		log(`👋 ${bold(socket.player.name)} left world ${bold(socket.player.world)}`);
+
+		if (io.sockets.adapter.rooms.has(socket.player.world)) {
+			playerlist(socket);
+		} else {
+			saveWorld(socket.player.world);
+			lastsaved = Date.now();
+		}
+
+		socket.player = undefined;
+	}
+
 	io.emit('worldslist', worldslist);
+
+	socket.on('joinWorld', data => {
+		socket.player = data;
+		socket.player.name = escapeHTML(data.name);
+		socket.player.id = socket.id;
+
+		if (!socketValid(socket)) return;
+
+		loadWorld(socket);
+		playerlist(socket);
+		io.to(socket.player.world).emit('joinMessage', { 'player': escapeHTML(socket.player.name) });
+		log(`🤝 ${bold(socket.player.name)} joined world ${bold(socket.player.world)}`);
+	});
+
+	socket.on('leaveWorld', () => {
+		if (!socketValid(socket)) return;
+		socket.leave(socket.player.world);
+		socket.emit('leaveWorld');
+		disconnect(socket);
+	});
+
+	socket.on('disconnect', () => disconnect());
+
+
 
 	socket.on('place', data => {
 		pos = data.pos;
@@ -170,61 +208,27 @@ io.on('connection', socket => {
 		log(`🌍 ${bold(socket.player.world)} > ${bold(socket.player.name)}: ${sanitize(content)}`);
 
 		if (config.dsbridge.enabled) {
-			hook.setUsername(`${socket.player.world} ~ ${socket.player.name}`);
-			hook.setAvatar();
-			hook.send(data.content.replace(/\x1b\[[0-9;]*m/g,""))
+			dshook.setUsername(`🌍 ${socket.player.world} ~ ${socket.player.name}`);
+			dshook.send(content.replace(/\x1b\[[0-9;]*m/g,""))
 		}
 	});
-
-	socket.on('joinWorld', data => {
-		socket.player = data;
-		socket.player.name = escapeHTML(data.name);
-		socket.player.id = socket.id;
-
-		if (!socketValid(socket)) return;
-
-		loadWorld(socket);
-		playerlist(socket);
-		io.to(socket.player.world).emit('joinMessage', { 'player': escapeHTML(socket.player.name) });
-		log(`🤝 ${bold(socket.player.name)} joined world ${bold(socket.player.world)}`);
-	});
-
-	socket.on('leaveWorld', () => {
-		if (!socketValid(socket)) return;
-		socket.leave(socket.player.world);
-		socket.emit('leaveWorld');
-		disconnect(socket);
-	});
-
-	socket.on('disconnect', () => disconnect());
-
-	function disconnect() {
-		if (!socketValid(socket)) return;
-		io.to(socket.player.world).emit('leaveMessage', { 'player': escapeHTML(socket.player.name) });
-		log(`👋 ${bold(socket.player.name)} left world ${bold(socket.player.world)}`);
-
-		if (io.sockets.adapter.rooms.has(socket.player.world)) {
-			playerlist(socket);
-		} else {
-			saveWorld(socket.player.world);
-			lastsaved = Date.now();
-		}
-
-		socket.player = undefined;
-	}
 });
 
 // Discord bot bridging. likely broken
 if (config.dsbridge.enabled) {
-	client.on('messageCreate', async message => {
-		console.log(message.attachments)
-		if (message.author.bot
-		|| message.channelId !== config.dsbridge.channelId) return;
+	dsbridge.on('messageCreate', async message => {
+		if (message.author.bot || message.channelId !== config.dsbridge.channelId) return;
 		io.emit('message', { "sender": `[${message.author.username}]`, "msg": message.content });
-		log(`${bold(message.author.username)}: ${message.content}`);
+		log(`🎮 ${bold('bridge')} > ${bold(message.author.username)}: ${message.content}`);
+		message.attachments.forEach(attachment => {
+			log(`^^ ${attachment.name} ~ ${attachment.url}`);
+		});
 	});
-	client.once('ready', () => { log("🎮 \x1b[38;5;75mBridge is ready!") });
-	client.login(config.dsbridge.botToken);
+	dsbridge.once('ready', () => {
+		dshook.send("hi");
+		log("🎮 \x1b[38;5;75mBridge is ready!");
+	});
+	dsbridge.login(config.dsbridge.botToken);
 }
 
 app.use(express.static(path.join(__dirname, '../client/public')));

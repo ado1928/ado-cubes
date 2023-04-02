@@ -14,7 +14,15 @@
 	<div>
 		{label}
 		<div>
-			<input class={classes} {id} type="text" {maxlength} {oninput} {value}>
+			<input
+				{id}
+				type="text"
+				class={classes}
+				{maxlength}
+				bind:value
+				on:change
+				on:input
+			>
 			<slot/>
 		</div>
 	</div>

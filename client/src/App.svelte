@@ -7,19 +7,21 @@
 	import Welcome from "./Welcome.svelte";
 	import Esc from "./esc/Esc.svelte"
 
-	import Toolbar from "./canvas/Toolbar.svelte";
-	import Chat from "./canvas/Chat.svelte";
-	import Sign from "./canvas/Sign.svelte";
-	import Playerlist from "./canvas/Playerlist.svelte";
+	import LoadingWorld from "./world/LoadingWorld.svelte";
+	import Toolbar from "./world/Toolbar.svelte";
+	import Chat from "./world/Chat.svelte";
+	import Sign from "./world/Sign.svelte";
+	import Playerlist from "./world/Playerlist.svelte";
 
 	import { setHide } from "public/game/utils.js";
-	import { config } from "public/game/config.js";
 </script>
 
 <main>
 	<Welcome/>
-	
-	<div id="uiCanvas">
+
+	<LoadingWorld/>
+
+	<div id="uiWorld">
 		<img id="crosshair" class="hide center" src="./img/crosshair.svg" alt="+">
 		<div id="coordinates" class="hide"/>
 		<Box id="palette" style="gap:0"/>

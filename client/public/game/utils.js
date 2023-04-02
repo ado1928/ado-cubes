@@ -1,5 +1,3 @@
-import { config } from "./config.js";
-
 const paletteColors = [
 	'FFFFFF', 'AAAAAA', '777777', '484848', '000000',
 	'991609', 'F3280C', 'FF5610', 'FF832A', 'FFB885',
@@ -46,7 +44,7 @@ export function createMessage(content, audio) {
 	playAudio(audio ?? "ui/msg/default", config.uiVolume, !config.disableMessageSounds)
 }
 
-export function coloride(text, useDefault) {
+export function coloride(text, useDefault = true) {
 	let colors = (useDefault) ? paletteColors : window.game.world.palette;
     return text
         .replace(/:#([0-9]+):/g, (_, color) => `</span><span style="color:#${colors[color] ?? "f00"}">`)

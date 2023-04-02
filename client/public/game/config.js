@@ -4,28 +4,28 @@ class Config {
 		Object.entries(defaults).forEach(([key, value]) => {
 			Object.defineProperty(this, key, {
 				get() {
-					return JSON.parse(localStorage.getItem(key)) ?? undefined
+					return JSON.parse(localStorage.getItem(key)) ?? this.defaults[key];
 				},
 				set(val) {
-					localStorage.setItem(key, JSON.stringify(val))
+					localStorage.setItem(key, JSON.stringify(val));
 				}
 			});
-			if (this[key] === undefined) this[key] = value;
+			if (!this[key] === undefined) this[key] = value;
 		})
 	}
 
 	reset(key) {
-		if (!this.defaults[key]) return console.error(`config "${key}" does not exist`);
-		return localStorage.setItem(key, JSON.stringify(this.defaults[key]));
+		if (this.defaults[key] === undefined) return console.error(`config "${key}" does not exist`);
+		return localStorage.removeItem(key);
 	}
 }
 
-export const config = new Config({
+window.config = new Config({
 	// General
 	language: 'among-us',
 	uiScale: 1,
 	rendererPixelRatio: 1,
-	chatWidth: 440,
+	chatWidth: 480,
 	chatMaxLines: 24,
 	enableRandomAndSpecialLogos: true,
 
@@ -49,6 +49,7 @@ export const config = new Config({
 	musicVolume: 50,
 	sfxVolume: 50,
 	uiVolume: 50,
+	coughingCubePlacementSounds: false,
 	disableCubePlacementSounds: false,
 	disablePaletteScrollSound: false,
 	disableColorPickerSound: false,
@@ -57,4 +58,6 @@ export const config = new Config({
 
 	// Debug
 	forceMobileAgent: false
-})
+});
+
+console.log('config!?')

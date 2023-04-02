@@ -15,6 +15,6 @@ window.game = new Proxy(vars, {
 		document.dispatchEvent(new Event('game'));
 		return true;
 	}
-})
+});
 
 console.log("%ci did the init", 'font-size:16px');

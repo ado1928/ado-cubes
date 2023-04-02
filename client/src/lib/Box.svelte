@@ -5,6 +5,6 @@
 	export let id = null;
 </script>
 
-<div {id} {style} class={`box ${(show) ? '' : 'hide'} ${classes}`}>
+<div {id} {style} class={`box ${(show) ? '' : 'hide'} ${classes ?? ''}`}>
 	<slot/>
 </div>

@@ -32,25 +32,16 @@ html body	{ background: #f2f2ff; margin: 0; overflow: hidden }
 	{ cursor: url("./cursor/auto.png"), auto }
 button, a, input[type="range"], input[type="checkbox"]
 	{ cursor: url("./cursor/pointer.png"), pointer }
-*[title]
+*[title] *
 	{ cursor: url("./cursor/help.png"), help !important }
 input[type="text"]
 	{ cursor: url("./cursor/text.png") 10 16, text }
 
-* {
-	font-family: "Unifont Upper", "Unifont", monospace;
-	text-shadow: 1px 1px #000;
-}
-
+* { font-family: "Unifont Upper", "Unifont", monospace; text-shadow: 1px 1px #000 }
 p { margin: 0 }
-b {
-	font-weight: normal;
-	letter-spacing: 1px;
-	text-shadow: 1px 0 0px #fff;
-	filter: drop-shadow(1px 1px 0 #000);
-}
-h1, h2, h3, strong, summary { font-family: "Silkado", "Unifont"; font-weight: normal; margin: 0 }
+b, b * { font-weight: normal; letter-spacing: 1px; text-shadow: 1px 0px, 1px 1px #000, 2px 1px #000 }
 
+h1, h2, h3, strong, summary { font-family: "Silkado", "Unifont"; font-weight: normal; margin: 0 }
 h1 { font-size: 32px }
 h2 { font-size: 24px }
 h3 { font-size: 16px }
@@ -93,15 +84,19 @@ kbd {
 
 
 
-.hide, .no-raycast
-{ opacity: 0; scale: 0 }
+.hide, .no-raycast, #loadingWorld.hide *
+{ opacity: 0; scale: 0; user-select: none }
 
+#loadingWorld img {
+	transition: all 0.16s cubic-bezier(0, 1, 0.75, 1)
+}
 
 
 
 .box {
 	position: absolute;
 	display: flex;
+	flex-direction: column;
 	color: #fff;
 	background: var(--box-background);
 	border: var(--box-border);
@@ -117,12 +112,11 @@ kbd {
 	transition: all 0.16s cubic-bezier(0, 1, 0.75, 1)
 }
 .box.hide {
-	transition-timing-function: cubic-bezier(1, 0, 1, 0.75)
+	transition: all 0.16s cubic-bezier(1, 0, 1, 0.75), display 0.16s
 }
 
 .window {
 	overflow: hidden;
-	flex-direction: column;
 	gap: 0;
 	padding: 0;
 	width: 600px;
@@ -157,6 +151,19 @@ kbd {
 	from { opacity: 0; max-height: 0 }
 	to { opacity: 1; max-height: var(--window-max-height) }
 }
+
+.tooltip {
+	z-index: 4393;
+	position: absolute;
+	padding: 6px 8px;
+	color: #fff;
+	background: var(--box-background);
+	border: var(--box-border);
+	outline: var(--box-outline);
+	border-radius: 0 8px 8px 8px;
+	pointer-events: none;
+}
+
 
 
 
@@ -311,7 +318,7 @@ kbd {
 /*
 	Changelog
 */
-	.changelog > article			{ padding: 16px; line-height: 1.2 }
+	.changelog						{ padding: 16px; line-height: 1.2 }
 	.changelog h2, .changelog h3	{ margin-top: 16px }
 
 /*
@@ -331,8 +338,6 @@ kbd {
 
 
 
-
-
 .width-fill-available {
 	width: -moz-available;
 	width: -webkit-fill-available;
@@ -341,20 +346,38 @@ kbd {
 .center { position: absolute; top: 50%; left: 50%; translate: -50% -50% }
 
 #welcome { height: 0 }
-#welcome > .login {
+.welcome-boxes {
+	display: flex;
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+}
+
+.login {
 	top: 50%;
 	left: 50%;
-	flex-direction: column;
-	width: 400px;
 	padding: 16px;
+	width: 400px;
 	translate: -50% 0;
 }
 
+.links {
+	top: 6px;
+	left: 6px;
+	flex-direction: row;
+}
+
+
+
 .floaty-adocubes {
 	position: absolute;
-	top: 64px;
+	bottom: 50%;
 	left: 50%;
-	translate: -50% 0;
+	translate: -50% 32px;
 	rotate: 0deg;
 	pointer-events: auto;
 }
@@ -367,17 +390,16 @@ kbd {
 	transition: all 19.28s ease-in-out;
 }
 
-
 .splash-text {
 	position: absolute;
-	top: 260px; left: 50%;
+	bottom: 50%;
+	left: 50%;
 	padding: 4px 6px;
 	width: max-content;
 	color: #fff;
 	background: #000a;
 	border-radius: 6px;
-	translate: -50% 0;
-	/*transform: translate(240px, -20px) rotate(-16deg) scale(2);*/
+	translate: -50% -40px;
 }
 
 .blur-background {
@@ -390,10 +412,12 @@ kbd {
 
 
 #palette {
-	top: 6px; right: 6px;
+	top: 6px;
+	right: 6px;
+	flex-direction: row;
+	flex-wrap: wrap;
 	width: calc(var(--palette-color-size) * var(--palette-rows));
 	height: min-content; 
-	flex-wrap: wrap;
 	transform-origin: top right;
 }
 #palette * {
@@ -419,9 +443,10 @@ kbd {
 #toolbar {
 	bottom: 6px;
 	left: 50%;
+	flex-direction: row;
+	gap: 4px;
 	padding: 4px;
 	translate: -50% 0;
-	gap: 4px;
 	transform-origin: bottom;
 }
 
@@ -480,12 +505,16 @@ kbd {
 }
 .chat.compact > #messages { max-height: calc(var(--chat-maxheight) / 2) }
 
-.chat > #messages > p {
+.message {
 	width: auto;
 	user-select: text;
 	animation-name: new-player-message;
 	animation-timing-function: cubic-bezier(0, 0, 0, 1);
 	animation-duration: 0.25s;
+}
+
+.message:hover {
+	background: #fff1;
 }
 
 @keyframes new-player-message {

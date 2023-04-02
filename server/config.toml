@@ -23,6 +23,6 @@ port = 1928
 
 [dsbridge]
 	enabled = false
-	webhookToken = "Webhook token here"
-	botToken = "Bot token here"
-	channelId = "Channel ID here"
+	channelId = "the channel where messages will be bridged"
+	webhookUrl = "sends the messages from game to discord"
+	botToken = "sends the messages from discord to game"

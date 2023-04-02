@@ -20,13 +20,12 @@
 		return text;
 	}
 
-	marked.setOptions({ headerIds: false })
-
 	let renderer = {
 		strong(text) { return `<b>${text}</b>` },
 		em(text) { return `<i>${text}</i>` }
 	};
 
+	marked.setOptions({ headerIds: false })
 	marked.use({renderer});
 </script>
 
