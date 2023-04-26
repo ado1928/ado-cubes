@@ -1,4 +1,7 @@
-window.socket = io().disconnect();
+window.socket = io({
+	autoConnect: false,
+	reconnection: true
+})
 
 let vars = {
 	world: {},
@@ -17,4 +20,4 @@ window.game = new Proxy(vars, {
 	}
 });
 
-console.log("%ci did the init", 'font-size:16px');
+console.log("warm up some stuff");

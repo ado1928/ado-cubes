@@ -45,7 +45,8 @@ function sanitize(data, escape) {
 
 let renderer = {
 	strong(text) { return `<b>${text}</b>` },
-	em(text) { return `<i>${text}</i>` }
+	em(text) { return `<i>${text}</i>` },
+	link(href, title, text) { return `<a href="${href}" rel="noopener noreferrer">${text}</a>` }
 };
 
 marked.use({renderer});
@@ -67,17 +68,20 @@ var lastsaved = Date.now();
 
 let worlds = {};
 let worldslist = [];
-fs.readdir("server/worlds", (err, crows) => { if (err) throw err;
+
+fs.readdir("server/worlds", (err, crows) => {
+	if (err) throw err;
 	crows.forEach((crow, i) => {
 		crow = crow.substr(0, crow.length - 4);
-		worldslist.push(crow);
-		fs.readFile(`./server/worlds/${crow}.caw`, 'utf8', (err, data) => { if (err) throw err;
+		worldslist.push(crow)
+		fs.readFile(`./server/worlds/${crow}.caw`, 'utf8', (err, data) => {
+			if (err) throw err;
 			worlds[crow] = textencoder.encode(data);
 			// worlds[i] = new Uint8Array(262144).fill(0) // Fills the world with nothing. Debugging purposes.
 		})
 	});
 	worldslist.sort();
-	log(`\x1b[90mloaded ${worldslist}`)
+	log(`\x1b[90mloaded ${worldslist}`);
 })
 
 function loadWorld(socket) {

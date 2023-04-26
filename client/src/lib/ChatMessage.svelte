@@ -6,10 +6,10 @@
 </script>
 
 <!-- this feels ungodly wrong -->
-<p class="message">
+<p>
 	<b data-tooltip={`
 		<b>session id:</b> ${data.sender.id}<br>
-		<b>timestamp:</b> ${new Date(data.timestamp).toLocaleTimeString(navigator.language, { hour12: false })}
+		<b>time sent:</b> ${new Date(data.timestamp).toLocaleTimeString(navigator.language, { hour12: false })}
 	`} use:tooltip>{@html coloride(data.sender.name)}</b><b>:</b>
 	{@html coloride(data.content, false)}
 </p>

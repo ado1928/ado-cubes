@@ -11,23 +11,21 @@
 
 	document.addEventListener('keydown', event => {
 		if (event.key !== "Escape" && document.activeElement.tagName !== "input") return;
-		let windows = document.getElementsByClassName("window");
-		for (let i = 0; i < windows.length; i++) setHide(windows[i], true);
+		setHide(document.querySelectorAll(".window"), true)
 		changeEsc(true);
 	});
 
 	function changeEsc(toggle, win) {
-		let windows = document.getElementsByClassName("window");
-		if (toggle) setHide(esc);
+		if (toggle) setHide(escMenu);
 		if (win) {
 			setHide(document.getElementById(win));
-			setHide(esc, true);
+			setHide(escMenu);
 		}
 	}
 </script>
 
-<div>
-	<Box id="esc" classes="center esc-menu">
+<div id="esc">
+	<Box id="escMenu" classes="center esc-menu">
 		<Button type="esc" on:click={() => changeEsc(true)}>
 			<img src="/img/icon/esc/return.png"> Return
 		</Button>
@@ -45,14 +43,15 @@
 			<img src="/img/icon/esc/credits.png"> Credits
 		</Button>
 	</Box>
+
+	<Window id="settings" title="SETTINGS" on:back={() => changeEsc(false, 'settings')} on:exit={() => changeEsc(true, 'settings')}>
+		<Settings/>
+	</Window>
+	<Window id="changelog" title="CHANGELOG" on:back={() => changeEsc(false, 'changelog')} on:exit={() => changeEsc(true, 'changelog')}>
+		<Changelog/>
+	</Window>
+	<Window id="credits" title="CREDITS" on:back={() => changeEsc(false, 'credits')} on:exit={() => changeEsc(true, 'credits')}>
+		<Credits/>
+	</Window>
 </div>
 
-<Window id="settings" title="SETTINGS" on:back={() => changeEsc(false, 'settings')} on:exit={() => changeEsc(true, 'settings')}>
-	<Settings/>
-</Window>
-<Window id="changelog" title="CHANGELOG" on:back={() => changeEsc(false, 'changelog')} on:exit={() => changeEsc(true, 'changelog')}>
-	<Changelog/>
-</Window>
-<Window id="credits" title="CREDITS" on:back={() => changeEsc(false, 'credits')} on:exit={() => changeEsc(true, 'credits')}>
-	<Credits/>
-</Window>

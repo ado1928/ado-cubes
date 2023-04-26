@@ -13,29 +13,19 @@
 	--box-border: 1px solid var(--light-1);
 	--box-outline: 2px solid #0e0e0e;
 
+	--box-transition-in: all 0.16s cubic-bezier(0, 1, 0.75, 1);
+	--box-transition-out: all 0.16s cubic-bezier(1, 0, 1, 0.75);
+
 	--window-max-height: 600px;
 }
 
-@font-face	{ font-family: "Unifont"; src: url("./font/unifont-15.0.01.otf") }
-@font-face	{ font-family: "Unifont Upper"; src: url("./font/unifont_upper-15.0.01.otf") }
-@font-face	{ font-family: "Silkado"; src: url("./font/Silkado.ttf") }
-@font-face	{ font-family: "sfgSlightlySmallerFont"; src: url("./font/sfgSlightlySmallerFont.ttf") }
-@font-face	{ font-family: "adocoords"; src: url("./font/adocoords.ttf") }
+@font-face { font-family: "Unifont"; src: url("./font/unifont-15.0.01.otf") }
+@font-face { font-family: "Unifont Upper"; src: url("./font/unifont_upper-15.0.01.otf") }
+@font-face { font-family: "Silkado"; src: url("./font/Silkado.ttf") }
+@font-face { font-family: "sfgSlightlySmallerFont"; src: url("./font/sfgSlightlySmallerFont.ttf") }
+@font-face { font-family: "adocoords"; src: url("./font/adocoords.ttf") }
 
-html body	{ background: #f2f2ff; margin: 0; overflow: hidden }
-
-::-webkit-scrollbar				{ width: 6px; height: 6px; background: 0; margin: 6px; background-clip: padding-box }
-::-webkit-scrollbar-thumb		{ background: #aaa; margin: 6px; background-clip: padding-box }
-::-webkit-scrollbar-thumb:hover	{ background: #fff }
-
-*
-	{ cursor: url("./cursor/auto.png"), auto }
-button, a, input[type="range"], input[type="checkbox"]
-	{ cursor: url("./cursor/pointer.png"), pointer }
-*[title] *
-	{ cursor: url("./cursor/help.png"), help !important }
-input[type="text"]
-	{ cursor: url("./cursor/text.png") 10 16, text }
+html body { background: #fff; margin: 0; overflow: hidden }
 
 * { font-family: "Unifont Upper", "Unifont", monospace; text-shadow: 1px 1px #000 }
 p { margin: 0 }
@@ -54,12 +44,38 @@ a:active	{ opacity: 50% }
 img, canvas { image-rendering: pixelated }
 
 kbd {
-	background: #fff;
-	color: #000;
-	text-shadow: none;
 	padding: 0 4px;
-	border-radius: 6px;
+	background: #323232;
+	color: #fff;
+	border: 1px solid #aaa;
+	border-left-color: #777;
+	border-right-color: #777;
+	border-bottom-color: #555;
+	border-radius: 3px;
+	text-shadow: none;
 }
+kbd:active {
+	opacity: 32%;
+}
+
+::-webkit-scrollbar				{ width: 6px; height: 6px; background: 0; margin: 6px; background-clip: padding-box }
+::-webkit-scrollbar-thumb		{ background: #fff4; margin: 6px; background-clip: padding-box }
+::-webkit-scrollbar-thumb:hover	{ background: #fffa }
+
+
+
+*	{ cursor: url("./cursor/auto.png"), auto }
+
+button, a, input[type="range"], input[type="checkbox"]
+	{ cursor: url("./cursor/pointer.png"), pointer }
+
+*[title] *, * *[data-tooltip]
+	{ cursor: url("./cursor/help.png"), help !important }
+
+input[type="text"]
+	{ cursor: url("./cursor/text.png") 10 16, text }
+
+
 
 .socket-error {
 	width: calc(100vw - 128px);
@@ -83,37 +99,28 @@ kbd {
 }
 
 
-
-.hide, .no-raycast, #loadingWorld.hide *
-{ opacity: 0; scale: 0; user-select: none }
-
-#loadingWorld img {
-	transition: all 0.16s cubic-bezier(0, 1, 0.75, 1)
-}
-
+.hide, .hide * { pointer-events: none }
 
 
 .box {
+	user-select: none;
 	position: absolute;
 	display: flex;
 	flex-direction: column;
+	gap: 6px;
+	padding: 6px;
 	color: #fff;
 	background: var(--box-background);
 	border: var(--box-border);
 	border-bottom-width: 3px;
-	outline: var(--box-outline);
 	border-radius: 6px;
-	padding: 6px;
+	outline: var(--box-outline);
+	box-shadow: inset 0 0 48px #080808;
 	backdrop-filter: blur(var(--backdrop-blur));
-	box-shadow: inset 0 0 20px #000;
-	user-select: none;
-	gap: 6px;
 	line-height: 1;
-	transition: all 0.16s cubic-bezier(0, 1, 0.75, 1)
+	transition: var(--box-transition-in);
 }
-.box.hide {
-	transition: all 0.16s cubic-bezier(1, 0, 1, 0.75), display 0.16s
-}
+.box.hide { opacity: 0; scale: 0; transition: var(--box-transition-out) }
 
 .window {
 	overflow: hidden;
@@ -155,396 +162,127 @@ kbd {
 .tooltip {
 	z-index: 4393;
 	position: absolute;
-	padding: 6px 8px;
+	padding: 4px 8px;
 	color: #fff;
 	background: var(--box-background);
 	border: var(--box-border);
-	outline: var(--box-outline);
 	border-radius: 0 8px 8px 8px;
+	outline: var(--box-outline);
 	pointer-events: none;
 }
 
 
 
-
-.line-x {
-	width: 2px;
-	height: auto;
-	background: #666;
+button {
+	margin: 2px;
+	padding: 4px 12px 6px;
+	color: #fff;
+	background: #0006;
+	border: var(--box-border);
+	border-radius: 16px;
+	outline: 2px solid #0e0e0e;
+	font-size: var(--font-size);
 }
-.line-y {
-	margin: 8px 0;
+button:hover				{ background: #eef3; border: 1px solid #eef6; text-shadow: var(--highlight) }
+button:active, button:focus { background: #eef3; outline: 1px solid #eef6; text-shadow: var(--highlight); }
+button:focus:not(:active)	{ border: 1px solid #eef8; text-shadow: var(--highlight) }
+button:active				{ opacity: 32% }
+button[disabled]			{ opacity: 24% }
+
+button * { pointer-events: none }
+
+button.icon	{ padding: 4px; border-radius: 6px; line-height: 0 }
+button.nav	{ padding: 8px }
+
+button.esc {
+	min-height: 32px;
+	padding: 6px;
+	border-radius: 16px;
+	outline: 0;
+	letter-spacing: 0px;
+	transition: all .1s;
+	transition-duration: .1s;
+	animation-name: outHover;
+	animation-duration: .5s;
+	animation-timing-function: cubic-bezier(0, 1, 0, 1);
+}
+button.esc:hover {
+	background: #eef3;
+	outline: 2px solid #eef6;
+	text-shadow: var(--highlight);
+	letter-spacing: 8px;
+	transition: none;
+	animation-name: inHover;
+	animation-duration: .3s;
+	animation-fill-mode: both;
+}
+button.esc:active {
+	padding: 6px;
+	color: #fff;
+	outline: 0;
+	opacity: 50%;
+	letter-spacing: 0px;
+	animation-name: outHover;
+	animation-duration: .5s;
+}
+@keyframes inHover  { from { letter-spacing: 0px } to { letter-spacing: 8px } }
+@keyframes outHover { from { letter-spacing: 8px } to { letter-spacing: 0px } }
+
+button.esc img {
+	position: absolute;
+	left: 16px;
+	transform: rotateX(-360deg);
+	transition: left 0.5s cubic-bezier(0, 1, 0, 1), transform 0.2s cubic-bezier(0, 0.64, 0, 0.64);
+}
+button.esc:hover span { left: calc(100% - 32px); transform: rotateX(360deg) }
+button.esc:hover img { left: calc(100% - 32px); transform: rotateX(360deg) }
+
+
+
+input[type='text'], select {
+	min-height: 26px;
+	margin: 2px;
+	padding: 0 6px;
 	width: 100%;
-	height: 2px;
-	background: var(--box-border-color);
+	color: #fff;
+	background: #000;
+	border: 1px solid #555a;
+	border-radius: 6px;
+	outline: 2px solid #000;
+	font-size: var(--font-size);
+
 }
 
-
-
-/*
-	Buttons
-*/
-	button {
-		margin: 2px;
-		padding: 4px 12px 6px;
-		color: #fff;
-		background: #0006;
-		border: var(--box-border);
-		outline: 2px solid #0e0e0e;
-		border-radius: 16px;
-		font-size: var(--font-size);
-	}
-	button * { pointer-events: none }
-	button:hover				{ background: #fff3; border: 1px solid #fff6; text-shadow: var(--highlight) }
-	button:active, button:focus { background: #fff3; outline: 1px solid #fff6; text-shadow: var(--highlight) }
-	button:focus:not(:active)	{ border: 1px solid #fff8; text-shadow: var(--highlight) }
-	button:active				{ opacity: 32% }
-	button[disabled]			{ opacity: 24% }
-
-	button.icon				{ padding: 4px; border-radius: 6px; line-height: 0 }
-	button.icon:active *	{ scale: 0.5 }
-	button.nav				{ padding: 8px }
-
-	button.esc {
-		min-height: 32px;
-		padding: 6px;
-		border-radius: 16px;
-		outline: 0;
-		letter-spacing: 0px;
-		transition: all .1s;
-		transition-duration: .1s;
-		animation-name: outHover;
-		animation-duration: .5s;
-		animation-timing-function: cubic-bezier(0, 1, 0, 1);
-	}
-	button.esc:hover {
-		background: #fff3;
-		outline: 2px solid #fff6;
-		text-shadow: var(--highlight);
-		letter-spacing: 8px;
-		transition: none;
-		animation-name: inHover;
-		animation-duration: .3s;
-		animation-fill-mode: both;
-	}
-	button.esc:active {
-		padding: 6px;
-		color: #fff;
-		background: #fff3;
-		border: 1px solid #fff6;
-		outline: 0;
-		opacity: 50%;
-		letter-spacing: 0px;
-		animation-name: outHover;
-		animation-duration: .5s;
-	}
-	@keyframes inHover  { from { letter-spacing: 0px } to { letter-spacing: 8px } }
-	@keyframes outHover { from { letter-spacing: 8px } to { letter-spacing: 0px } }
-
-	button.esc img {
-		position: absolute;
-		left: 16px;
-		transform: rotateX(-360deg);
-		transition: left 0.5s cubic-bezier(0, 1, 0, 1), transform 0.2s cubic-bezier(0, 0.64, 0, 0.64);
-	}
-	button.esc:hover span { left: calc(100% - 32px); transform: rotateX(360deg) }
-	button.esc:hover img { left: calc(100% - 32px); transform: rotateX(360deg) }
-
-/*
-	Input
-*/
-	input[type='text'], select {
-		min-height: 26px;
-		margin: 2px;
-		padding: 0 6px;
-		font-size: var(--font-size);
-		color: #fff;
-		background: #000;
-		border: 1px solid #555a;
-		border-radius: 6px;
-		outline: 2px solid #000;
-	}
-
-	input[type="text"]:hover { background: 0 }
-	input[type="text"]:focus, select:focus { background: #000; outline-color: #fff }
-	input[type='range'] {
-		width: -moz-available;
-		width: -webkit-fill-available;
-		height: 8px;
-		margin: 0;
-		background: #000;
-		border: 1px solid #555a;
-		border-radius: 8px;
-		box-shadow: 0 0 0 2px #000;
-		-webkit-appearance: none;
-	}
-
-	input[type="checkbox"] {
-		width: 16px;
-		height: 16px;
-	}
-
-	.checkbox-container {
-		display: block;
-	}
-
-	.checkmark {
-		height: 24px;
-		width: 24px;
-		background: #000;
-	}
-
-/*
-	Esc
-*/
-	.esc-menu { display: flex; top: 72%; flex-direction: column; gap: 2px; width: 320px }
-	#leaveWorldButton { display: none };
-
-/*
-	Settings
-*/
-	.settings					{ display: flex; justify-content: space-between }
-	.settings > section			{ padding: 16px; border-bottom: var(--box-border) }
-	.settings > section:hover	{ background: #fff1 }
-	.settings > section > h3	{ margin-top: 16px }
-
-	.setting		{ display: flex; justify-content: flex-end; align-items: center; flex-direction: row-reverse; margin: 6px 0; gap: 6px }
-	.setting.range	{ flex-direction: column; align-items: baseline; margin: 6px 0 12px 0 }
-	.setting p		{ margin-bottom: 1px }
-	.setting input[type="text"]	{
-		width: 180px;
-	}
-
-/*
-	Changelog
-*/
-	.changelog						{ padding: 16px; line-height: 1.2 }
-	.changelog h2, .changelog h3	{ margin-top: 16px }
-
-/*
-	Credits
-*/
-	.credits		{ overflow-y: scroll; padding: 16px; text-align: center }
-	.credits tr td	{ padding: 0 6px }
-	.credits::-webkit-scrollbar	{ margin: 0 }
-
-	.credits > section {
-		display: flex;
-		flex-direction: column; 
-		justify-content: center;
-		align-items: center;
-		margin-top: 24px;
-	}
-
-
-
-.width-fill-available {
-	width: -moz-available;
-	width: -webkit-fill-available;
+input[type="text"]:hover { background: 0 }
+input[type="text"]:focus, select:focus { background: #000; outline-color: #fff }
+input[type='range'] {
+	width: 100%;
+	height: 8px;
+	margin: 0;
+	background: #000;
+	border: 1px solid #555a;
+	border-radius: 8px;
+	box-shadow: 0 0 0 2px #000;
+	-webkit-appearance: none;
 }
+input[type="checkbox"] { width: 16px; height: 16px }
+
+
 
 .center { position: absolute; top: 50%; left: 50%; translate: -50% -50% }
 
-#welcome { height: 0 }
-.welcome-boxes {
-	display: flex;
-	position: absolute;
-	top: 50%;
-	left: 0;
-	right: 0;
-	flex-direction: column;
-	align-items: center;
-	gap: 8px;
-}
+.blur-background		{ position: absolute; width: 100%; height: 100%; backdrop-filter: blur(6px); transition: backdrop-filter 0.32s cubic-bezier(0, 1, 0.75, 1) }
+.blur-background.hide	{ backdrop-filter: blur(0) }
 
-.login {
-	top: 50%;
-	left: 50%;
-	padding: 16px;
-	width: 400px;
-	translate: -50% 0;
-}
-
-.links {
-	top: 6px;
-	left: 6px;
-	flex-direction: row;
-}
-
-
-
-.floaty-adocubes {
-	position: absolute;
-	bottom: 50%;
-	left: 50%;
-	translate: -50% 32px;
-	rotate: 0deg;
-	pointer-events: auto;
-}
-.floaty-adocubes.hide {
-	rotate: 1928deg;
-	transition: all 1s cubic-bezier(1, 0, 1, 1);
-}
-.floaty-adocubes:active {
-	rotate: 1928deg;
-	transition: all 19.28s ease-in-out;
-}
-
-.splash-text {
-	position: absolute;
-	bottom: 50%;
-	left: 50%;
-	padding: 4px 6px;
-	width: max-content;
-	color: #fff;
-	background: #000a;
-	border-radius: 6px;
-	translate: -50% -40px;
-}
-
-.blur-background {
+#loadingGame {
+	z-index: 1928;
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	backdrop-filter: blur(6px);
-}
-
-
-
-#palette {
-	top: 6px;
-	right: 6px;
-	flex-direction: row;
-	flex-wrap: wrap;
-	width: calc(var(--palette-color-size) * var(--palette-rows));
-	height: min-content; 
-	transform-origin: top right;
-}
-#palette * {
-	width: var(--palette-color-size);
-	height: var(--palette-color-size);
-}
-#palette *:hover	{ transform: scale(1.15); box-shadow: 0 0 4px 2px #000 }
-
-.selected-color	{
-	z-index: 1;
-	outline: 2px solid #fff;
-	box-shadow: 0 0 0 4px black;
-	transition: none;
-	animation-name: on-select-color;
-	animation-duration: 0.16s;
-}
-
-@keyframes on-select-color {
-	from { box-shadow: 0 0 0 8px black; outline: 6px solid #fff }
-	to { box-shadow: 0 0 0 4px black; outline: 2px solid #fff }
-}
-
-#toolbar {
-	bottom: 6px;
-	left: 50%;
-	flex-direction: row;
-	gap: 4px;
-	padding: 4px;
-	translate: -50% 0;
-	transform-origin: bottom;
-}
-
-#crosshair {
-	user-select: none;
-	transition: 0.16s all;
-}
-#crosshair.hide, #crosshair.no-raycast {
-	scale: 2;
-}
-
-#coordinates {
-	position: absolute;
-	bottom: 70px;
-	left: 50%;
-	padding: 4px 10px 4px 12px;
-	color: #fff;
 	background: #000;
-	border-radius: 6px;
-	translate: -50% 0;
-	font-family: "adocoords";
-	transform-origin: 50% 50px;
-	transition: var(--box-transition);
 }
 
-#playerlist {
-	display: flex;
-	flex-direction: column;
-	min-width: 160px;
-	min-height: 240px;
-}
-
-.chat { flex-direction: column; top: 6px; left: 6px; gap: 6px; transform-origin: top left }
-.chat.compact { gap: 0px }
-
-.chat > .chatbox {
-	display: flex;
-	flex-direction: row-reverse;
-	height: 32px;
-	width: auto;
-	overflow: hidden;
-	transition: all 0.25s cubic-bezier(0, 1, 0.75, 1)
-}
-.chat.compact > .chatbox {
-	height: 0;
-}
-
-.chat > #messages {
-	display: flex;
-	overflow-y: scroll;
-	overflow-wrap: break-word;
-	flex-direction: column;
-	width: var(--chat-width);
-	max-height: var(--chat-maxheight);
-	transition: all 0.4s cubic-bezier(0, 1, 0, 1);
-}
-.chat.compact > #messages { max-height: calc(var(--chat-maxheight) / 2) }
-
-.message {
-	width: auto;
-	user-select: text;
-	animation-name: new-player-message;
-	animation-timing-function: cubic-bezier(0, 0, 0, 1);
-	animation-duration: 0.25s;
-}
-
-.message:hover {
-	background: #fff1;
-}
-
-@keyframes new-player-message {
-	from { line-height: 0; opacity: 0% }
-	to { line-height: 1; opacity: 100% }
-}
-
-
-
-#signEditContent {
-	overflow: hidden;
-}
-
-main.sign {
-	display: flex;
-	flex-direction: row;
-	padding: 16px;
-}
-
-.sign-content {
-	min-height: 432px;
-	min-width: 480px;
-	max-height: 432px;
-	max-width: 480px;
-	padding: 6px;
-	color: #fff;
-	background: #000;
-	border: var(--box-border);
-	font-size: 16px;
-	white-space: pre;
-    word-break: break-all;
-    resize: none;
+#loadingGame.hide {
+	opacity: 0;
+	transition: all 0.16s linear;
 }

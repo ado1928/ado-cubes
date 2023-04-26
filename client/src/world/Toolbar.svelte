@@ -3,19 +3,7 @@
 	import Button from "lib/Button.svelte";
 	import { setHide, usingMobile } from "public/game/utils.js";
 
-	let game = window.game;
-	let fullscreen = false;
-
-	function switchFullscreen() { // h
-		if (document.fullscreen) {
-			document.exitFullscreen();
-			fullscreen = false;
-		} else {
-			document.body.requestFullscreen();
-			fullscreen = true;
-		}
-
-	}
+	let update = {};
 
 	function switchBuildingMethod() {
 		game.buildingMethod = (game.buildingMethod == 'raycast') ? 'camera' : 'raycast';
@@ -31,6 +19,10 @@
 	function toggleGrid() {
 		game.showGrid = !game.showGrid
 	}
+
+	document.addEventListener('game', () => {
+		update = {};
+	})
 </script>
 
 <Box id="cubeTypes" classes="center" style="display:none;top:revert;bottom:76px">
@@ -41,29 +33,24 @@
 </Box>
 
 <Box id="toolbar">
-	<Button type="icon" on:click={() => setHide(esc)}>
+	<Button type="icon" on:click={() => setHide(escMenu)}>
 		<img src="./img/icon/esc/esc.png">
 	</Button>
-	{#if usingMobile()}
-		<Button type="icon" on:click={switchFullscreen}>
-			<img src={`./img/icon/fullscreen/${(fullscreen) ? "toggle off" : "toggle on"}.png`}>
-		</Button>
-	{/if}
 
-	<div class="line-x"/>
+	<div class="separator"/>
 
 	<!--<Button type="icon" on:click={() => toggleDisplay(cubeTypes)}>
 		<img src="./img/icon/cube type/basic.png">
 	</Button>-->
 	<Button type="icon" on:click={switchBuildingMethod}>
-		<img src={`./img/icon/placement/${game.buildingMethod}.png`}>
+		{#key update}<img src={`./img/icon/placement/${game.buildingMethod}.png`}>{/key}
 	</Button>
 
 	<Button type="icon" on:click={toggleGrid}>
-		<img src={`./img/icon/grid/${game.showGrid}.png`}>
+		{#key update}<img src={`./img/icon/grid/${game.showGrid}.png`}>{/key}
 	</Button>
 
-	<!--<div class="line-x"/>
+	<!--<div class="separator"/>
 
 	<Button type="icon" on:click={switchMovementMethod}>
 		<img src={`/img/icon/movement/${config.movementMethod}.png`}>

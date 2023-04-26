@@ -1,7 +1,3 @@
-<script>
-</script>
-
-<div id="loadingWorld" class="hide">
-	<div class="blur-background"/>
+<div id="loadingWorld" class="blur-background hide">
 	<img src="./img/loading.gif" class="center">
 </div>

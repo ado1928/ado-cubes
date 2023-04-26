@@ -25,6 +25,12 @@
 	}
 
 	if (usingMobile()) alert("mobile is very buggy.");
+
+	let worlds = [];
+	socket.on('worldslist', data => {
+		worlds = data;
+		console.log(worlds);
+	});
 </script>
 
 <div id="welcome">
@@ -34,15 +40,17 @@
 		<h2>LOGIN</h2>
 		<div style="display:flex;align-items:center;gap:6px">
 			Nickname:
-			<input class="width-fill-available" id="inputUsername" type="text" maxlength="30" on:change={saveUsername} bind:value={nickname}/>
+			<input id="inputUsername" type="text" maxlength="30" on:change={saveUsername} bind:value={nickname}/>
 		</div>
 
 		<div style="display:flex;align-items:center;gap:6px">
 			World:
-			<select class="width-fill-available" id="selectWorld"></select>
+			<select id="selectWorld">
+				{#each worlds as world}
+					<option>{world}</option>
+				{/each}
+			</select>
 		</div>
-
-		<br>
 
 		<div>
 			<Button id="joinWorldButton">Join</Button> as <b data-tooltip="it's you!" use:tooltip>{@html coloride(nickname)}</b>

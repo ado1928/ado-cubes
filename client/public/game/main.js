@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
-import JoystickController from 'joystick-controller';
 import { createMessage, playAudio, escapeHTML, coloride, setHide, usingMobile } from "./utils.js";
-import { commands } from "./commands.js";
+import { commandHandler } from "./commands.js";
 
 const clock = new THREE.Clock();
 const velocity = new THREE.Vector3();
@@ -59,7 +58,7 @@ camera.lookAt(48, 0, 48);
 
 export function cameraZoom(zoom) {
 	camera.zoom = Math.min(Math.max(camera.zoom + zoom, 1), 8);
-	camera.updateProjectionMatrix()
+	camera.updateProjectionMatrix();
 }
 
 let world = [];
@@ -70,9 +69,9 @@ material = new THREE.ShaderMaterial({
 	uniforms: { time: { value: 1.0 }, resolution: { value: new THREE.Vector2() } },
 	vertexShader: vert,
 	fragmentShader: frag,
-	side: THREE.BackSide
+	side: THREE.BackSide,
+	transparent: true
 });
-material.transparent = true;
 geometry = new THREE.BoxGeometry(64, 64, 64);
 grid = new THREE.Mesh(geometry, material);
 grid.position.set(31.5, 31.5, 31.5);
@@ -135,12 +134,8 @@ window.addEventListener("resize", (resize(), resize));
 
 renderer.domElement.addEventListener('click', () => {
 	if (nickname) controls.lock();
-	setHide([document.querySelectorAll('.window'), esc], true);
+	setHide(esc.children, true);
 });
-
-
-
-
 
 
 
@@ -160,10 +155,13 @@ function updateColor() {
 function colorPicker() {
 	raycaster.setFromCamera({ "x": 0, "y": 0 }, camera);
 	const intersects = raycaster.intersectObjects(scene.children);
-	if (intersects[0].object.material.type == 'ShaderMaterial') return;
-	if (intersects.length > 0) { color = world.indexOf(intersects[0].object); updateColor() };
 	//console.log(intersects[0].object.material)
-	playAudio('ui/color picker', config.uiVolume, !config.disableColorPickerSound)
+	if (intersects[0].object.material.type == 'ShaderMaterial') return;
+	if (intersects.length > 0) {
+		color = world.indexOf(intersects[0].object);
+		updateColor();
+	};
+	playAudio('ui/color picker', config.uiVolume, !config.disableColorPickerSound);
 }
 
 function initPalette(worldPalette) {
@@ -178,20 +176,24 @@ function initPalette(worldPalette) {
 	}
 
 	for (var i = 0; i < colors.length; i++) {
-		colorMaterials[i] = new THREE.MeshPhongMaterial({ color: colors[i].style.backgroundColor })
-	} 
-
-	for (let i = 0; i < colors.length; i++) colors[i].onclick = () => { color = i; updateColor() };
+		colorMaterials[i] = new THREE.MeshPhongMaterial({
+			color: colors[i].style.backgroundColor
+		});
+		colors[i].onclick = () => {
+			color = i;
+			updateColor();
+		}
+	}
 
 	updateColor();
 
-	window.onwheel = event => {
+	document.addEventListener('wheel', event => {
 		if (controls.isLocked) {
 			color += (event.deltaY < 0) ? colorSkip : colorSkip * -1
 			updateColor();
 			playAudio('ui/palette scroll', config.uiVolume, !config.disablePaletteScrollSound);
 		}
-	};
+	});
 
 	geometry = new THREE.BoxGeometry(1, 1, 1);
 	for (var i = 0; i < colors.length; i++) geometries[i] = [];
@@ -202,23 +204,14 @@ function initPalette(worldPalette) {
 inputChat.onkeydown = event => {
 	if (event.key !== 'Enter' || !nickname) return;
 	if (inputChat.value.startsWith('/')) {
-		let args = inputChat.value.slice(1).split(' ');
-		let command = escapeHTML(args[0]); args.shift();
-
-		if (commands[command] == undefined) return createMessage(`command <b>${command}</b> does not exist`);
-		for (let i = 0; i < args.length; i++) {
-			args[i] = escapeHTML(args[i]);
-			if (!isNaN(args[i])) args[i] = Number(args[i]);
-		}
-		if (args.length <= 1) args = args[0];
-
-		commands[command].args(args);
+		commandHandler(inputChat.value);
 	} else if (inputChat.value) {
 		socket.emit('message', inputChat.value);
 	} else {
 		inputChat.blur();
 		controls.lock();
 	}
+
 	inputChat.value = '';
 };
 
@@ -228,8 +221,7 @@ let moveForward, moveBackward, moveLeft, moveRight, moveUp, moveDown;
 let cameraSpeed = 72;
 
 document.addEventListener('keydown', event => {
-	if (!nickname) return;
-	if (controls.isLocked) {
+	if (controls.isLocked && nickname) {
 		event.preventDefault();
 		switch (event.code) {
 		// Movement
@@ -257,7 +249,7 @@ document.addEventListener('keydown', event => {
 		// Placement
 			case config.placeCubes:	placeCube(controls.getObject().position); break
 			case config.breakCubes:	breakCube(controls.getObject().position); break
-			case config.toggleGrid:	grid.visible = !grid.visible; break
+			case config.toggleGrid:	game.showGrid = !game.showGrid; break
 
 		// Other
 			case 'Enter':
@@ -279,7 +271,10 @@ document.addEventListener('keydown', event => {
 		}
 	} else {
 		switch (event.code) {
-			case 'F1': alert("No Help Available (so leave me alone)"); break
+			case 'F1':
+				alert("No Help Available (so leave me alone)");
+				event.preventDefault();
+				break
 		}
 	}
 });
@@ -378,7 +373,7 @@ function createCube(pos, color) {
 	let cube = new THREE.Mesh(geometry, colorMaterials[color], 100);
 	const matrix = new THREE.Matrix4();
 	const instanceGeometry = geometry.clone();
-	if ((color + 1) > colors.length) { color = 6; console.warn(`Illegal color at ${pos.x} ${pos.y} ${pos.z})`) };
+	if ((color + 1) > colors.length) { color = 6; console.warn(`Illegal cube at ${pos.x} ${pos.y} ${pos.z})`) };
 
 	cube.position.set(pos.x, pos.y, pos.z);
 	cube.receiveShadow = true;
@@ -402,7 +397,7 @@ function destroyCube(pos) {
 				if (c.igeometry.id == geometries[e.color][j].id) {
 					geometries[e.color].splice(j, 1);
 					sun.shadow.needsUpdate = true;
-					return updateWorld(e.color);
+					updateWorld(e.color);
 				}
 			}
 		}
@@ -434,29 +429,6 @@ function updateWorld(color) {
 	} else world[color].geometry = new THREE.BufferGeometry();
 };
 
-let joystickMoveX, joystickMoveY, joystickRotate, lastPos;
-
-if (usingMobile()) {
-	joystickMoveX = new JoystickController({
-		leftToRight: true,
-		x: "80px",
-		y: "80px",
-		containerClass: "joystick hide"
-	});
-	joystickMoveY = new JoystickController({
-		leftToRight: false,
-		x: "80px",
-		y: "192px",
-		containerClass: "joystick hide"
-	});
-	joystickRotate = new JoystickController({
-		leftToRight: false,
-		x: "80px",
-		y: "80px",
-		containerClass: "joystick hide"
-	});
-}
-
 
 
 // is there a better way to do this?
@@ -468,11 +440,10 @@ document.addEventListener('game', () => {
 
 
 
-let nickname, worldslist;
+let nickname;
 
 function joinWorld(event) {
 	if (event.key !== 'Enter' && event.which !== 1 || !inputUsername.value || !selectWorld.value || nickname) return;
-	if (usingMobile()) setHide(document.querySelectorAll('.joystick'), false);
 	nickname = inputUsername.value;
 	socket.emit('joinWorld', { "name": nickname, "id": socket.id, "world": selectWorld.value });
 	setHide(welcome.children, true);
@@ -484,7 +455,7 @@ function leaveWorld() {
 	game.world = {};
 	inputChat.value = '';
 	messages.innerHTML = '<div id="chatMessagesAnchor"/>';
-	setHide([uiWorld.children, esc], true);
+	setHide([uiWorld.children, escMenu], true);
 	setHide(welcome.children, false);
 }
 
@@ -497,11 +468,11 @@ socket.on('ohno', reason => {
 })
 
 socket.on('connected', data => {
-	const view = new Uint8Array(data.world);
+	cubes.forEach(e => scene.remove(e));
 	game.world = { palette: data.palette };
 	initPalette(data.palette);
-	cubes.forEach(e => scene.remove(e)); // if for some reason connecting again, remove all cubes from scene,
-	for (let x = 0; x < 64; x++) { // loop through all recieved cubes and add them
+	const view = new Uint8Array(data.world);
+	for (let x = 0; x < 64; x++) {
 		for (let y = 0; y < 64; y++) {
 			for (let z = 0; z < 64; z++) {
 				if (view[x*4096+y*64+z] > 0) {
@@ -518,29 +489,26 @@ socket.on('connected', data => {
 
 socket.on('leaveWorld', () => leaveWorld());
 
-socket.on('worldslist', arr => {
-	selectWorld.innerHTML = '';
-	worldslist = arr;
-	for (let i = 0; i < arr.length; i++) {
-		let option = document.createElement("option");
-		option.text = arr[i];
-		selectWorld.add(option);
-	}
+
+
+socket.on('connect', () => {
+	console.log("socket connected!");
 });
 
-socket.on('playerlist', arr => {
-	playerlist.innerHTML = `<strong>playerlist</strong>`;
-	arr.forEach(player => {
-		playerlist.insertAdjacentHTML('beforeend', `<b title="${player.id}">${player.name}</b>`);
-	});
+socket.on('disconnect', reason => {
+	alert(reason);
+	setHide(uiWorld.children, true);
+	setHide(welcome.children, false);
 });
+
+
 
 socket.on('place', data => {
 	let pos = data.pos;
 	createCube(new THREE.Vector3(pos[0], pos[1], pos[2]), data.color);
 	updateWorld(data.color);
 
-	/*if (config.cubeType == 'light') {
+	/*if (game.cubeType == 'light') {
 		const bl = new THREE.PointLight( colors[data.color].style.backgroundColor, 0.4, 5 );
 		bl.position.set(pos[0], pos[1], pos[2]);
 		bl.castShadow = false;
@@ -555,23 +523,12 @@ socket.on('break', data => {
 
 
 
+let lastPos;
+
 function render() {
 	requestAnimationFrame(render);
 
 	const delta = clock.getDelta();
-
-	if (usingMobile()) {
-		if (joystickMoveX.y > 16) moveForward = true;
-		if (joystickMoveX.x < -16) moveLeft = true;
-		if (joystickMoveX.y < -16) moveBackward = true;
-		if (joystickMoveX.x > 16) moveRight = true;
-
-		if (joystickMoveY.y > 16) moveUp = true;
-		if (joystickMoveY.y < -16) moveDown = true;
-
-		camera.rotation.x += joystickRotate.y / 48 * delta;
-		camera.rotation.y -= joystickRotate.x / 48 * delta;
-	}
 
 	camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x)); // Enfore limit for mobile controls
 	

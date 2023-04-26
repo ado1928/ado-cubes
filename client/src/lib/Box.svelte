@@ -3,8 +3,10 @@
 	export let classes = null;
 	export let show = false
 	export let id = null;
+
+	classes = 'box' + ((show) ? '' : ' hide') + ((classes) ? ` ${classes}` : '');
 </script>
 
-<div {id} {style} class={`box ${(show) ? '' : 'hide'} ${classes ?? ''}`}>
+<div {id} {style} class={classes}>
 	<slot/>
 </div>

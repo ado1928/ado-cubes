@@ -60,4 +60,4 @@ window.config = new Config({
 	forceMobileAgent: false
 });
 
-console.log('config!?')
+console.log("config")

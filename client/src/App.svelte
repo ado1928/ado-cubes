@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { setHide } from "public/game/utils.js";
 
 	import Box from "lib/Box.svelte";
 	import Window from "lib/Window.svelte";
@@ -7,13 +8,13 @@
 	import Welcome from "./Welcome.svelte";
 	import Esc from "./esc/Esc.svelte"
 
+	import LoadingGame from "./LoadingGame.svelte";
 	import LoadingWorld from "./world/LoadingWorld.svelte";
 	import Toolbar from "./world/Toolbar.svelte";
 	import Chat from "./world/Chat.svelte";
 	import Sign from "./world/Sign.svelte";
 	import Playerlist from "./world/Playerlist.svelte";
 
-	import { setHide } from "public/game/utils.js";
 </script>
 
 <main>
@@ -22,9 +23,9 @@
 	<LoadingWorld/>
 
 	<div id="uiWorld">
-		<img id="crosshair" class="hide center" src="./img/crosshair.svg" alt="+">
+		<img id="crosshair" class="hide center" src="./img/crosshair/raycast.svg">
 		<div id="coordinates" class="hide"/>
-		<Box id="palette" style="gap:0"/>
+		<Box id="palette"/>
 		<Toolbar/> <Chat/>
 	</div>
 

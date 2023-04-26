@@ -1,66 +1,36 @@
 import { camera, sun } from './main.js';
-import { escapeHTML, createMessage, coloride, coordsValid } from './utils.js';
+import { createMessage, coloride, escapeHTML, coordsValid } from './utils.js';
 
-export const commands = {
-	cmsg: {
+export function commandHandler(data) {
+	let args = inputChat.value.slice(1).split(' ');
+	let command = escapeHTML(args[0]); args.shift();
+	if (!commands[command]) return createMessage(`command <b>${command}</b> does not exist`);
+	
+	for (let i = 0; i < args.length; i++) {
+		args[i] = escapeHTML(args[i]);
+		if (!isNaN(args[i])) args[i] = Number(args[i]);
+	}
+	if (args.length <= 1) args = args[0];
+
+	commands[command].run(args);
+}
+
+const commands = {
+	help: {
 		help: [
-			"create a message to yourself",
-			"/cmsg <text>"
+			"shows what a command does",
+			"/help [command]",
+			"you can leave [command] blank to list all commands"
 		],
-		args: text => createMessage(coloride(escapeHTML(text)))
-	},
-	egg: {
-		help: [
-			"stack eggs",
-			"/egg [amount]"
-		],
-		args: number => {
-			if (isNaN(number)) return createMessage('Invalid number!');
-			let egg = '🥚';
-			for (let i = 1; i < number; i++) egg += '🥚';
-			createMessage(egg);
-		}
-	},
-	clear: {
-		help: [
-			"clear messages",
-			"/clear"
-		],
-		args: () => messages.innerHTML = ''
-	},
-	look: {
-		help: [
-			"look at that pose",
-			"/look [x] [y] [z]"
-		],
-		args: coords => {
-			if (!coordsValid(coords)) return createMessage("Invalid coords!");
-			camera.lookAt(coords[0], coords[1], coords[2]);
-			createMessage(`Looked to ${coords}`);
-		}
-	},
-	sun: {
-		help: [
-			"position the sun or whatever",
-			"/sun [x] [y] [z]"
-		],
-		args: coords => {
-			if (coords == 'reset') { sun.position.set(20, 90, 50); return createMessage('Sun position has been reset') }
-			if (!coordsValid(coords)) return createMessage("Invalid coords!");
-			sun.position.set(coords[0], coords[1], coords[2]);
-			sun.shadow.needsUpdate = true;
-			createMessage(`Repositioned sun`)
-		}
-	},
-	tp: {
-		help: [
-			"teleportation",
-			"/tp [x] [y] [z]"
-		],
-		args: coords => {
-			if (!coordsValid(coords)) return createMessage("Invalid coords!");
-			camera.position.set(coords[0], coords[1], coords[2]);
-			createMessage(`Teleported to ${coords}`);
+		run: command => {
+			createMessage(`----------`);
+			if (command) return commands[command].help.reverse().forEach(text => {
+				createMessage((!text) ? '<br>' : coloride(text), true)
+			});
+
+			Object.keys(commands).reverse().forEach(command => {
+				createMessage(`<b>${command}</b> - ${commands[command].help[0]}`)
+			});
 		}
 	},
 	formatting: {
@@ -74,77 +44,69 @@ export const commands = {
 			"colors are taken from the world palette. hover on a palette color to show its color number",
 			"you can also use colors in your nicknames, but colors are taken from an already-defined palette",
 		],
-		args: () => commands.help.args('formatting')
+		run: () => commands.help.args('formatting')
 	},
-	help: {
+	tp: {
 		help: [
-			"shows what a command does",
-			"/help [command]",
-			"you can leave [command] blank to list all commands"
+			"teleportation",
+			"/tp [x] [y] [z]"
 		],
-		args: command => {
-			createMessage(`----------`);
-			if (!command) {
-				return Object.keys(commands).forEach(command => {
-					createMessage(`<b>${command}</b> - ${commands[command].help[0]}`)
-				})
-			}
-			commands[command].help.reverse().forEach(text => { createMessage(coloride(text), true) });
+		run: coords => {
+			if (!coordsValid(coords)) return createMessage("Invalid coords!");
+			camera.position.set(coords[0], coords[1], coords[2]);
+			createMessage(`Teleported to ${coords}`);
 		}
+	},
+	look: {
+		help: [
+			"look at that pose",
+			"/look [x] [y] [z]"
+		],
+		run: coords => {
+			if (!coordsValid(coords)) return createMessage("Invalid coords!");
+			camera.lookAt(coords[0], coords[1], coords[2]);
+			createMessage(`Looked to ${coords}`);
+		}
+	},
+	sun: {
+		help: [
+			"position the sun or whatever",
+			"/sun [x] [y] [z]"
+		],
+		run: coords => {
+			if (coords == 'reset') { sun.position.set(20, 90, 50); return createMessage('Sun position has been reset') }
+			if (!coordsValid(coords)) return createMessage("Invalid coords!");
+			sun.position.set(coords[0], coords[1], coords[2]);
+			sun.shadow.needsUpdate = true;
+			createMessage(`Repositioned sun`)
+		}
+	},
+	clear: {
+		help: [
+			"clear messages",
+			"/clear"
+		],
+		run: () => messages.innerHTML = ''
+	},
+	egg: {
+		help: [
+			"stack eggs",
+			"/egg [amount]"
+		],
+		run: number => {
+			if (isNaN(number)) return createMessage('Invalid number!');
+			let egg = '🥚';
+			for (let i = 1; i < number; i++) egg += '🥚';
+			createMessage(egg);
+		}
+	},
+	cmsg: {
+		help: [
+			"create a message to yourself",
+			"/cmsg <text>"
+		],
+		run: text => createMessage(coloride(text))
 	}
 }
 
-/*export var flook;
-
-export function executeCommand() {
-	let args = escapeHTML(inputChat.value).slice(1).split(" ");
-	let command = args[0].toLowerCase(); args.shift();
-	inputChat.value = '';
-
-	for (let i = 0; i < args.length; i++) if (!isNaN(args[i])) args[i] = parseInt(args[i]);
-
-	try { switch (command) {
-		case 'egg':
-			if (isNaN(args)) return createMessage("That's not a number!")
-			let count = (args == 0) ? 1 : args[0]; let egg = '';
-			for (let i = 0; i < count; i++) egg = egg + '🥚';
-			createMessage(egg);
-			break
-
-		case 'msgself': createMessage(args[0]); break
-
-		case 'clear': messages.innerHTML = ''; break
-
-		case 'tp':
-			if (!coordsValid(args)) return createMessage("Invalid coords!");
-			camera.position.set(args[0], args[1], args[2]);
-			createMessage(`Teleported to ${args}`);
-			break
-
-		case 'look':
-			if (!coordsValid(args)) return createMessage("Invalid coords!");
-			camera.lookAt(args[0], args[1], args[2]);
-			createMessage(`Looked to ${args}`);
-			break
-
-		case 'flook':
-			if (args == 'stop') { flook = ''; return createMessage("Stopped flooking") };
-			if (!coordsValid(args)) return createMessage("Invalid coords!");
-			flook = args;
-			createMessage(`Flooking at ${args}`);
-			break
-
-		case 'sun':
-			if (args == 'reset') { sun.position.set(20, 90, 50); return createMessage('Resetted sun') }
-			if (!coordsValid(args)) return createMessage("Invalid coords!");
-			sun.position.set(args[0], args[1], args[2]);
-			sun.shadow.needsUpdate = true;
-			createMessage(`Repositioned sun`)
-			break
-
-
-
-		default: createMessage(`Command ${command} does not exist`); break
-	}} catch(err) { createMessage(err); throw err }
-}
-*/
+window.commands = commands

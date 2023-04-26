@@ -1,7 +1,6 @@
 <script>
-	import { onMount } from 'svelte';
 	import Button from "lib/Button.svelte";
-	import { coloride } from "public/game/utils.js";
+	import { setHide, coloride } from "public/game/utils.js";
 
 	import { marked } from 'marked';
 	import changelogs from "public/changelog/index.json";
@@ -27,6 +26,13 @@
 
 	marked.setOptions({ headerIds: false })
 	marked.use({renderer});
+
+	document.addEventListener('readystatechange', () => {
+		if (document.readyState == 'complete' && localStorage.lastPlayedVersion !== changelogs[0]) {
+			setHide(changelog, false);
+			localStorage.lastPlayedVersion = changelogs[0];
+		}
+	})
 </script>
 
 <header>

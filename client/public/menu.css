@@ -1,0 +1,60 @@
+.esc-menu { display: flex; flex-direction: column; gap: 2px; width: 320px }
+
+#leaveWorldButton { display: none };
+
+
+
+.settings					{ display: flex; justify-content: space-between }
+.settings > section			{ padding: 16px; border-bottom: var(--box-border) }
+.settings > section:hover	{ background: #fff1 }
+.settings > section > h3	{ margin-top: 16px }
+
+.setting {
+	position: relative;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: row;
+	gap: 6px;
+	margin: 6px 0;
+	padding: 0 24px;
+}
+.setting .range {
+	display: flex;
+	flex-direction: column;
+	align-items: baseline;
+	gap: 6px;
+	margin: 0 0 12px 0;
+	width: 100%;
+}
+.setting p					{ margin-bottom: 1px }
+.setting input[type="text"]	{ width: 180px }
+
+.reset-to-default {
+	position: absolute;
+	left: 0;
+	width: 16px;
+	height: 16px;
+	background: orange;
+	border-radius: 50%
+}
+.reset-to-default.hide { background: 0 }
+
+
+
+.changelog						{ padding: 16px; line-height: 1.2 }
+.changelog h2, .changelog h3	{ margin-top: 16px }
+
+
+
+.credits		{ overflow-y: scroll; padding: 16px; text-align: center }
+.credits tr td	{ padding: 0 6px }
+.credits::-webkit-scrollbar	{ margin: 0 }
+
+.credits > section {
+	display: flex;
+	flex-direction: column; 
+	justify-content: center;
+	align-items: center;
+	margin-top: 24px;
+}

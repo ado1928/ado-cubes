@@ -1,0 +1,173 @@
+.floaty-adocubes {
+	position: absolute;
+	bottom: 50%;
+	left: 50%;
+	translate: -50% 32px;
+	rotate: 0deg;
+	pointer-events: auto;
+	transition: scale 0.16s cubic-bezier(0, 1, 0.75, 1);
+}
+.floaty-adocubes.hide { opacity: 0; scale: 0; rotate: 1928deg; transition: all 1s cubic-bezier(1, 0, 1, 1) }
+.floaty-adocubes:active { rotate: 1928deg; transition: all 19.28s ease-in-out }
+
+.splash-text {
+	position: absolute;
+	bottom: 50%;
+	left: 50%;
+	padding: 4px 6px;
+	width: max-content;
+	color: #fff;
+	background: #000a;
+	border-radius: 6px;
+	translate: -50% -40px;
+	transition: scale 0.16s cubic-bezier(0, 1, 0.75, 1);
+}
+.splash-text.hide { scale: 0 }
+
+.login { top: 50%; left: 50%; padding: 16px; width: 400px; translate: -50% 0 }
+.links { top: 6px; left: 6px; flex-direction: row }
+
+#loadingWorld {
+	color: #fff;
+	transition: all 0.16s linear
+}
+#loadingWorld.hide { opacity: 0 }
+
+
+
+#palette {
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 0;
+	top: 6px;
+	right: 6px;
+	width: calc(var(--palette-color-size) * var(--palette-rows));
+	height: min-content; 
+	transform-origin: top right;
+}
+#palette *			{ width: var(--palette-color-size); height: var(--palette-color-size) }
+#palette *:hover	{ transform: scale(1.15); box-shadow: 0 0 4px 2px #000 }
+
+.selected-color	{
+	z-index: 1;
+	outline: 2px solid #fff;
+	box-shadow: 0 0 0 4px black;
+	transition: none;
+	animation-name: on-select-color;
+	animation-duration: 0.16s;
+}
+
+@keyframes on-select-color {
+	from { box-shadow: 0 0 0 8px black; outline: 6px solid #fff }
+	to { box-shadow: 0 0 0 4px black; outline: 2px solid #fff }
+}
+
+
+
+#toolbar {
+	bottom: 6px;
+	left: 50%;
+	gap: 4px;
+	flex-direction: row;
+	padding: 4px;
+	border-radius: 10px 10px 6px 6px;
+	translate: -50% 0;
+	transform-origin: bottom;
+}
+#toolbar .separator { width: 2px; height: auto; background: #666 }
+
+
+
+#crosshair { user-select: none; transition: 0.16s all }
+#crosshair.hide, #crosshair.no-raycast { opacity: 0; scale: 2 }
+.no-raycast	{ scale: 0 }
+
+
+
+#coordinates {
+	position: absolute;
+	bottom: 70px;
+	left: 50%;
+	padding: 4px 10px 4px 12px;
+	color: #fff;
+	background: #000a;
+	border-radius: 6px;
+	translate: -50% 0;
+	font-family: "adocoords";
+	transform-origin: 50% 50px;
+	transition: var(--box-transition-in);
+}
+#coordinates.hide { opacity: 0; scale: 0; filter: blur(6px); transition: var(--box-transition-out) }
+
+
+
+#playerlist { display: flex; flex-direction: column; min-width: 160px; min-height: 240px }
+
+
+
+main.sign { display: flex; flex-direction: row; padding: 16px }
+#signEditContent { overflow: hidden }
+.sign-content {
+	min-height: 432px;
+	min-width: 480px;
+	max-height: 432px;
+	max-width: 480px;
+	padding: 6px;
+	color: #fff;
+	background: #000;
+	border: var(--box-border);
+	font-size: 16px;
+	white-space: pre;
+    word-break: break-all;
+    resize: none;
+}
+
+
+
+.chat {
+	flex-direction: column;
+	top: 6px;
+	left: 6px;
+	gap: 6px;
+	border-radius: 6px 6px 10px 10px;
+	transform-origin: top left
+}
+
+.chat > .chatbox {
+	display: flex;
+	flex-direction: row-reverse;
+	height: 32px;
+	width: auto;
+	overflow: hidden;
+	transition: all 0.25s cubic-bezier(0, 1, 0.75, 1)
+}
+
+.chat > #messages {
+	display: flex;
+	overflow-y: scroll;
+	overflow-y: overlay;
+	overflow-wrap: break-word;
+	flex-direction: column;
+	width: var(--chat-width);
+	max-height: var(--chat-maxheight);
+	transition: all 0.4s cubic-bezier(0, 1, 0, 1);
+}
+
+#messages > p {
+	width: auto;
+	user-select: text;
+	animation-name: new-player-message;
+	animation-timing-function: cubic-bezier(0, 0, 0, 1);
+	animation-duration: 0.25s;
+}
+
+.chat.compact { gap: 0px }
+.chat.compact > .chatbox { height: 0 }
+.chat.compact > #messages { max-height: calc(var(--chat-maxheight) / 2) }
+.chat.compact > #messages::-webkit-scrollbar-thumb { background: 0 }
+#messages > p:hover { background: #fff1; box-shadow: inset 0 0 0 1px #fff1 }
+
+@keyframes new-player-message {
+	from { line-height: 0; opacity: 0% }
+	to { line-height: 1; opacity: 100% }
+}

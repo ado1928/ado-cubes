@@ -2,6 +2,8 @@
 	import Button from "lib/Button.svelte";
 	import Setting from "lib/Setting.svelte";
 	import { usingMobile } from "public/game/utils.js";
+
+
 </script>
 
 <header>
@@ -49,9 +51,5 @@
 		<Setting label="Disable color picker sound" set="disableColorPickerSound" type="checkbox"/>
 		<Setting label="Disable button sounds" set="disableButtonSounds" type="checkbox"/>
 		<Setting label="Disable message sounds" set="disableMessageSounds" type="checkbox"/>
-	</section>
-	<section>
-		<h2>Debug</h2>
-		<Setting label="Force mobile agent (needs page refresh)" set="forceMobileAgent" type="checkbox"/>
 	</section>
 </main>

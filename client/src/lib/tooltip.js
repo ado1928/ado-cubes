@@ -1,12 +1,13 @@
 // stolen from my website, which is also stolen from https://svelte.dev/repl/dd6754a2ad0547c5b1c1ea37c0293fef?version=3.57.0
 
+import { afterUpdate } from 'svelte';
 import Tooltip from "./Tooltip.svelte";
 
 export default function tooltip(element) {
 	let title, tooltipBox;
 
 	function getTitle() {
-		title = element.dataset.tooltip
+		title = element.dataset.tooltip ?? "you're an idiot";
 	}
 
 	function initialize(event) {
@@ -18,7 +19,7 @@ export default function tooltip(element) {
 				y: event.pageY
 			},
 			target: document.body,
-		})
+		});
 	}
 
 	function update(event) {
@@ -27,13 +28,13 @@ export default function tooltip(element) {
 			title: title,
 			x: event.pageX,
 			y: event.pageY
-		})
+		});
 	}
 
 	function kill() {
 		tooltipBox.$destroy();
 	}
-	
+
 	element.addEventListener('mouseenter', initialize);
 	element.addEventListener('mouseout', kill);
 	element.addEventListener('mousemove', update);
