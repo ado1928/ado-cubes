@@ -62,6 +62,10 @@ const osIcon = {
 	aix: '🟢'
 }
 
+function bold(text) {
+	return `\x1b[1m${text}\x1b[0m`
+}
+
 
 
 var lastsaved = Date.now();
@@ -76,7 +80,11 @@ fs.readdir("server/worlds", (err, crows) => {
 		worldslist.push(crow)
 		fs.readFile(`./server/worlds/${crow}.caw`, 'utf8', (err, data) => {
 			if (err) throw err;
-			worlds[crow] = textencoder.encode(data);
+			worlds[crow] = {
+				size: config.defaults.world.size,
+				cubes: textencoder.encode(data),
+				palette: config.defaults.world.palette
+			}
 			// worlds[i] = new Uint8Array(262144).fill(0) // Fills the world with nothing. Debugging purposes.
 		})
 	});
@@ -84,18 +92,38 @@ fs.readdir("server/worlds", (err, crows) => {
 	log(`\x1b[90mloaded ${worldslist}`);
 })
 
-function loadWorld(socket) {
+function joinWorld(socket) {
 	socket.join(socket.player.world);
-	io.to(socket.id).emit('connected', {
-		world: worlds[socket.player.world],
-		palette: config.defaults.world.palette
-	})
+	io.to(socket.id).emit('joinWorld', worlds[socket.player.world]);
 }
 
 function saveWorld(i) {
-	fs.writeFile(`./server/worlds/${i}.caw`, textdecoder.decode(worlds[i]), err => { if (err) throw err });
+	fs.writeFile(`./server/worlds/${i}.caw`, textdecoder.decode(worlds[i].cubes), err => { if (err) throw err });
 	lastsaved = Date.now();
 	log(`🌍 Saved world ${bold(i)}`);
+}
+
+function cubeValid(pos, color) {
+	if (pos) for (const coord of pos) if (0 > coord || coord > 63) return false;
+	if (color) if ((color + 1) > config.defaults.world.palette.length) return false;
+	return true
+}
+
+function serverMessage(msg) {
+	io.emit('serverMessage', { content: msg });
+	log(msg);
+	if (config.dsbridge.enabled) {
+		dshook.setUsername("Server");
+		dshook.send(msg.replace(/\x1b\[[0-9;]*m/g, ''));
+	}
+}
+
+function playerlist(socket) {
+	let players = [];
+	io.sockets.adapter.rooms.get(socket.player.world).forEach(id => {
+		players.push(io.sockets.sockets.get(id).player)
+	});
+	io.to(socket.player.world).emit('playerlist', players);
 }
 
 function socketValid(socket) { // this looks wonky :P
@@ -113,37 +141,12 @@ function kickSocket(socket, reason) {
 	return false
 }
 
-function cubeValid(pos, color) {
-	if (pos) for (const coord of pos) if (0 > coord || coord > 63) return false;
-	if (color) if ((color + 1) > config.defaults.world.palette.length) return false;
-	return true
-}
-
-function serverMessage(msg) {
-	io.emit('serverMessage', { "content": msg });
-	log(msg);
-	if (config.dsbridge.enabled) {
-		dshook.setUsername("Server");
-		dshook.send(msg.replace(/\x1b\[[0-9;]*m/g, ''));
-	}
-}
-
-function playerlist(socket) {
-	let players = [];
-	io.sockets.adapter.rooms.get(socket.player.world).forEach(id => {
-		players.push(io.sockets.sockets.get(id).player)
-	});
-	io.to(socket.player.world).emit('playerlist', players);
-}
-
-function bold(text) { return `\x1b[1m${text}\x1b[0m` }
-
 io.on('connection', socket => {
 	let ratelimit = new Ratelimit([socket, config.ratelimit]);
 
 	function disconnect() {
 		if (!socketValid(socket)) return;
-		io.to(socket.player.world).emit('leaveMessage', { 'player': escapeHTML(socket.player.name) });
+		io.to(socket.player.world).emit('leaveMessage', { player: escapeHTML(socket.player.name) });
 		log(`👋 ${bold(socket.player.name)} left world ${bold(socket.player.world)}`);
 
 		if (io.sockets.adapter.rooms.has(socket.player.world)) {
@@ -165,9 +168,9 @@ io.on('connection', socket => {
 
 		if (!socketValid(socket)) return;
 
-		loadWorld(socket);
+		joinWorld(socket);
 		playerlist(socket);
-		io.to(socket.player.world).emit('joinMessage', { 'player': escapeHTML(socket.player.name) });
+		io.to(socket.player.world).emit('joinMessage', socket.player);
 		log(`🤝 ${bold(socket.player.name)} joined world ${bold(socket.player.world)}`);
 	});
 
@@ -182,12 +185,17 @@ io.on('connection', socket => {
 
 
 
+	function setCube(pos, color) {
+		let size = worlds[socket.player.world].size
+		worlds[socket.player.world].cubes[pos[0] * (size[1] * size[2]) + pos[1] * size[2] + pos[2]] = color
+	}
+
 	socket.on('place', data => {
 		pos = data.pos;
 		color = data.color;
 		if (!socketValid(socket) || ratelimit.cubes || !cubeValid(pos, color)) return;
-		if (worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] !== 0) return;
-		worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = color + 1;
+		if (worlds[socket.player.world].cubes[pos[0] * 4096 + pos[1] * 64 + pos[2]] !== 0) return;
+		setCube(pos, color + 1);
 		io.to(socket.player.world).emit('place', data);
 		if (Date.now() - lastsaved > 30000) saveWorld(socket.player.world);
 	});
@@ -195,19 +203,19 @@ io.on('connection', socket => {
 	socket.on('break', data => {
 		pos = data.pos;
 		if (!socketValid(socket) || ratelimit.cubes || !cubeValid(pos)) return;
-		worlds[socket.player.world][pos[0] * 4096 + pos[1] * 64 + pos[2]] = 0;
+		setCube(pos, 0);
 		io.to(socket.player.world).emit('break', data);
 	});
 
 	socket.on('message', content => {
 		if (!socketValid(socket) || ratelimit.chat || content.length > 1600) return;
 		io.to(socket.player.world).emit('message', {
-			'sender': {
-				'name': socket.player.name,
-				'id': socket.id,
+			sender: {
+				name: socket.player.name,
+				id: socket.id,
 			},
-			'content': sanitize(marked.parseInline(content)),
-			'timestamp': Date.now()
+			content: sanitize(marked.parseInline(content)),
+			timestamp: Date.now()
 		});
 		log(`🌍 ${bold(socket.player.world)} > ${bold(socket.player.name)}: ${sanitize(content)}`);
 

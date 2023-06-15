@@ -10,12 +10,13 @@
 			: chat.classList.remove("compact")
 	})
 
-	socket.on('joinMessage', data => {
-		createMessage(`<b>${coloride(data.player)}</b> joined the world`, "ui/msg/player join");
+	socket.on('joinMessage', player => {
+		console.log(player)
+		createMessage(`<b>${coloride(player.name)}</b> joined the world`, "ui/msg/player join");
 	});
 
-	socket.on('leaveMessage', data => {
-		createMessage(`<b>${coloride(data.player)}</b> left the world`, "ui/msg/player left");
+	socket.on('leaveMessage', name => {
+		createMessage(`<b>${coloride(name)}</b> left the world`, "ui/msg/player left");
 	});
 
 	socket.on('message', data => {

@@ -8,13 +8,13 @@
 	import Welcome from "./Welcome.svelte";
 	import Esc from "./esc/Esc.svelte"
 
-	import LoadingGame from "./LoadingGame.svelte";
 	import LoadingWorld from "./world/LoadingWorld.svelte";
 	import Toolbar from "./world/Toolbar.svelte";
 	import Chat from "./world/Chat.svelte";
 	import Sign from "./world/Sign.svelte";
 	import Playerlist from "./world/Playerlist.svelte";
 
+	console.log("svelte")
 </script>
 
 <main>

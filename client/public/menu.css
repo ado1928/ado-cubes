@@ -7,7 +7,8 @@
 .settings					{ display: flex; justify-content: space-between }
 .settings > section			{ padding: 16px; border-bottom: var(--box-border) }
 .settings > section:hover	{ background: #fff1 }
-.settings > section > h3	{ margin-top: 16px }
+.settings h2	{ margin: 0 24px }
+.settings h3	{ margin: 0 24px; margin-top: 8px }
 
 .setting {
 	position: relative;

@@ -47,12 +47,13 @@ export default {
 			entries: [
 				{ find: 'src', replacement: path.resolve(__dirname, "client/src") },
 				{ find: 'lib', replacement: path.resolve(__dirname, "client/src/lib") },
-				{ find: 'public', replacement: path.resolve(__dirname, "client/public") }
+				{ find: 'public', replacement: path.resolve(__dirname, "client/public") },
+				{ find: 'utils', replacement: path.resolve(__dirname, "client/public/game/utils.js") }
 			]
 		}),
 
 		css({ output: 'bundle.css' }),
-		resolve({ mainFields: ['browser'], browser: true }),
+		resolve(),
 		commonjs(),
 		json(),
 

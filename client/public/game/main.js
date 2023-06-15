@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
-import { createMessage, playAudio, escapeHTML, coloride, setHide, usingMobile } from "./utils.js";
+import { createMessage, playAudio, escapeHTML, coloride, setHide } from "./utils.js";
 import { commandHandler } from "./commands.js";
 
 const clock = new THREE.Clock();
@@ -467,11 +467,13 @@ socket.on('ohno', reason => {
 	document.body.innerHTML = `<p class="socket-error">${reason ?? "oh no, something has gone wrong! please refresh page!"}</p>`
 })
 
-socket.on('connected', data => {
+socket.on('joinWorld', data => {
+	console.log(data)
 	cubes.forEach(e => scene.remove(e));
 	game.world = { palette: data.palette };
 	initPalette(data.palette);
-	const view = new Uint8Array(data.world);
+
+	const view = new Uint8Array(data.cubes);
 	for (let x = 0; x < 64; x++) {
 		for (let y = 0; y < 64; y++) {
 			for (let z = 0; z < 64; z++) {

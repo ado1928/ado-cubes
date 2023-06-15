@@ -66,14 +66,14 @@
 
 	onMount(() => {
 		resetter = element.querySelector('.reset-to-default');
-		setHide(resetter, !localStorage[set])
+		setHide(resetter, !localStorage[set]);
 	});
 
 	init();
 </script>
 
 
-<div bind:this={element} class="setting" on:input={changeSetting}>
+<div bind:this={element} class="setting" on:change={changeSetting}>
 	<div
 		role="button"
 		class="reset-to-default"

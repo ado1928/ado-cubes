@@ -1,8 +1,20 @@
+:root {
+	--world-box-width: 160px;
+	--world-per-row: 3;
+}
+
+.worlds {
+	position: absolute;
+	top: 50%;
+	left: 75%;
+	display: flex;
+	translate: -50% -50%;
+}
+
+
 .floaty-adocubes {
 	position: absolute;
-	bottom: 50%;
-	left: 50%;
-	translate: -50% 32px;
+	top: 32%;
 	rotate: 0deg;
 	pointer-events: auto;
 	transition: scale 0.16s cubic-bezier(0, 1, 0.75, 1);
@@ -12,8 +24,7 @@
 
 .splash-text {
 	position: absolute;
-	bottom: 50%;
-	left: 50%;
+	top: 45.5%;
 	padding: 4px 6px;
 	width: max-content;
 	color: #fff;
@@ -24,7 +35,7 @@
 }
 .splash-text.hide { scale: 0 }
 
-.login { top: 50%; left: 50%; padding: 16px; width: 400px; translate: -50% 0 }
+.login { padding: 16px; width: 400px; translate: -50% 0 }
 .links { top: 6px; left: 6px; flex-direction: row }
 
 #loadingWorld {

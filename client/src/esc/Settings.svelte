@@ -12,9 +12,12 @@
 <main class="settings">
 	<section>
 		<h2>General</h2>
+		<h3>Graphics</h3>
 		<Setting label="Renderer pixel ratio" set="rendererPixelRatio" type="range" min="1" max="4" step="0.25"/>
+		<h3>Chat</h3>
 		<Setting label="Chat width" set="chatWidth" type="range" min="100" max="1280" step="10"/>
 		<Setting label="Chat max lines visible" set="chatMaxLines" type="range" min="12" max="32"/>
+		<h3>Other</h3>
 		<Setting label="Enable random and special logos" set="enableRandomAndSpecialLogos" type="checkbox"/>
 	</section>
 	<section>

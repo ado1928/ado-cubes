@@ -44,7 +44,7 @@ const commands = {
 			"colors are taken from the world palette. hover on a palette color to show its color number",
 			"you can also use colors in your nicknames, but colors are taken from an already-defined palette",
 		],
-		run: () => commands.help.args('formatting')
+		run: () => commands.help.run('formatting')
 	},
 	tp: {
 		help: [

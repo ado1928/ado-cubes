@@ -1,6 +1,5 @@
 // stolen from my website, which is also stolen from https://svelte.dev/repl/dd6754a2ad0547c5b1c1ea37c0293fef?version=3.57.0
 
-import { afterUpdate } from 'svelte';
 import Tooltip from "./Tooltip.svelte";
 
 export default function tooltip(element) {

@@ -6,12 +6,12 @@
 	--palette-rows: 5;
 	--chat-width: 440px;
 	--chat-maxheight: 384px;
-	--font-size: 16px;
 	--backdrop-blur: 6px;
 
-	--box-background: radial-gradient(circle at 50% 56px, #111d, #000e);
+	--box-background: radial-gradient(circle at 50% 0, #101010d4, #000000ed);
 	--box-border: 1px solid var(--light-1);
 	--box-outline: 2px solid #0e0e0e;
+	--box-box-shadow: inset 0 0 16px 6px #000; /* oh how humorous */
 
 	--box-transition-in: all 0.16s cubic-bezier(0, 1, 0.75, 1);
 	--box-transition-out: all 0.16s cubic-bezier(1, 0, 1, 0.75);
@@ -45,13 +45,14 @@ img, canvas { image-rendering: pixelated }
 
 kbd {
 	padding: 0 4px;
-	background: #323232;
+	background: #2a2a2a;
 	color: #fff;
-	border: 1px solid #aaa;
-	border-left-color: #777;
-	border-right-color: #777;
-	border-bottom-color: #555;
-	border-radius: 3px;
+	border: 1px solid #999;
+	border-bottom-width: 2px;
+	border-left-color: #888;
+	border-right-color: #888;
+	border-bottom-color: #666;
+	border-radius: 4px;
 	text-shadow: none;
 }
 kbd:active {
@@ -115,7 +116,7 @@ input[type="text"]
 	border-bottom-width: 3px;
 	border-radius: 6px;
 	outline: var(--box-outline);
-	box-shadow: inset 0 0 48px #080808;
+	box-shadow: var(--box-box-shadow);
 	backdrop-filter: blur(var(--backdrop-blur));
 	line-height: 1;
 	transition: var(--box-transition-in);
@@ -177,11 +178,11 @@ button {
 	margin: 2px;
 	padding: 4px 12px 6px;
 	color: #fff;
-	background: #0006;
+	background: #000a;
 	border: var(--box-border);
 	border-radius: 16px;
 	outline: 2px solid #0e0e0e;
-	font-size: var(--font-size);
+	font-size: 16px;
 }
 button:hover				{ background: #eef3; border: 1px solid #eef6; text-shadow: var(--highlight) }
 button:active, button:focus { background: #eef3; outline: 1px solid #eef6; text-shadow: var(--highlight); }
@@ -249,7 +250,7 @@ input[type='text'], select {
 	border: 1px solid #555a;
 	border-radius: 6px;
 	outline: 2px solid #000;
-	font-size: var(--font-size);
+	font-size: 16px;
 
 }
 
@@ -273,16 +274,3 @@ input[type="checkbox"] { width: 16px; height: 16px }
 
 .blur-background		{ position: absolute; width: 100%; height: 100%; backdrop-filter: blur(6px); transition: backdrop-filter 0.32s cubic-bezier(0, 1, 0.75, 1) }
 .blur-background.hide	{ backdrop-filter: blur(0) }
-
-#loadingGame {
-	z-index: 1928;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background: #000;
-}
-
-#loadingGame.hide {
-	opacity: 0;
-	transition: all 0.16s linear;
-}
